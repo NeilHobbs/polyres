@@ -7,13 +7,11 @@ Authors@R:
            role = c("aut", "cre"),
            email = "neilphobbs@hotmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Incorporates  the addition of polygenic resistance and resistance intensity using the Hill variation
-of the Michaelis-Menten equation. This enables the creation of a arbitray scale over which resistance intensity can be
-calculated given survival in resistance bioassays. 
+Description: The polyres packages gives the addition of polygenic resistance and resistance intensity using the Hill variation of the Michaelis-Menten equation. This is achieved by creating an arbitray scale over which resistance intensity can be calculated using survival from resistance bioassays. 
 License: `use_mit_license()`, `use_gpl3_license()` or friends to
     pick a license
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
-Imports: dplyr, ggplot2, knitr, tidyr
+Imports: dplyr, ggplot2, knitr, tidyr, magrittr
