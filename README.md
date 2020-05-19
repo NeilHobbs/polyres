@@ -26,16 +26,18 @@ Running the above code would return a value of 900 (Your value will depend on yo
 The functions ```plot_resistance_to_bioassay_survival``` and ```plot_bioassay_survival_to_resistance``` allow for the plotting and visualising of the relationship between insecticide resistance intensity and bioassay survival by using the ```resistance_to_bioassay_survival``` and ```bioassay_survival_to_resistance``` functions respectively.
 
 An example of how to plot your calculated scale follows, using the ```half.population.bioassay.survival.resistance``` = 900, as calculated using the ```calculate_half_population_survival``` function. 
+
 ```plot_resistance_to_bioassay_survival(
                                 maximum.bioassay.survival.proportion = 1, 
                                 michaelis.menton.slope = 1, 
                                 half.population.bioassay.survival.resistance = 900, 
-                                nsim, 
-                                minimum.resistance, 
-                                maximum.resistance, 
-                                sd.population.resistance)
+                                nsim = 1000, 
+                                minimum.resistance = 0, 
+                                maximum.resistance = 10000, 
+                                sd.population.resistance = 10
+```
 
-
+This will return a plot of the relationship between resistance intensity and bioassay survival.
 
 
 
