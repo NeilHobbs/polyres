@@ -1,10 +1,14 @@
-#Function to translate IR levels(z) into survival 
-#Kmax = the maximum proportion surviving (must be set at 1)
-#z = the insecticide resistance intensity level
-#n=slope of the curve (tangent to the curve at z_50)
-#z_50 = the insecticide resistance intensity level that has 50% survival
-#sigma = standard devation of the normal distribution
-#nsim = the number of simulations for the rnorm function
+#' Function to convert mean population resistance intensity to bioassay survival
+#' 
+#' @param maximum.bioassay.survival.proportion Should be set as 1.
+#' @param mean.population.resistance 
+#' @param michaelis.menton.slope Should be set as 1
+#' @param half.population.bioassay.survival.resistance This is calculated using the calculate_half_population_resistance function
+#' @param sd.population.resistance How much variation in the population resistance. 
+#' @param nsim How many replications of the rnorm function are conducted. Recommended value is 1000.
+#' 
+#' @return mean(bioassay.survival.proportion) This is the mean bioassay survival for the population resistance intensity.
+
 
 resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion,
                                            mean.population.resistance,
@@ -19,7 +23,7 @@ resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion,
                             sd = sd.population.resistance) 
   
   
-  #Prevent Insecticide Resistance being less than 0, as this would give survival less than 0
+  #Prevent Insecticide Resistance being less than 0, as this would give survival less than 0.
   resistance_values = ifelse(resistance_values < 0, 0, resistance_values) 
   
   ##Calculate Bioassay Survival (Equation 6)
@@ -28,8 +32,8 @@ resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion,
     (half.population.bioassay.survival.resistance + 
        (resistance_values ^michaelis.menton.slope))  
   
-  bioassay.survival.proportion = ifelse(bioassay.survival.proportion < 0, 0, bioassay.survival.proportion) #Prevent survival being less than zero.
-  
+   #Prevent survival being less than zero, as this is impossible!
+    bioassay.survival.proportion = ifelse(bioassay.survival.proportion < 0, 0, bioassay.survival.proportion) 
   return(mean(bioassay.survival.proportion))
 }
 
