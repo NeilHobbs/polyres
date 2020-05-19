@@ -1,4 +1,17 @@
-#Function to convert bioassay survival to mean population insecticide resistance
+#' Function to convert bioassay survival to mean population insecticide resistance intensity
+#' 
+#' @param maximum.bioassay.survival.proportion Should be set as 1.
+#' @param michaelis.menton.slope Should be set as 1
+#' @param half.population.bioassay.survival.resistance This is calculated using the calculate_half_population_resistance function
+#' @param bioassay.survival The survival that occured in the bioassay, as a proportion(values must be between 0 and 1). Where 1=all survived, 0=all died
+#' @param estimate.precision How precise your estimate of insecticide restistance intensity should be. Recommend values between 0.01 to 0.001
+#' @param sd.population.resistance How much variation in the population resistance. 
+#' @param nsim How many replications of the rnorm function are conducted. Recommended value is 1000.
+#' @param minimum.resistance.value Recommend setting as 0.
+#' @param maximum.resistance.value This will depend on the half survival scale, but 10000 would be a good start. 
+#' 
+#' @return test.population.resistance This is the mean insecticide resistance intensity of the population.
+
 bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion,
                                            michaelis.menton.slope, 
                                            half.population.bioassay.survival.resistance, 
