@@ -7,7 +7,7 @@
 #' 
 #' @param maximum.bioassay.survival.proportion Must be set to 1. 
 #' @param michaelis.menton.slope.values A vector of values, including the value 1. Recommend a sequence from 0 to 2.
-#' @param half.population.bioassay.survival.resistance As calculated with calculate_half_population_survival,
+#' @param half.population.bioassay.survival.resistance As calculated with calculate_half_population_survival
 #' @param bioassay.survival The survival that occured in the bioassay, as a proportion(values must be between 0 and 1). Where 1=all survived, 0=all died 
 #' @param estimate.precision How precise your estimate of insecticide restistance intensity should be. Recommend values between 0.01 to 0.001
 #' @param sd.population.resistance.values How much variation in the population resistance. 

@@ -1,7 +1,7 @@
 #' Plot the impact of changing the michaelis.menten.slope parameter in the resistance_to_bioassay_survival function.
 #' Demonstrates the equations only work correctly when michaelis.menten.slope = 1.
 #' 
-#' #' @import magrittr dplyr ggplot2
+#' @import magrittr dplyr ggplot2
 #' @importFrom magrittr %>%
 #' @name %>%
 #' 

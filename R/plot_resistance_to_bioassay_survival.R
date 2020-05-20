@@ -17,15 +17,15 @@
 #' 
 #' @return A ggplot of the relationship between resistance (x axis) and survival (y axis).
 #' 
-#' @examples 
-#' plot_resistance_to_bioassay_survival(
+#' @example plot_resistance_to_bioassay_survival(
 #' maximum.bioassay.survival.proportion = 1, 
 #' michaelis.menten.slope = 1, 
 #' half.population.bioassay.survival.resistance = 900, 
 #' nsim = 1000, 
 #' minimum.resistance = 0, 
 #' maximum.resistance = 10000, 
-#' sd.population.resistance = 10)
+#' sd.population.resistance = 10
+#' )
 
 
 
