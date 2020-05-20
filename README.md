@@ -137,3 +137,4 @@ plot_michaelis_menten_slope_survival(
                                      nsim = 1000
                                      )
 ```
+Alternatively, the impact of varying the ```michaelis.menten.slope``` could be visualised using a table: ```table_michaelis_menten_slope_survival```; with the implementation similar to the ```plot_michaelis_menten_slope_survival``` example.
