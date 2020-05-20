@@ -5,6 +5,10 @@
 **polyres** enables the user to incorporate poygenic insecticide resistance (and the associated resistance intensity) into insecticide resistance models. This is achieved through converting bioassay survival (eg. from CDC Bottle Bioassays or WHO Cylinders) to a resistance intensity score. This is implemented through the Hill variation of the Michaelis-Menten equation. 
 
 ## Getting Started
+
+###### Side Note:
+Functions in ```polyres``` are named with ```_``` between the names. Parameters are named with ```.``` between the names.
+
 ###### Step 1: Deciding upon intitial scale of insecticide resistance intensity. 
 The function ```calculate_half_population_survival``` allows for the calculation of a user defined resistance scale. 
 The user should specify what resistance value is required at a particular cut-off point. For example, an intuitive scale would involve a ```desired.resistance```value of 100 corresponding to a ```desired.survival.proportion``` of 10% (0.1 as a proportion). Using these values the insecticide resistance intensity at which 50% of exposed mosquitoes would survive in a bioassay is calculated. 
