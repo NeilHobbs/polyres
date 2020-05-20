@@ -27,7 +27,7 @@ calculate_half_population_survival(desired.resistance = 100,
 ```
 Running the above code would return a value of 900 (Your value will depend on your ```desired.resistance``` and ```desired.survival.proportion``` combination . Which will be the *half.population.bioassay.survival.resistance* parameter that is used throughout the rest of the model and code.
 
-## Step 2: The ```bioassay_survival_to_resistance``` and ```resistance_to_bioassay_survival``` functions
+##### Step 2: The ```bioassay_survival_to_resistance``` and ```resistance_to_bioassay_survival``` functions
 
 The ```resistance_to_bioassay_survival``` converts the population resistance intensity into a corresponding survival in an insecticide bioassay. This function implements the Hill variant of the Michaelis-Menten equation with the distribution of individual level resistance intensity having a Normal distribution.
 
@@ -121,5 +121,19 @@ plot_michaelis_menten_slope_resistance(maximum.bioassay.survival.proportion = 1,
 The final returned plot is the Michaelis Menten Slope (x axis) and the associated resistance values (y axis). If using ```half.population.bioassay.survival.resistance = 900``` and ```bioassay.survival = 0.5``` then the only time the graph plots this correctly is when the Michaelis Menten slope value = 1. 
 
 
-The ```plot_michaelis_menten_slope_resistance``` uses the ```resistance_to_bioassay_survival``` function:
+The ```plot_michaelis_menten_slope_survival``` uses the ```resistance_to_bioassay_survival``` function:
 
+```
+
+michaelis.menten.values = rep(seq(0, 2, by = 0.1), 6)
+st.dev.values = c(rep(0.1, 21), rep(0.5, 21), rep(1, 21), rep(5, 21), rep(20, 21), rep(25, 21))
+
+plot_michaelis_menten_slope_survival(
+                                     michaelis.menten.slope.values = michaelis.menten.values, 
+                                     sd.population.resistance.values = st.dev.values, 
+                                     maximum.bioassay.survival = 1,
+                                     half.population.bioassay.survival.resistance = 900, 
+                                     mean.population.resistance = 900,
+                                     nsim = 1000
+                                     )
+```
