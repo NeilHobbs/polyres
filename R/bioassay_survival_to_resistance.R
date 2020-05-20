@@ -1,7 +1,7 @@
 #' Function to convert bioassay survival to mean population insecticide resistance intensity
 #' 
 #' @param maximum.bioassay.survival.proportion Should be set as 1.
-#' @param michaelis.menton.slope Should be set as 1
+#' @param michaelis.menten.slope Should be set as 1
 #' @param half.population.bioassay.survival.resistance This is calculated using the calculate_half_population_resistance function
 #' @param bioassay.survival The survival that occured in the bioassay, as a proportion(values must be between 0 and 1). Where 1=all survived, 0=all died
 #' @param estimate.precision How precise your estimate of insecticide restistance intensity should be. Recommend values between 0.01 to 0.001
@@ -13,7 +13,7 @@
 #' @return test.population.resistance This is the mean insecticide resistance intensity of the population.
 
 bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion,
-                                           michaelis.menton.slope, 
+                                           michaelis.menten.slope, 
                                            half.population.bioassay.survival.resistance, 
                                            bioassay.survival, 
                                            estimate.precision, 
@@ -28,7 +28,7 @@ bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion,
       if(resistance_to_bioassay_survival(
         maximum.bioassay.survival.proportion = maximum.bioassay.survival.proportion,
         mean.population.resistance = test.population.resistance, 
-        michaelis.menton.slope = michaelis.menton.slope, 
+        michaelis.menten.slope = michaelis.menten.slope, 
         half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance, 
         sd.population.resistance = sd.population.resistance, 
         nsim = nsim) < bioassay.survival) #check if survival 

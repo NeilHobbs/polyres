@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @param maximum.bioassay.survival.proportion Should be set as 1.
-#' @param michaelis.menton.slope Should be set as 1
+#' @param michaelis.menten.slope Should be set as 1
 #' @param half.population.bioassay.survival.resistance This is calculated using the calculate_half_population_resistance function
 #' @param estimate.precision How precise your estimate of insecticide restistance intensity should be. Recommend values between 0.01 to 0.001
 #' @param sd.population.resistance How much variation in the population resistance. 
@@ -23,7 +23,7 @@
 #' @example 
 #' plot_bioassay_survival_to_resistance(
 #' maximum.bioassay.survival.proportion = 1,
-#' michaelis.menton.slope = 1, 
+#' michaelis.menten.slope = 1, 
 #' half.population.bioassay.survival.resistance = 900, 
 #' estimate.precision = 0.01, 
 #' sd.population.resistance = 10, 
@@ -35,7 +35,7 @@
 #' divisions = 0.01)
 
 plot_bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion,
-                                                michaelis.menton.slope, 
+                                                michaelis.menten.slope, 
                                                 half.population.bioassay.survival.resistance, 
                                                 estimate.precision, 
                                                 sd.population.resistance, 
@@ -52,7 +52,7 @@ plot_bioassay_survival_to_resistance = function(maximum.bioassay.survival.propor
     dplyr::rowwise()%>%
       dplyr::mutate(resistance.values = bioassay_survival_to_resistance(
       maximum.bioassay.survival.proportion=maximum.bioassay.survival.proportion,
-      michaelis.menton.slope=michaelis.menton.slope, 
+      michaelis.menten.slope=michaelis.menten.slope, 
       half.population.bioassay.survival.resistance=half.population.bioassay.survival.resistance, 
       bioassay.survival=bioassay.survival.values, 
       estimate.precision=estimate.precision, 

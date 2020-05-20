@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @param maximum.bioassay.survival.proportion Should be set as 1.
-#' @param michaelis.menton.slope Should be set as 1
+#' @param michaelis.menten.slope Should be set as 1
 #' @param half.population.bioassay.survival.resistance This is calculated using the calculate_half_population_resistance function
 #' @param bioassay.survival The survival that occured in the bioassay, as a proportion(values must be between 0 and 1). Where 1=all survived, 0=all died
 #' @param estimate.precision How precise your estimate of insecticide restistance intensity should be. Recommend values between 0.01 to 0.001
@@ -20,7 +20,7 @@
 #' @examples 
 #' plot_resistance_to_bioassay_survival(
 #' maximum.bioassay.survival.proportion = 1, 
-#' michaelis.menton.slope = 1, 
+#' michaelis.menten.slope = 1, 
 #' half.population.bioassay.survival.resistance = 900, 
 #' nsim = 1000, 
 #' minimum.resistance = 0, 
@@ -30,7 +30,7 @@
 
 
 plot_resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion, 
-                                                michaelis.menton.slope, 
+                                                michaelis.menten.slope, 
                                                 half.population.bioassay.survival.resistance, 
                                                 nsim, 
                                                 minimum.resistance, 
@@ -42,14 +42,14 @@ plot_resistance_to_bioassay_survival = function(maximum.bioassay.survival.propor
     dplyr::mutate(bioassay.survival.proportion = resistance_to_bioassay_survival(
       maximum.bioassay.survival.proportion = maximum.bioassay.survival.proportion, 
       mean.population.resistance = resistance.values, 
-      michaelis.menton.slope=michaelis.menton.slope, 
+      michaelis.menten.slope=michaelis.menten.slope, 
       half.population.bioassay.survival.resistance=half.population.bioassay.survival.resistance, 
       sd.population.resistance = sd.population.resistance,
       nsim=nsim)) ##plotting with sigma as 0.1 or 25 made no difference to plots
   
     ggplot(df, aes(x=resistance.values, y = bioassay.survival.proportion)) + ##logging to increase ease of readibility
     geom_point(colour = "blue") +
-    xlab("Insecticide Resistance") + ##applying log(z) makes it more readable at the lower z levels.
+    xlab("Insecticide Resistance Intensity") + ##applying log(z) makes it more readable at the lower z levels.
     ylab("Bioassay Survival Proportion")+ #note: this label may need to be changed depending on what we calibrate against
     theme_classic()
 }
