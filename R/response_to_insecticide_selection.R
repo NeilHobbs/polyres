@@ -1,5 +1,9 @@
 #' Function to turn insecticide selection into selection response, using the Breeder's Equation
 #'
+#' @import stats
+#' @importFrom stats runif
+#' @name runif
+#'
 #'@param exposure.scaling.factor This factor converts exposure to selection differential. This requires empirically setting.
 #'@param nsim number of simulations of the runif functions.
 #'@param minimum.insecticide.resistance.hertitability The minimum heritability of insecticide resistance (set at 0.05)
