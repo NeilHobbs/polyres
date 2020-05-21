@@ -31,7 +31,8 @@ Running the above code would return a value of 900 (Your value will depend on yo
 
 The ```resistance_to_bioassay_survival``` converts the population resistance intensity into a corresponding survival in an insecticide bioassay. This function implements the Hill variant of the Michaelis-Menten equation with the distribution of individual level resistance intensity having a Normal distribution.
 
-```resistance_to_bioassay_survival = function(
+```
+resistance_to_bioassay_survival = function(
                                            maximum.bioassay.survival.proportion = 1,
                                            mean.population.resistance = 100,
                                            michaelis.menten.slope = 1, 
@@ -43,17 +44,18 @@ The ```resistance_to_bioassay_survival``` converts the population resistance int
 
 The ```bioassay_survival_to_resistance``` function converts the proportion of individuals surviving in an insecticide bioassay (eg. CDC Bottle Bioassay or WHO Cylinder Bioassay) into what the corresponding population resistance intensity is. The target resistance value to be calculated needs to lie inbetween the ```minimum.resistance.value``` and the ```maximum.resistance.value```:
 
-```bioassay_survival_to_resistance = function(
-                                           maximum.bioassay.survival.proportion = 1,
-                                           michaelis.menten.slope = 1, 
-                                           half.population.bioassay.survival.resistance = 900, 
-                                           bioassay.survival = 0.1, 
-                                           estimate.precision = 0.01, 
-                                           sd.population.resistance = 5,
-                                           nsim = 1000,
-                                           minimum.resistance.value = 0, 
-                                           maximum.resistance.value  = 10000
-                                           )
+```
+bioassay_survival_to_resistance(
+                                maximum.bioassay.survival.proportion = 1,
+                                michaelis.menten.slope = 1, 
+                                half.population.bioassay.survival.resistance = 900, 
+                                bioassay.survival = 0.1, 
+                                estimate.precision = 0.01, 
+                                sd.population.resistance = 5,
+                                nsim = 1000,
+                                minimum.resistance.value = 0, 
+                                maximum.resistance.value  = 10000
+                                )
 ```                                           
 
 ###### Step 3: Obtain the scale and visualise
@@ -61,7 +63,8 @@ The functions ```plot_resistance_to_bioassay_survival``` and ```plot_bioassay_su
 
 An example of how to plot your calculated scale follows, using the ```half.population.bioassay.survival.resistance``` = 900, as calculated using the ```calculate_half_population_survival``` function. 
 
-```plot_resistance_to_bioassay_survival(
+```
+plot_resistance_to_bioassay_survival(
                                 maximum.bioassay.survival.proportion = 1, 
                                 michaelis.menten.slope = 1, 
                                 half.population.bioassay.survival.resistance = 900, 
@@ -85,16 +88,17 @@ survival.vector = c(rep(0.05, 6), rep(0.1, 6), rep(0.2, 6), rep(0.5, 6), rep(0.8
 These vectors can then be passed into the ```table_resistance_from_survival_and_sd``` function as follows:
 ```
 table_resistance_from_survival_and_sd(
-  half.population.bioassay.survival.resistance = 900, 
-  maximum.bioassay.survival.proportion = 1, 
-  michaelis.menten.slope = 1, 
-  bioassay.survival.values = survival.vector, 
-  sd.population.values = sd.vector, 
-  estimate.precision = 0.01, 
-  nsim = 1000, 
-  minimum.resistance.value = 0, 
-  maximum.resistance.value = 10000
-)
+                                       half.population.bioassay.survival.resistance = 900, 
+                                       maximum.bioassay.survival.proportion = 1, 
+                                       michaelis.menten.slope = 1, 
+                                       bioassay.survival.values = survival.vector, 
+                                       sd.population.values = sd.vector, 
+                                       estimate.precision = 0.01,
+                                       nsim = 1000, 
+                                       minimum.resistance.value = 0, 
+                                       maximum.resistance.value = 10000
+                                       )                                      
+
 ```
 This will then return a table of standard deviation (left column), bioassay survival (top row) with the filled in values being the insecticide resistance values. 
 
