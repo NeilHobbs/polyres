@@ -12,15 +12,15 @@
 #' 
 #' @return test.population.resistance This is the mean insecticide resistance intensity of the population.
 
-bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion,
-                                           michaelis.menten.slope, 
-                                           half.population.bioassay.survival.resistance, 
+bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion = 1,
+                                           michaelis.menten.slope = 1, 
+                                           half.population.bioassay.survival.resistance = 900, 
                                            bioassay.survival, 
-                                           estimate.precision, 
+                                           estimate.precision = 0.01, 
                                            sd.population.resistance,
-                                           nsim,
-                                           minimum.resistance.value, 
-                                           maximum.resistance.value){
+                                           nsim = 1000,
+                                           minimum.resistance.value = 0, 
+                                           maximum.resistance.value = 25000){
   while((test.population.resistance = ((minimum.resistance.value + maximum.resistance.value)/2))){
     if((maximum.resistance.value - minimum.resistance.value) < estimate.precision)
     {return(test.population.resistance)} #When precision level reached return population resistance
