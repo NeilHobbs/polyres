@@ -13,13 +13,13 @@
 
 calculate_half_population_survival = function(desired.resistance,
                                               desired.survival.proportion,
-                                              maximum.bioassay.survival.proportion,
-                                              michaelis.menten.slope, 
-                                              estimate.precision, 
+                                              maximum.bioassay.survival.proportion = 1,
+                                              michaelis.menten.slope = 1, 
+                                              estimate.precision = 0.01, 
                                               sd.population.resistance,
-                                              nsim,
-                                              minimum.resistance.value, 
-                                              maximum.resistance.value){
+                                              nsim = 1000,
+                                              minimum.resistance.value = 0, 
+                                              maximum.resistance.value = 25000){
   while((half.population.survival.value = ((minimum.resistance.value + maximum.resistance.value)/2))){
     if((maximum.resistance.value - minimum.resistance.value) < estimate.precision)
     {return(half.population.survival.value)} #When precision level reached return population resistance
