@@ -2,7 +2,7 @@
 ## Incorporating polygenic resistance into Insecticide Resistance Management
 
 ## Description
-**polyres** enables the user to incorporate poygenic insecticide resistance (and the associated resistance intensity) into insecticide resistance models. This is achieved through converting bioassay survival (eg. from CDC Bottle Bioassays or WHO Cylinders) to a resistance intensity score using the Hill variant of the Michaelis-Menten equation. 
+**polyres** enables the user to incorporate poygenic insecticide resistance (and the associated resistance intensity) into insecticide resistance models. This is achieved through converting bioassay survival (eg. from CDC Bottle Bioassays or WHO Cylinders) to a resistance intensity score using the Hill variant of the Michaelis-Menten equation. This package is developed based around the *Anopheles gambiae* mosquito. 
 
 ## Getting Started
 
@@ -138,3 +138,22 @@ plot_michaelis_menten_slope_survival(
                                      )
 ```
 Alternatively, the impact of varying the ```michaelis.menten.slope``` could be visualised using a table: ```table_michaelis_menten_slope_survival```; with the implementation similar to the ```plot_michaelis_menten_slope_survival``` example.
+
+##### Step 6: Tracking Changes in Resistance Intensity with the Breeder's Equation:
+The function ```response_to_insecticide_selection``` function implements the Breeder's equation, modified to incorporate differential selection pressures on male and female mosquitoes (as only female *Anopheles gambiae* blood feed and so are more likely to come into contact with indoor based insecticides (Indoor Residual Spraying or Insecticide Treated Bednets). The exposures and heritabilities are assumed to have a uniform distribution.  
+
+```
+response_to_insecticide_selection(
+ exposure.scaling.factor = 10, # Empirically set.
+ nsim = 1000, 
+ minimum.insecticide.resistance.hertitability = 0.05, 
+ maximum.insecticide.resistance.hertitability = 0.3,
+ minimum.male.insecticide.exposure = 0,
+ maximum.male.insecticide.exposure = 1, 
+ minimum.female.insecticide.exposure = 0.4, 
+ maximum.female.insecticide.exposure = 0.9
+ )
+```
+
+
+
