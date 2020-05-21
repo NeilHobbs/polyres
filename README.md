@@ -154,6 +154,13 @@ response_to_insecticide_selection(
  maximum.female.insecticide.exposure = 0.9
  )
 ```
+This function will return a vector of length of ```nsim``` of the change in the resistance intensity. The change in resistance intensity values can be plotted using either the ```plot_response_to_insecticide_selection``` or ```plot_log_response_to_insecticide_selection```. 
+
+
+
+
+
+
 
 
 
