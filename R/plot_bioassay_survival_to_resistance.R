@@ -38,7 +38,7 @@ plot_bioassay_survival_to_resistance = function(maximum.bioassay.survival.propor
                                                 michaelis.menten.slope = 1, 
                                                 half.population.bioassay.survival.resistance = 900, 
                                                 estimate.precision = 0.01, 
-                                                sd.population.resistance, 
+                                                sd.population.resistance = 10, 
                                                 nsim = 1000, 
                                                 minimum.resistance.value = 0, 
                                                 maximum.resistance.value = 25000,
