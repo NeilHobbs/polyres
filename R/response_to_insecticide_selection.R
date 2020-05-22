@@ -25,30 +25,31 @@
 #' minimum.female.insecticide.exposure = 0.4, 
 #' maximum.female.insecticide.exposure = 0.9)
 
-response_to_insecticide_selection = function(exposure.scaling.factor,
-                                             nsim, 
-                                             minimum.insecticide.resistance.hertitability, 
-                                             maximum.insecticide.resistance.hertitability,
-                                             minimum.male.insecticide.exposure,
-                                             maximum.male.insecticide.exposure, 
-                                             minimum.female.insecticide.exposure, 
-                                             maximum.female.insecticide.exposure){
+response_to_insecticide_selection = function(exposure.scaling.factor = 10,
+                                             nsim = 1000, 
+                                             minimum.insecticide.resistance.hertitability = 0.05, 
+                                             maximum.insecticide.resistance.hertitability = 0.30,
+                                             minimum.male.insecticide.exposure = 0,
+                                             maximum.male.insecticide.exposure = 1, 
+                                             minimum.female.insecticide.exposure = 0.4, 
+                                             maximum.female.insecticide.exposure = 0.9){
   
   insecticide.resistance.hertitability = runif(nsim, 
                                                min = minimum.insecticide.resistance.hertitability, 
-                                               max=maximum.insecticide.resistance.hertitability)
+                                               max = maximum.insecticide.resistance.hertitability)
   
   male.insecticide.exposure.proportion = runif(nsim,
                                                min = minimum.male.insecticide.exposure, 
-                                               max=maximum.male.insecticide.exposure)
+                                               max = maximum.male.insecticide.exposure)
   
   female.insecticide.exposure.proportion= runif(nsim, 
                                                 min = minimum.female.insecticide.exposure, 
-                                                max=maximum.female.insecticide.exposure)
+                                                max = maximum.female.insecticide.exposure)
+  #Breeders Equation
+ 
+  resistance.selection.reponse = exposure.scaling.factor*((insecticide.resistance.hertitability) * female.insecticide.exposure.proportion * (1 + male.insecticide.exposure.proportion)/2)
   
-  resistance.selection.reponse = exposure.scaling.factor*((insecticide.resistance.hertitability) * female.insecticide.exposure.proportion * (1 + male.insecticide.exposure.proportion)/2) #Breeders Equation
-  
-  return(resistance.selection.reponse) ##Return insecticide selection response as a data frame
+  return(resistance.selection.reponse) ##Return insecticide selection response as a vector
 }
 
 
