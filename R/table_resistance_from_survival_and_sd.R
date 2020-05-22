@@ -14,15 +14,15 @@
 #' @param minimum.resistance.value Should be set as 0.
 #' @param maximum.resistance.value Value required would depend on resistance intensity scale. Recommend starting with 10000
 
-table_resistance_from_survival_and_sd = function(half.population.bioassay.survival.resistance, 
-                                                 maximum.bioassay.survival.proportion, 
-                                                 michaelis.menten.slope, 
+table_resistance_from_survival_and_sd = function(half.population.bioassay.survival.resistance = 900, 
+                                                 maximum.bioassay.survival.proportion = 1, 
+                                                 michaelis.menten.slope = 1, 
                                                  bioassay.survival.values, 
                                                  sd.population.values, 
-                                                 estimate.precision, 
-                                                 nsim, 
-                                                 minimum.resistance.value, 
-                                                 maximum.resistance.value){
+                                                 estimate.precision = 0.01, 
+                                                 nsim = 1000, 
+                                                 minimum.resistance.value = 0, 
+                                                 maximum.resistance.value = 25000){
   
   df = data.frame(bioassay.survival.values, sd.population.values)%>%
     dplyr::rowwise()%>%
