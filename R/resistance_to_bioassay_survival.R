@@ -10,12 +10,12 @@
 #' @return mean(bioassay.survival.proportion) This is the mean bioassay survival for the population resistance intensity.
 
 
-resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion,
-                                           mean.population.resistance,
-                                           michaelis.menten.slope, 
-                                           half.population.bioassay.survival.resistance,
-                                           sd.population.resistance, 
-                                           nsim){ 
+resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion = 1,
+                                           mean.population.resistance = 900,
+                                           michaelis.menten.slope = 1, 
+                                           half.population.bioassay.survival.resistance = 900,
+                                           sd.population.resistance = 10, 
+                                           nsim = 1000){ 
   
   #Generate a Normal distribution around the population mean of insecticide resistance values
   resistance.values = rnorm(nsim, 
@@ -24,11 +24,11 @@ resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion,
   
   
   #Prevent Insecticide Resistance being less than 0, as this would give survival less than 0.
-  resistance.values = ifelse(resistance_values < 0, 0, resistance.values) 
+  resistance.values = ifelse(resistance.values < 0, 0, resistance.values) 
   
   ##Calculate Bioassay Survival (Equation 6)
   bioassay.survival.proportion = (maximum.bioassay.survival.proportion * 
-                                    (resistance_values^michaelis.menten.slope)) / 
+                                    (resistance.values^michaelis.menten.slope)) / 
     (half.population.bioassay.survival.resistance + 
        (resistance.values ^michaelis.menten.slope))  
   
