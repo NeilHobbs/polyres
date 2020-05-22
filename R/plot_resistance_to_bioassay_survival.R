@@ -29,13 +29,13 @@
 
 
 
-plot_resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion, 
-                                                michaelis.menten.slope, 
-                                                half.population.bioassay.survival.resistance, 
-                                                nsim, 
-                                                minimum.resistance, 
-                                                maximum.resistance, 
-                                                sd.population.resistance){
+plot_resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion = 1, 
+                                                michaelis.menten.slope = 1, 
+                                                half.population.bioassay.survival.resistance = 900, 
+                                                nsim = 1000, 
+                                                minimum.resistance = 0, 
+                                                maximum.resistance = 25000, 
+                                                sd.population.resistance = 10){
   
     df=data.frame(resistance.values=seq(minimum.resistance, maximum.resistance, by = 1))%>%
     dplyr::rowwise()%>%
