@@ -22,8 +22,8 @@
 
 plot_michaelis_menten_slope_survival = function(michaelis.menten.slope.values, 
                                                 sd.population.resistance.values, 
-                                                maximum.bioassay.survival,
-                                                half.population.bioassay.survival.resistance, 
+                                                maximum.bioassay.survival = 1,
+                                                half.population.bioassay.survival.resistance = 900, 
                                                 mean.population.resistance,
                                                 nsim){
   df = data.frame(michaelis.menten.slope.values, sd.population.resistance.values)%>%
