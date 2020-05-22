@@ -25,15 +25,15 @@
 #'                                     minimum.resistance.value = 0,
 #'                                     maximum.resistance.value = 10000)
 
-plot_michaelis_menten_slope_resistance = function(maximum.bioassay.survival.proportion,
+plot_michaelis_menten_slope_resistance = function(maximum.bioassay.survival.proportion = 1,
                                                   michaelis.menten.slope.values,
-                                                  half.population.bioassay.survival.resistance,
-                                                  bioassay.survival, 
-                                                  estimate.precision, 
+                                                  half.population.bioassay.survival.resistance = 900,
+                                                  bioassay.survival = 0.5, 
+                                                  estimate.precision = 0.01, 
                                                   sd.population.resistance.values, 
-                                                  nsim, 
-                                                  minimum.resistance.value,
-                                                  maximum.resistance.value){
+                                                  nsim = 1000, 
+                                                  minimum.resistance.value = 0,
+                                                  maximum.resistance.value = 25000){
   
   df = data.frame(michaelis.menten.slope.values, sd.population.resistance.values)%>%
     dplyr::rowwise()%>%
