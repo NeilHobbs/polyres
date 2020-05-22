@@ -13,14 +13,14 @@
 
 table_michaelis_menten_slope_survival = function(michaelis.menten.slope.values, 
                                                  sd.population.resistance.values,
-                                                 maximum.bioassay.survival.proportion,
-                                                 half.population.bioassay.survival.resistance, 
-                                                 mean.population.resistance,
-                                                 nsim){
+                                                 maximum.bioassay.survival.proportion = 1,
+                                                 half.population.bioassay.survival.resistance = 900, 
+                                                 mean.population.resistance = 900,
+                                                 nsim = 1000){
   
   df = data.frame(michaelis.menten.slope.values, sd.population.resistance.values)%>%
     dplyr::rowwise()%>%
-    dplyr::mutate(Y.values = resistance_to_bioassay_survival(maximum.bioassay.survival.proportion = maximum.bioassay.survival.proportion,
+    dplyr::mutate(bioassay.survival = resistance_to_bioassay_survival(maximum.bioassay.survival.proportion = maximum.bioassay.survival.proportion,
                                                       mean.population.resistance = mean.population.resistance, 
                                                       michaelis.menten.slope = michaelis.menten.slope.values, 
                                                       half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance, 
