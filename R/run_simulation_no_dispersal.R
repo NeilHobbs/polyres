@@ -6,14 +6,11 @@
 #' @param maximum.insecticide.resistance.hertitability = 0.30,
 #' @param minimum.male.insecticide.exposure = 0,
 #' @param maximum.male.insecticide.exposure = 1, 
-#' @paramminimum.female.insecticide.exposure = 0.4, 
+#' @param minimum.female.insecticide.exposure = 0.4, 
 #' @param maximum.female.insecticide.exposure = 0.9,
 #' @param resistance.cost cost of having insecticide resistance
 #' @param initial.resistance.intensity The initial resistance intensities 
 #' @param irm.strategy To be able to set the resistance management strategy (rotations, sequences)
-
-
-
 
 
 #And need to figure out how to save into an array!
@@ -34,11 +31,19 @@ run_simulation_no_dispersal = function(number.of.insecticides = 3,
   
   count.insecticides = set_number_of_insecticides(number.of.insecticides)
   
+  # Set up the array for the data:
+  name.column = c("generation", "intensity.site", "intensity.refugia", "deployment")
+  name.matrix = c("insecticide")
+  
+  #allow for 500 generations (50 years) with rows
+  simulation.data = array(c(500, 4, length(count.insecticides)), dimnames = list(NULL, name.column, name.matrix))
+  
+  
   ##Can be either rotation or sequence
   #strategy = irm.strategy #rotation or sequence
   
   #fixed intitial year:
-  track.mean.site.resistance = c(initial.resistance.intensity)
+  track.mean.site.resistance = initial.resistance.intensity
  
   for(year in 1:50){
     
@@ -82,6 +87,8 @@ run_simulation_no_dispersal = function(number.of.insecticides = 3,
              maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
              minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
              maximum.female.insecticide.exposure = maximum.female.insecticide.exposure))
+        
+        #Input a check to prevent track.mean.site.resistance going below zero.
    }
     
     #return the mean population IR each year.
