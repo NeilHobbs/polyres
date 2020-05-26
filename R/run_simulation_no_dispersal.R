@@ -28,21 +28,23 @@ run_simulation_no_dispersal = function(number.of.insecticides = 3,
                                        minimum.female.insecticide.exposure = 0.4, 
                                        maximum.female.insecticide.exposure = 0.9,
                                        resistance.cost,
-                                       initial.resistance.intensity = 0,
-                                       irm.strategy){
+                                       initial.resistance.intensity = 0
+                                       #irm.strategy
+                                       ){
   
   count.insecticides = set_number_of_insecticides(number.of.insecticides)
   
   ##Can be either rotation or sequence
-  strategy = irm.strategy #rotation or sequence
+  #strategy = irm.strategy #rotation or sequence
   
   #fixed intitial year:
-  
+  track.mean.site.resistance = c(initial.resistance.intensity)
  
   for(year in 1:50){
     
      for(insecticide in 1:length(count.insecticides)){
       
+       #Check if survival/resistance less than the limits
       if(check_resistance_10(current.resistance.status = track.mean.site.resistance) == TRUE){
         deploy.insecticide = TRUE} else (deploy.insecticide = FALSE)
       }
@@ -52,7 +54,7 @@ run_simulation_no_dispersal = function(number.of.insecticides = 3,
       #check_resistance ##if less than 10% (IR = 100) can continue to be used. For sequences only??
       #check_resistance_10(current.resistance.status = track.mean.site.resistance)
     
-      #deploy_insecticide #How??? TRUE/FALSE Question
+      #How to deploy only 1 insecticide at a time??
       
       for(generation in 1:10){
         track.mean.site.resistance[generation+1] = if(deploy.insecticide == TRUE){
@@ -86,6 +88,7 @@ run_simulation_no_dispersal = function(number.of.insecticides = 3,
   return(track.mean.site.resistance)
   }
 }
+
 
  
   
