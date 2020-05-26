@@ -1,7 +1,7 @@
 #' To see if resistance is gives lower than 10% survival.
 
 
-check_resistance = function(current.resistance.intensity){
+check_resistance_10 = function(current.resistance.intensity){
   
   if(current.resistance.intensity > bioassay_survival_to_resistance(maximum.bioassay.survival.proportion = 1,
                                                                     michaelis.menten.slope = 1, 
