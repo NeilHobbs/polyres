@@ -3,7 +3,7 @@
 #' if true can be used
 
 
-check_resistance = function(current.resistance.intensity){
+check_resistance_5 = function(current.resistance.intensity){
   
   if(current.resistance.intensity > bioassay_survival_to_resistance(maximum.bioassay.survival.proportion = 1,
                                     michaelis.menten.slope = 1, 
