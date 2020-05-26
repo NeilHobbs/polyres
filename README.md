@@ -163,6 +163,35 @@ This function will return a vector of length of ```nsim``` of the change in the 
 
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+New Functions to Mention in ReadME:
+
+check_resistance_5
+check_resistance_10
+
+choose_insecticide
+deploy_insecticide
+
+effect_of_fitness_cost
+
+insecticide_deployed_selection_cost
+insecticide_not_deployed_selection_cost
+
+migration_refugia_to_treatment
+migration_treatment_to_refugia
+
+set_number_of_insecticides
+
+
+
+
+
+
+
+
+
+
+
 
 
 
