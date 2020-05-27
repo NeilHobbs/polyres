@@ -160,17 +160,24 @@ response_to_insecticide_selection(
 ```
 This function will return a vector of length of ```nsim``` of the change in the resistance intensity. The change in resistance intensity values can be plotted using either the ```plot_response_to_insecticide_selection``` or ```plot_log_response_to_insecticide_selection```. 
 
+## Running Simulations
+
+Setting the number of insecticides available: 
+
+```set_number_of_insecticides(total.insecticides)
+
+   set_number_of_insecticides(3)
+```
+Would return a vector of a sequence 1, 2, 3 that are the insecticides with unique numbers. 
+
+Checking whether the resistance intensity has reached pre-defined threshold:
+
+```check_resistance_5(current.resistant.intensity) #resistance at 5% survival
+check_resistance_10(current.resistance.intensity) #resistance at 10% survival
+```
+These will return a TRUE or FALSE answer. TRUE if resistance below threshold. FALSE if resistance above threshold. 
 
 
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-New Functions to Mention in ReadME:
-
-check_resistance_5
-check_resistance_10
-
-choose_insecticide
-deploy_insecticide
 
 effect_of_fitness_cost
 
@@ -180,7 +187,7 @@ insecticide_not_deployed_selection_cost
 migration_refugia_to_treatment
 migration_treatment_to_refugia
 
-set_number_of_insecticides
+
 
 
 
