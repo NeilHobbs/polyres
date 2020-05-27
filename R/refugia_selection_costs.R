@@ -23,8 +23,8 @@ refugia_selection_costs = function(initial.refugia.resistance,
                                    maximum.male.insecticide.exposure = 1, 
                                    minimum.female.insecticide.exposure = 0.4, 
                                    maximum.female.insecticide.exposure = 0.9){
-  
-  track.refugia.resistance = intial.refugia.resistance - effect_of_fitness_cost(resistance.cost = resistance.cost,
+                                  #plus used as effect_of_fitness_cost does negative
+  track.refugia.resistance = initial.refugia.resistance + effect_of_fitness_cost(resistance.cost = resistance.cost,
                                                                           exposure.scaling.factor = exposure.scaling.factor,
                                                                           nsim = nsim, 
                                                                           minimum.insecticide.resistance.hertitability = minimum.insecticide.resistance.hertitability, 
@@ -35,8 +35,7 @@ refugia_selection_costs = function(initial.refugia.resistance,
                                                                           maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
   
   ##To prevent resistance intensity being less than 0
-  if(track.refugia.resistance < 0){track.refugia.resistance = 0} 
-  else(track.refugia.resistance = track.refugia.resistance)
+  track.refugia.resistance = ifelse(track.refugia.resistance < 0, 0, track.refugia.resistance) 
   
   return(track.refugia.resistance)
 }

@@ -1,4 +1,5 @@
 #'This function calculates the migration effect from the treatment area to the refugia.
+#'Equation 6A
 #'
 #'@param min.intervention.coverage Minimum coverage of uniform distribution of insecticide intervention, set to 0.1
 #'@param max.intervention.coverage Minimum coverage of uniform distribution of insecticide intervention, set to 0.9
@@ -8,14 +9,18 @@
 #'
 #'@return exchange.treatment.to.refugia
 
-migration_treatment_to_refugia = function(nsim, 
+migration_treatment_to_refugia = function(nsim = 1000, 
                                           min.intervention.coverage = 0.1, 
-                                          max,intervention.coverage = 0.9, 
-                                          min.dispersal.proportion = 0.1,
-                                          max.dispersal.proportion = 0.9){
+                                          max.intervention.coverage = 0.9, 
+                                          min.dispersal.rate = 0.1,
+                                          max.dispersal.rate = 0.9){
   
-  exchange.treatment.to.refugia = (1 - runif(nsim, min = min.intervention.coverage, max = max.intervention.coverage)) * 
-                                     runif(nsim, min = min.dispersal.proportion, max= max.dispersal.proportion)
+  exchange.treatment.to.refugia = (1 - runif(nsim, 
+                                             min = min.intervention.coverage,
+                                             max = max.intervention.coverage)) * 
+                                     runif(nsim, 
+                                           min = min.dispersal.rate, 
+                                           max= max.dispersal.rate)
   
   return(exchange.treatment.to.refugia)
 }
