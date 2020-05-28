@@ -45,22 +45,27 @@
                                         ){
       
    
-    #Start by creating an array:
+    #Start by creating an array (calls the array_named function):
     #dimension 1: site = c("refugia", "treatment")
     #dimension 2: insectide
     #dimension 3: generation.
+    #dim 4: which insecticide is currently deployed
     #refugia is the refugia. treatment is the place where insecticides are the intervention site where insecticides are deployed.
    
-       sim.array  = create_starting_array(n.insecticides = number.of.insecticides, maximum.generations = maximum.generations)
+       sim.array  = create_starting_array(n.insecticides = number.of.insecticides, 
+                                          maximum.generations = maximum.generations)
     
-    
+      
     #Set starting resistance intensities (fills in whole column with zeroes) - shouldn't be an issue as updated in for loops:
-                #treatment(intervention) site
-      sim.array['refugia', , ] = starting.refugia.intensity
+                #refugia site starting resistace intensity
+      sim.array['refugia', ,] = starting.refugia.intensity
       
-                #refugia site
-      sim.array['treatment', , ] = starting.treatment.site.intensity 
+                #treatment site starting resistance intensity (where the insecticide can be deployed)
+      sim.array['treatment', ,] = starting.treatment.site.intensity 
       
+      #Make a pre-defined treatment strategy; this will have to be changeed
+      current.insecticide = c(rep(1, times = 100), rep(2, times = 100), 
+                              rep(3, times = 100), rep(1, times=100), rep(2, times = 100)) # total 500. While playing around
     
    ##Define which insecticide resistance management is being used: Can be either rotation or sequence
    #strategy = irm.strategy
@@ -72,19 +77,20 @@
       for(insecticide in 1:number.of.insecticides){
 
        #Check if survival/resistance less than the limits of 10% survival. #How to deploy only 1 insecticide at a time??
+        #Use the resistance intensity of the previous generation at the treatment site.
        #if(check_resistance_10(current.resistance.status = sim.array['treatment', insecticide, generation - 1]) == TRUE){
-        #deploy.insecticide = TRUE} else (deploy.insecticide = FALSE)
+       # deploy.insecticide = TRUE} else (deploy.insecticide = FALSE)
         
         
         ##This is just to make the simulation run for checking
-        deploy.insecticide = TRUE
+        #deploy.insecticide = TRUE
         
        #can insecticide be used? IR level less than 47 (5% survival) to be re-used. If TRUE can be re-used
        #check_resistance_5(current.resistance.status = track.mean.site.resistance)
 
          #Do refugia first, updating each generation for each insecticide
           #calculate the population mean from the previous population mean
-        sim.array['refugia', insecticide, generation] = mean(refugia_migration_effect(
+        sim.array['refugia', insecticide, generation] = mean(refugia_migration_effect(#this function calls refugia_selection_costs
                                           initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1],
                                           resistance.cost = resistance.cost,
                                           exposure.scaling.factor = exposure.scaling.factor,
@@ -103,10 +109,10 @@
         #next do treatment site: requires checking if insecticide deployed or not (will be TRUE/FALSE)
           
           
-         ##Incorporate
-         sim.array['treatment', insecticide, generation] = if(deploy.insecticide == TRUE){#Insecticide is deployed in treatment site
+         ##                                                   #ask whether insecticide is the same as deployed insecticide
+         sim.array['treatment', insecticide, generation] = if(insecticide == current.insecticide[generation]){#Insecticide is deployed in treatment site
                    #calculate population mean from previous population mean when insecticide present
-                    mean(insecticide_deployed_migration(
+                    mean(insecticide_deployed_migration(#this function calls insecticide_deployed_selection_costs
                exposure.scaling.factor = exposure.scaling.factor,
                nsim = nsim,
                minimum.insecticide.resistance.hertitability = minimum.insecticide.resistance.hertitability,
@@ -124,10 +130,10 @@
                max.dispersal.rate = max.dispersal.rate))} #end of insecticide deployed
                                                       else( #insecticide is not deployed
                       #calculate population mean when insecticide not deployed from previous population mean
-                    mean(insecticide_not_deployed_migration(
-              initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],
+                    mean(insecticide_not_deployed_migration(#this function calls insecticide_not_deployed_selection_costs
+              initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],#use previous generation info in treatment site
               resistance.cost = resistance.cost,
-              initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1],
+              initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1], # use previous generation info in refugia
               exposure.scaling.factor = exposure.scaling.factor,
               nsim = nsim,
               minimum.insecticide.resistance.hertitability = minimum.insecticide.resistance.hertitability,
@@ -140,7 +146,7 @@
               max.intervention.coverage = max.intervention.coverage,
               min.dispersal.rate = min.dispersal.rate,
               max.dispersal.rate = max.dispersal.rate
-            )))
+            )))#end insecticide not deployed
 
            }#end of insecticide loop
 
@@ -149,6 +155,7 @@
    }#end of for(generation) loop
       
       #ensure the simulation array is return after running
+      #need to develop an quick and easy way to turn array into dataframes for plotting purposes
       return(sim.array)
  }
 
