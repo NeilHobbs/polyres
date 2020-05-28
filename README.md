@@ -179,13 +179,16 @@ These will return a TRUE or FALSE answer. TRUE if resistance below threshold. FA
 
 
 
-effect_of_fitness_cost
+5						effect_of_fitness_cost
+6A					migration_treatment_to_refugia
+6B					migration_refugia_to_treatment
+7A					insecticide_deployed_selection_costs
+7B					insecticide_deployed_migration
+8A					insecticide_not_deployed_selection_costs
+8B					insecticide_not_deployed_migration
+9A					refugia_selection_costs
+9B					refugia_migration_effect
 
-insecticide_deployed_selection_cost
-insecticide_not_deployed_selection_cost
-
-migration_refugia_to_treatment
-migration_treatment_to_refugia
 
 
 
