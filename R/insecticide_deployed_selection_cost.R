@@ -1,4 +1,5 @@
-#' Implements the selection costs when insecticide is present in the treated area. Does not include dispersal. 
+#' Implements the selection costs when insecticide is present in the treated area. Does not include dispersal effect. 
+#' Gives the resistance intensity in the next generation afer selection costs and before migration in the treated site. 
 #' Equation 7A 
 #' 
 #' @param exposure.scaling.factor
@@ -13,6 +14,7 @@
 #' 
 #' @return resistance.intensity.values
 
+#This function is used when the insecticide is deployed
 insecticide_deployed_selection_cost = function(
                                   exposure.scaling.factor = 10,
                                   nsim = 1000, 
@@ -23,11 +25,12 @@ insecticide_deployed_selection_cost = function(
                                   minimum.female.insecticide.exposure = 0.4, 
                                   maximum.female.insecticide.exposure = 0.9,
                                   resistance.cost = 0.1,
-                                  initial.resistance.intensity = 0){
+                                  initial.resistance.intensity = 0){ #The resistance intensity in the previous generation. Set zero for generation 1
     
     
-    resistance.intensity.values = initial.resistance.intensity + 
-                                 (response_to_insecticide_selection(
+    resistance.intensity.values = initial.resistance.intensity + ##The resistance intensity in the previous generation
+      
+                                 (response_to_insecticide_selection( 
                                    exposure.scaling.factor = exposure.scaling.factor,
                                    nsim = nsim, 
                                    minimum.insecticide.resistance.hertitability = minimum.insecticide.resistance.hertitability, 
@@ -35,8 +38,8 @@ insecticide_deployed_selection_cost = function(
                                    minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
                                    maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                    minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                   maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)) #plus sign used as made negative in function
-        
+                                   maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)) 
+#plus sign used as made negative effect put in effect_of_fitness_cost function        
    + (effect_of_fitness_cost(
                             resistance.cost = resistance.cost,
                             exposure.scaling.factor = exposure.scaling.factor,
@@ -48,9 +51,9 @@ insecticide_deployed_selection_cost = function(
                             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                             maximum.female.insecticide.exposure = maximum.female.insecticide.exposure))
     
-    #Resistance intensity cannot be below 0.
+    #Resistance intensity cannot be below 0. Set values below zero as zero
     resistance.intensity.values = ifelse(resistance.intensity.values < 0, 0, resistance.intensity.values)
     
     return(resistance.intensity.values)
-    
+  
 }
