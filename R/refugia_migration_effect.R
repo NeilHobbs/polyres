@@ -1,6 +1,20 @@
-#' Equation 9B
+#' This function adds the effect of migration to the resistance intensity of the refugia (and calls the costs function too)
 #' 
-
+#' @param initial.refugia.resistance The current IR intensity in the refugia.
+#' @param resistance.cost The cost of having IR
+#' @param exposure.scaling.factor factor converting exposure into selection differential (default is 10)
+#' @param nsim number of simulations of the runif functions
+#' @param minimum.insecticide.resistance.hertitability minimum heritability of IR (default is 0.05) 
+#' @param maximum.insecticide.resistance.hertitability maximum heritability of IR (default is 0.30)
+#' @param minimum.male.insecticide.exposure Proportion of males exposed as a proportion of females (default is 0)
+#' @param maximum.male.insecticide.exposure Proportion of males exposed as a proportion of females (default is 1)
+#' @param minimum.female.insecticide.exposure Proportion of females exposed at intervention site (default = 0.4)
+#' @param maximum.female.insecticide.exposure Proportion of females exposed at intervention site (default = 0.9)
+#' @param min.intervention.coverage Proportion of the insect population in the treated intervention area (default is 0.1) 
+#' @param max.intervention.coverage Proportion of the insect population in the treated intervention area (default is 0.9)  
+#' @param min.dispersal.rate Proportion of population exchanged between intervention and refugia areas per generation (default 0.1)
+#' 
+#' @return track.refugia.resistance A vector length nsim of resistance intensity values in the refugia
 
 
 refugia_migration_effect = function(
