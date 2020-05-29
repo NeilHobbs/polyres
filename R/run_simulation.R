@@ -40,19 +40,17 @@
                                         max.intervention.coverage = 0.9,
                                         min.dispersal.rate = 0.1,
                                         max.dispersal.rate = 0.9,
-                                        #irm.strategy,
-                                        maximum.generations = 500
-                                        ){
+                                        maximum.generations = 500){
       
-   
-    #Start by creating an array (calls the array_named function):
-    #dimension 1: site = c("refugia", "treatment")
-    #dimension 2: insectide
+       #Start by creating an array (calls the array_named function):
+    #dimension 1: site = c("refugia", "treatment"), which hold resistance intensities. 
+    #Easier to include both, but refugia won't happen if no dispersal
+    #dimension 2: insectide to which the resistance intensity corresponds to
     #dimension 3: generation.
     #dim 4: which insecticide is currently deployed
     #refugia is the refugia. treatment is the place where insecticides are the intervention site where insecticides are deployed.
    
-       sim.array  = create_starting_array(n.insecticides = number.of.insecticides, 
+       sim.array = create_starting_array(n.insecticides = number.of.insecticides, 
                                           maximum.generations = maximum.generations)
     
       

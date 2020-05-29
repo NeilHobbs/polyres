@@ -20,15 +20,11 @@
 
 
 
-array_named = function(...)
-{
+array_named = function(...){
   array(NA, dim = lengths(list(...)), dimnames = list(...))
 }
 
 #Function courtesy of Andy South
 
-test1 =array_named(insecticide = 1:4,
-            generation = 1:500,
-            site = c("treatment", "refugia"))
 
 
