@@ -19,6 +19,7 @@
 
 refugia_migration_effect = function(
                         initial.refugia.resistance,
+                        initial.resistance.intensity,
                         resistance.cost,
                         exposure.scaling.factor = 10,
                         nsim = 1000, 
@@ -52,8 +53,11 @@ refugia_migration_effect = function(
                                         min.dispersal.rate = min.dispersal.rate,
                                         max.dispersal.rate = max.dispersal.rate)))) +
     
-    (refugia_selection_costs(
-                    initial.refugia.resistance = initial.refugia.resistance,
+      #note: should this depend on whether the insecticide is being deployed? 
+      #Currently using as though there is no selection pressure (not deployed). 
+      #As updated first in the simulation does it matter??
+    (insecticide_not_deployed_selection_cost(
+                    initial.resistance.intensity = initial.resistance.intensity,
                     resistance.cost = resistance.cost,
                     exposure.scaling.factor = exposure.scaling.factor,
                     nsim = nsim, 

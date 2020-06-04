@@ -62,11 +62,14 @@
       sim.array['treatment', ,] = starting.treatment.site.intensity 
       
       #Make a pre-defined treatment strategy; this will have to be changeed
+      #change to deployed.insecticide; as 4th dimension in sim.array?
       current.insecticide = c(rep(1, times = 100), rep(2, times = 100), 
                               rep(3, times = 100), rep(1, times=100), rep(2, times = 100)) # total 500. While playing around
     
    ##Define which insecticide resistance management is being used: Can be either rotation or sequence
-   #strategy = irm.strategy
+   #strategy = irm.strategy 
+    #put in an error message if irm.strategy is not rotation or sequence. Prevent model from running if that is the case.
+      # "Have you specified irm.stategy either rotation or sequence?" 
 
     #start at generation 2, as generation 1 has intensities set.
    for(generation in 2:maximum.generations){
@@ -90,6 +93,7 @@
           #calculate the population mean from the previous population mean
         sim.array['refugia', insecticide, generation] = mean(refugia_migration_effect(#this function calls refugia_selection_costs
                                           initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1],
+                                          initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],
                                           resistance.cost = resistance.cost,
                                           exposure.scaling.factor = exposure.scaling.factor,
                                           nsim = nsim, 

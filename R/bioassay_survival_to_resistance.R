@@ -13,7 +13,7 @@
 #' @return test.population.resistance This is the mean insecticide resistance intensity of the population.
 
 bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion = 1,
-                                           michaelis.menten.slope = 1, 
+                                           michaelis.menten.slope = 1, #must be set to 1 to work properly
                                            half.population.bioassay.survival.resistance = 900, 
                                            bioassay.survival = 0.1, 
                                            estimate.precision = 0.01, 
@@ -21,7 +21,9 @@ bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion 
                                            nsim = 1000,
                                            minimum.resistance.value = 0, 
                                            maximum.resistance.value = 25000){
+  
   while((test.population.resistance = ((minimum.resistance.value + maximum.resistance.value)/2))){
+    
     if((maximum.resistance.value - minimum.resistance.value) < estimate.precision)
     {return(test.population.resistance)} #When precision level reached return population resistance
     else(
@@ -31,9 +33,9 @@ bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion 
         michaelis.menten.slope = michaelis.menten.slope, 
         half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance, 
         sd.population.resistance = sd.population.resistance, 
-        nsim = nsim) < bioassay.survival) #check if survival 
+        nsim = nsim) < bioassay.survival) #check if survival less than bioassay survival
       {
-        minimum.resistance.value = test.population.resistance} 
-      else(maximum.resistance.value = test.population.resistance))
+        minimum.resistance.value = test.population.resistance} #TRUE update min value
+      else(maximum.resistance.value = test.population.resistance))#FALSE update max value
   }
-}
+}#end while loop

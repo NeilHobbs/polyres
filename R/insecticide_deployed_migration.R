@@ -16,6 +16,11 @@
 #' @param initial.refugia.resistance,
 #' @param min.dispersal.rate = 0.1
 #' @param max.dispersal.rate = 0.9
+#' 
+#' @return resistance.intensity.migration 
+#' 
+#' This function returns the population mean resistance for the treated location, when
+#' insecticide is deployed, after migration and selection costs.
 
 
 insecticide_deployed_migration = function(exposure.scaling.factor = 10,
@@ -77,6 +82,6 @@ insecticide_deployed_migration = function(exposure.scaling.factor = 10,
   ##To prevent resistance intensity being less than 0. Sets any values less than zero at zero.
   resistance.intensity.migration = ifelse(resistance.intensity.migration < 0, 0, resistance.intensity.migration) 
   
-  return(resistance.intensity.migration)
+  return(resistance.intensity.migration) # The resistance intensity after migration and selection costs
   
 }

@@ -1,4 +1,6 @@
-#' A function that enables calculation of a  50% survival threshold
+#' A function that enables calculation of a  50% survival threshold, based on desired 
+#' resistance value and its desired survival value. Eg. if you want to base the scale on 
+#'  a 20% survival having a resistance intensity of 1000. 
 #' 
 #' @param desired.resistance The value you want a survival value to correspond to
 #' @param desired.survival.proportion The survival proportion you want your desired.resistance to have. Values must be between 0 and 1
@@ -9,6 +11,8 @@
 #' @param nsim Number of replications of the rnorm function. Recommended value = 1000
 #' @param minimum.resistance.value Recommend setting to 0. Must be lower than half survival resistance.
 #' @param maximum.resistance.value Depends on your scale. Recommend setting arbitrarily high (10000). Must be higher than half resistance survival
+#' 
+#' @return half.population.survival.value which is the Z-50 value based on the new scale.
 
 
 calculate_half_population_survival = function(desired.resistance,

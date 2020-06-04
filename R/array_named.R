@@ -25,6 +25,6 @@ array_named = function(...){
 }
 
 #Function courtesy of Andy South
-
+#This function is called in the the create_starting_array function
 
 

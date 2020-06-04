@@ -9,7 +9,7 @@
 #' @param minimum.female.insecticide.exposure Proportion of females exposed at intervention site (default = 0.4)
 #' @param maximum.female.insecticide.exposure Proportion of females exposed at intervention site (default = 0.9)
 #' 
-#' @return fitness.cost change in population resistance intensity.
+#' @return fitness.cost  in population resistance intensity. Will be a negative number.
 
 
 effect_of_fitness_cost = function(resistance.cost,
@@ -30,7 +30,7 @@ effect_of_fitness_cost = function(resistance.cost,
                                                                         maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                         minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                                                         maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
-  
+  #Will be a negative number.
   return(fitness.cost)
   
 }
