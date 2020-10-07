@@ -162,32 +162,43 @@ This function will return a vector of length of ```nsim``` of the change in the 
 
 ## Running Simulations
 
-Setting the number of insecticides available: 
+Insecticide resistance management simulations are run using the ```run_simulation_intervention``` function. This function is designed around giving a large amount of user flexibility to be able to test IRM strategies under multiple scenarios. This function returns a list of the simulation array holding the resistance intensities to the insecticides in both the refugia and the treatment site. 
 
-```set_number_of_insecticides(total.insecticides)
+Sequences: The ```irm.strategy = "sequence"``` runs the simulations using the sequence strategy for choosing and deploying insecticides. An insecticide is continually deployed until the ```withdrawal.threshold``` is reached, then the next insecticide is deployed. 
 
-   set_number_of_insecticides(3)
+Rotations: The ```irm.strategy = "rotation"``` runs the simulations using the rotation stragegy for choosing and deploying insecticides. The insecticide deployed must change at each deployment interval. 
+
 ```
-Would return a vector of a sequence 1, 2, 3 that are the insecticides with unique numbers. 
-
-Checking whether the resistance intensity has reached pre-defined threshold:
-
-```check_resistance_5(current.resistant.intensity) #resistance at 5% survival
-check_resistance_10(current.resistance.intensity) #resistance at 10% survival
+simulation.output = run_simulation_intervention(
+                    number.of.insecticides = 3,
+                    exposure.scaling.factor = 10,
+                    nsim = 1,
+                    minimum.insecticide.resistance.hertitability = 0.3,
+                    maximum.insecticide.resistance.hertitability = 0.30,
+                    minimum.male.insecticide.exposure = 0.9,
+                    maximum.male.insecticide.exposure = 0.9,
+                    minimum.female.insecticide.exposure = 0.9,
+                    maximum.female.insecticide.exposure = 0.9,
+                    resistance.cost = 0.2,
+                    starting.treatment.site.intensity = 0,
+                    starting.refugia.intensity = 0,
+                    min.intervention.coverage = 0.8,
+                    max.intervention.coverage = 0.8,
+                    min.dispersal.rate = 0.9,
+                    max.dispersal.rate = 0.9,
+                    maximum.generations = 1000,
+                    irm.strategy = "rotation", #will be "sequence" or "rotation" (plus mixture later on),
+                    half.population.bioassay.survival.resistance = 900, #This is the resistance intensity that would give 50% survival in the bioassay,
+                                                                         #and can be calculated with calculate_half_population_survival().
+                    withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+                    return.threshold.value = 0.1, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+                    deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+                    maximum.resistance.value = 25000 
 ```
-These will return a TRUE or FALSE answer. TRUE if resistance below threshold. FALSE if resistance above threshold. 
 
 
+## Getting the data from the simulations
 
-5						effect_of_fitness_cost
-6A					migration_treatment_to_refugia
-6B					migration_refugia_to_treatment
-7A					insecticide_deployed_selection_costs
-7B					insecticide_deployed_migration
-8A					insecticide_not_deployed_selection_costs
-8B					insecticide_not_deployed_migration
-9A					refugia_selection_costs
-9B					refugia_migration_effect
 
 
 
