@@ -14,7 +14,10 @@ create_starting_array = function(n.insecticides, maximum.generations){
   #dimension 2: insecticide to which resistance intensity corresponds
   #dimension 3: generation of mosquito
 
-  simulation.data = array_named(site = c("refugia", "treatment"), insecticide = 1:n.insecticides,
-                       generation = 1:maximum.generations)
+  simulation.data = array_named(site = c("refugia", "treatment"), 
+                                insecticide = 1:n.insecticides, 
+                                generation = 1:maximum.generations) #this is the insecticide that is currently deployed
   }
+
+
 
