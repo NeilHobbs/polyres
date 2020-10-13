@@ -166,7 +166,7 @@ Insecticide resistance management simulations are run using the ```run_simulatio
 
 Sequences: The ```irm.strategy = "sequence"``` runs the simulations using the sequence strategy for choosing and deploying insecticides. An insecticide is continually deployed until the ```withdrawal.threshold``` is reached, then the next insecticide is deployed. 
 
-Rotations: The ```irm.strategy = "rotation"``` runs the simulations using the rotation stragegy for choosing and deploying insecticides. The insecticide deployed must change at each deployment interval. 
+Rotations: The ```irm.strategy = "rotation"``` runs the simulations using the rotation stragegy for choosing and deploying insecticides. The insecticide deployed must change at each deployment interval. It should be noted that if the input parameter ```number.of.insecticides = 1```, the simulation will only run for the duration of the ```deployment.frequency```. Therefore, comparing rotations and sequences when ```number.of.insecticides = 1``` is not recommended.  
 
 ```
 simulation.output = run_simulation_intervention(
@@ -196,6 +196,7 @@ simulation.output = run_simulation_intervention(
                     maximum.resistance.value = 25000 
 ```
 
+Changing the minimum and maximum parameter to be different values from one another while keeping a small number of replicates ```nsim``` allows the model to run in a more stochastic fashion. If the minimum and maximum values values are the same, the model will run in a deterministic fashion. If the minimum and maximum parameter values are equal (for each set of parameter values), it is recommended to set ```nsim = 1``` to speed up the time of the simulations. 
 
 ## Getting the data from the simulations
 
