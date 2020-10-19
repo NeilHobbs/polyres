@@ -1,4 +1,4 @@
-#Function which deploys for the for a specified timeframe (in generations):
+#' @title Deploys selected insecticide for the for a specified timeframe (in generations):
 
 #' @param insecticide.to.deploy = The value of the insecticide to be deployed
 #' @param deployment.frequency = The number of generations between each insecticide deployment [5 generations is 6months, 10 generations is 12months]
@@ -11,3 +11,7 @@ deploy_insecticide = function(insecticide.to.deploy,
   currrent.insecticide = c(deployment.vector, rep(insecticide.to.deploy, times = deployment.frequency))
 
 }
+
+
+#Not sure if deployment.frequency is the most intuitive name. Perhaps change to deployment.duration as this is more informative
+# [but will need to check how this interacts with everything else].
