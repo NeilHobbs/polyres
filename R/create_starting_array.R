@@ -1,10 +1,15 @@
-#'This function sets the starting conditions for the simulations
+#' @title Create the array for holding the simulation.
 #'
-#'Returns a array: site, insecticide, generation.
-#'The site will be refugia or treatment. And will hold the corresponding resistance intensity values
+#'@description
+#'Returns an array: site, insecticide, generation.
+#'The site will be refugia or treatment. And will hold the corresponding resistance intensity values. The insecticide is the 
+#'insecticide to which the resistance intensity corresponds to. The generation is the timepoint in the model to which the intensity 
+#'corresponds to. 
 #'
 #' @param n.insecticides the number of different insecticides in the armoury.
 #' @param maximum.generation the maximum number of generations the model would be able to run for.
+#' 
+#' @return simulation.data an array which will hold the data for simulation
 
 
 #Creates a named array
@@ -20,4 +25,4 @@ create_starting_array = function(n.insecticides, maximum.generations){
   }
 
 
-
+####NEED TO CHECK THAT THE PARAMETER NAMES MATCH THE OTHER FUNCTIONS##########
