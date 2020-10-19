@@ -1,6 +1,10 @@
+#' @title Calculate the 50% survival for a given resistance intensity
+#' 
+#' @description
 #' A function that enables calculation of a  50% survival threshold, based on desired 
-#' resistance value and its desired survival value. Eg. if you want to base the scale on 
+#' resistance value and its desired survival value. For example if you want to base the scale on 
 #'  a 20% survival having a resistance intensity of 1000. 
+#' 
 #' 
 #' @param desired.resistance The value you want a survival value to correspond to
 #' @param desired.survival.proportion The survival proportion you want your desired.resistance to have. Values must be between 0 and 1
@@ -12,8 +16,7 @@
 #' @param minimum.resistance.value Recommend setting to 0. Must be lower than half survival resistance.
 #' @param maximum.resistance.value Depends on your scale. Recommend setting arbitrarily high (10000). Must be higher than half resistance survival
 #' 
-#' @return half.population.survival.value which is the Z-50 value based on the new scale.
-
+#' @return a value for the half.population.survival.value which is the half.population.bioassay.survival.resistance for the scale.
 
 calculate_half_population_survival = function(desired.resistance,
                                               desired.survival.proportion,
@@ -24,6 +27,19 @@ calculate_half_population_survival = function(desired.resistance,
                                               nsim = 1000,
                                               minimum.resistance.value = 0, 
                                               maximum.resistance.value = 25000){
+  
+  #Error Messages
+  if(michaelis.menten.slope != 1){stop("michaelis.menten.slope must equal 1")}
+  if(maximum.bioassay.survival.proportion != 1){stop("maximum.bioassay.survival.proportion must equal 1.")}
+  if(bioassay.survival > 1 | bioassay.survival < 0){stop("Bioassay survival must be between 0 and 1.")}
+  if(sd.population.resistance < 0){stop("sd.population.resistance must be greater than or equal to 0.")}
+  
+  #Warning messages
+  if(minimum.resistance.value > 10){warning("High input for minimum.resistance.value, bioassay survival could be out of range.")}
+  if(maximum.resistance.value < 1000){warning("Low input for maximum.bioassay.survival.proportion, bioassay survival could be out of range.")}
+  if(half.population.bioassay.survival.resistance < minimum.resistance.value |
+     half.population.bioassay.survival.resistance > maximum.resistance.value){warning("half.population.survival.resistance outside resistance value range")}
+  
   while((half.population.survival.value = ((minimum.resistance.value + maximum.resistance.value)/2))){
     if((maximum.resistance.value - minimum.resistance.value) < estimate.precision)
     {return(half.population.survival.value)} #When precision level reached return population resistance
