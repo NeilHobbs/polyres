@@ -1,9 +1,5 @@
-#Function to check if insecticides should be withdrawn from the arsenal based on the resistance intensity.
-#There will be a line of code which converts a user input of a survival threshold to the corresponding intensity.
-#It is more user friendly to input the survival proportion rather than have users calculate the resistance intensity level separately. 
-#This is a true or false result.
-
-
+#' @title Check if insecticides should be withdrawn from the arsenal based on the resistance intensity.
+#' 
 #' @param insecticide = The insecticide to which the resistance intensity is to be checked against
 #' @param current.generation = The generation where the run_simulation() is up to. 
 #' @param withdrawal.threshold = The resistance intensity at which an insecticide should no longer be used and therefore withdrawn.
