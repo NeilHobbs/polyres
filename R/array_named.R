@@ -1,8 +1,10 @@
-#' create an array with named dimensions  (Courtesy of Andy South)
+#' @title create an array with named dimensions
 #' 
+#' @description 
 #' an array specified by an number of dimensions with e.g. (name1=c('a','b','c), name2=c('x','y')) 
 #' 
 #' @param ... named dimensions to create in array e.g. (name1=c('a','b','c), name2=c('x','y')) 
+#' @author Andy South
 #' 
 #' @examples 
 #' array_named( sex = c('f','m') ) 
