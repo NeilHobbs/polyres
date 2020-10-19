@@ -1,4 +1,8 @@
-#' Function to convert bioassay survival to mean population insecticide resistance intensity
+#' @title Convert mosquito bioassay survival to mean population  resistance intensity
+#' 
+#' @description
+#' Converts the proportion of individuals surviving in a bioassay (eg. CDC Bottle or WHO Cylinder) into
+#' an insecticide resistance intensity score.
 #' 
 #' @param maximum.bioassay.survival.proportion Should be set as 1.
 #' @param michaelis.menten.slope Should be set as 1
@@ -10,9 +14,9 @@
 #' @param minimum.resistance.value Recommend setting as 0.
 #' @param maximum.resistance.value This will depend on the half survival scale, but 10000 would be a good start. 
 #' 
-#' @return test.population.resistance This is the mean insecticide resistance intensity of the population.
+#' @return test.population.resistance This is the mean insecticide resistance intensity of the population to the respected insecticide.
 
-bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion = 1,
+bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion = 1, #must be set to 1 to work properly
                                            michaelis.menten.slope = 1, #must be set to 1 to work properly
                                            half.population.bioassay.survival.resistance = 900, 
                                            bioassay.survival = 0.1, 
@@ -21,6 +25,18 @@ bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion 
                                            nsim = 1000,
                                            minimum.resistance.value = 0, 
                                            maximum.resistance.value = 25000){
+  
+  #Error Messages
+  if(michaelis.menten.slope != 1){stop("michaelis.menten.slope must equal 1")}
+  if(maximum.bioassay.survival.proportion != 1){stop("maximum.bioassay.survival.proportion must equal 1.")}
+  if(bioassay.survival > 1 | bioassay.survival < 0){stop("Bioassay survival must be between 0 and 1.")}
+  if(sd.population.resistance < 0){stop("sd.population.resistance must be greater than or equal to 0.")}
+  
+  #Warning messages
+  if(minimum.resistance.value > 10){warning("High input for minimum.resistance.value, bioassay survival could be out of range.")}
+  if(maximum.resistance.value < 1000){warning("Low input for maximum.bioassay.survival.proportion, bioassay survival could be out of range.")}
+  if(half.population.bioassay.survival.resistance < minimum.resistance.value |
+     half.population.bioassay.survival.resistance > maximum.resistance.value){warning("half.population.survival.resistance outside resistance value range")}
   
   while((test.population.resistance = ((minimum.resistance.value + maximum.resistance.value)/2))){
     
