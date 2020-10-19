@@ -12,7 +12,7 @@
 #' @return candidate.insecticide = a single integer which represents the insecticide which is to be deployed.
 
 choose_next_insecticide = function(previous.insecticide,
-                                   available.insecticides,
+                                   available.insecticides, #Make sure this function is only called when there are insecticides available.
                                    number.of.insecticides){
 
   candidate.insecticide = (previous.insecticide + 1) #move to the next insecticide
