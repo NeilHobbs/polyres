@@ -1,4 +1,4 @@
-#' This function implements the fitness cost associated with having insecticide resistance.
+#' @title Implements the fitness cost associated with having insecticide resistance.
 #' 
 #' @param resistance.cost Costs associated with insecticide resistance. Values recommended between 0.01 to 0.2
 #' @param nsim number of simulations of the runif functions
@@ -12,7 +12,7 @@
 #' @return fitness.cost  in population resistance intensity. Will be a negative number.
 
 
-effect_of_fitness_cost = function(resistance.cost,
+effect_of_fitness_cost = function(resistance.cost = 0,
                                   exposure.scaling.factor = 10,
                                   nsim = 1000, 
                                   minimum.insecticide.resistance.hertitability = 0.05, 
@@ -30,7 +30,9 @@ effect_of_fitness_cost = function(resistance.cost,
                                                                         maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                         minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                                                         maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
-  #Will be a negative number.
+  #Will be a negative number (unless zero).
   return(fitness.cost)
   
 }
+
+#This function is currently Equation 5 in the MS
