@@ -1,9 +1,9 @@
-#This function implements the deployment of the sequence irm.stategy. It returns a list:
-  #available.vector[[1]]
-  #withdrawn.vector[[2]]
-  #deployed.vector[[3]]
-
-#The sequence IRM stratey allows for an insecticide to be used until it meets the withdrawal criteria.
+#'@title Implement the deployment of the sequence insecticide resistance management strategy.
+#'
+#' @description Implementation of the sequence IRM strategy allows for an insecticide to be continously used
+#' until that insecticide reaches the threshold for withdrawal. After this the next insecticide is deployed. 
+#' This function returns a list of the updated vectors of the available.vector[[1]], withdrawn.vector[[2]]
+#' and the deployed.vector[[3]]
 
 #' @param number.of.insecticides = The total number of insecticides included in the simulation.
 #' @param current.generation = The generation where the simulation is up to.
@@ -15,6 +15,8 @@
 #' @param current.insecticide = The insecticide that is currently in deployment
 #' @param deployment.frequency = The number of mosquito generations between each insecticide deployment check
 #' @param deployment.vector = A vector containing the sequence of insecticides that have been deployed.
+#' 
+#' @return list(available.to.deploy, unavailable.to.deploy, deployment.vector.updated)
 
 irm_strategy_sequence = function(number.of.insecticides,
                                  current.generation,
