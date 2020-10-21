@@ -1,6 +1,9 @@
-#'Implements  the effect of dispersal (and costs) on when the insecticide is deployed.
-#'This is equation 7B
+#' @title The effect of dispersal and resistance costs when the insecticide is deployed.
 #'
+#' @description 
+#' This function returns the population mean resistance for the treated location, when
+#' insecticide is deployed, after migration and selection costs.
+#' 
 #' @param exposure.scaling.factor = 10,
 #' @param nsim = 1000, 
 #' @param minimum.insecticide.resistance.hertitability = 0.05, 
@@ -17,11 +20,7 @@
 #' @param min.dispersal.rate = 0.1
 #' @param max.dispersal.rate = 0.9
 #' 
-#' @return resistance.intensity.migration 
-#' 
-#' This function returns the population mean resistance for the treated location, when
-#' insecticide is deployed, after migration and selection costs.
-
+#' @return resistance.intensity.migration A vector of length nsim
 
 insecticide_deployed_migration = function(exposure.scaling.factor = 10,
                                               nsim = 1000, 
@@ -31,7 +30,7 @@ insecticide_deployed_migration = function(exposure.scaling.factor = 10,
                                               maximum.male.insecticide.exposure = 1, 
                                               minimum.female.insecticide.exposure = 0.4, 
                                               maximum.female.insecticide.exposure = 0.9,
-                                              resistance.cost,
+                                              resistance.cost = 0,
                                               initial.resistance.intensity,
                                               min.intervention.coverage = 0.1, 
                                               max.intervention.coverage = 0.9, 
@@ -85,3 +84,6 @@ insecticide_deployed_migration = function(exposure.scaling.factor = 10,
   return(resistance.intensity.migration) # The resistance intensity after migration and selection costs
   
 }
+
+
+#This is currently equation 7B in the MS.

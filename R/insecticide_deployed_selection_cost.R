@@ -1,6 +1,8 @@
-#' Implements the selection costs when insecticide is present in the treated area. Does not include dispersal effect. 
+#' @title Implement  the selection costs when the insecticide is present in the treated site.
+#' 
+#' @description
+#' Implements the selection costs when insecticide is present in the treated site Does not include dispersal effect. 
 #' Gives the resistance intensity in the next generation afer selection costs and before migration in the treated site. 
-#' Equation 7A 
 #' 
 #' @param exposure.scaling.factor
 #' @param nsim
@@ -27,7 +29,19 @@ insecticide_deployed_selection_cost = function(
                                   resistance.cost = 0.1,
                                   initial.resistance.intensity = 0){ #The resistance intensity in the previous generation. Set zero for generation 1
     
-    
+  
+  if(0 > minimum.insecticide.resistance.hertitability |minimum.insecticide.resistance.hertitability > 1){stop("minimum.insecticide.resistance.hertitability must be between 0 and 1")}
+  if(0 > maximum.insecticide.resistance.hertitability |maximum.insecticide.resistance.hertitability > 1){stop("maximum.insecticide.resistance.hertitability must be between 0 and 1")}
+  if(minimum.insecticide.resistance.hertitability > maximum.insecticide.resistance.hertitability){stop("minimum.insecticide.resistance.hertitability is greater than maximum.insecticide.resistance.hertitability")}
+  
+  if(0 > minimum.male.insecticide.exposure | minimum.male.insecticide.exposure > 1){stop("minimum.male.insecticide.exposure must be between 0 and 1")}
+  if(0 > maximum.male.insecticide.exposure | maximum.male.insecticide.exposure > 1){stop("maximum.male.insecticide.exposure must be between 0 and 1")}
+  if(minimum.male.insecticide.exposure > maximum.male.insecticide.exposure){stop("minimum.male.insecticide.exposure is greater than maximum.male.insecticide.exposure")}
+  
+  if(0 > minimum.female.insecticide.exposure | minimum.female.insecticide.exposure > 1){stop("minimum.female.insecticide.exposure must be between 0 and 1")}
+  if(0 > maximum.female.insecticide.exposure | maximum.female.insecticide.exposure > 1){stop("maximum.female.insecticide.exposure must be between 0 and 1")}
+  if(minimum.female.insecticide.exposure > maximum.female.insecticide.exposure){stop("minimum.female.insecticide.exposure is greater than maximum.female.insecticide.exposure")}
+  
     resistance.intensity.values = initial.resistance.intensity + ##The resistance intensity in the previous generation
       
                                  (response_to_insecticide_selection( 
@@ -57,3 +71,5 @@ insecticide_deployed_selection_cost = function(
     return(resistance.intensity.values)
   
 }
+
+#This is equation 7A in the MS

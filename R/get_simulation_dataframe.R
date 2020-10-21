@@ -1,10 +1,22 @@
-#Function that converts the array from the simulation into a dataframe
+#' @title Convert the array from the simulation into a dataframe
+#' 
+#' @description 
+#' Input the saved simulation array into this function to return a dataframe holding the information of regarding the 
+#' simulation. The dataframe has 5 columns. insecticide.tracked is the insecticide to which the resistance.intensity corresponds to
+#' at the site (either refugia or treatment), at the timepoint time.in.generations. When the corresponding insecticide.deployed is the
+#' insecticide that is deployed in the treatment site at at that generation.
 
-#' @param simulation.array = the array which holds the simulation data
-#' @param max.generations = the total length of the simulation
+#' @param simulation.array = the array which holds the simulation data called from run_simulation_intervention.
+#' @param maximum.generations = The number of generations the simulation was asked to run for (maximum.generations)
 #' @param number.of.insecticides = the number of insectcides that are tracked in the simulation
+#' 
+#' @return final.df A dataframe that has 5 columns, insecticide.tracked, resistance.intensity, site,
+#' time.in.generations and insecticide.deployed.
 
-get_simulation_dataframe = function(simulation.array, max.generations, number.of.insecticides){
+
+
+
+get_simulation_dataframe = function(simulation.array, maximum.generations, number.of.insecticides){
   
   data.list = list()
   
@@ -13,24 +25,24 @@ get_simulation_dataframe = function(simulation.array, max.generations, number.of
   
   for(insecticide in 1:number.of.insecticides){
     
-    if(sim.duration >= max.generations){
-      insecticide.tracked = as.character(rep(insecticide, times = (2 * max.generations))) # 2* as refugia and treatment
+    if(sim.duration >= maximum.generations){
+      insecticide.tracked = as.character(rep(insecticide, times = (2 * maximum.generations))) # 2* as refugia and treatment
       
-      generation.sequence = seq(1, max.generations, by = 1)
+      generation.sequence = seq(1, maximum.generations, by = 1)
       time.in.generations = rep(generation.sequence, times = 2) # 2* as refugia and treatment
       
       resistance.intensity.refugia = simulation.array[[1]]["refugia", insecticide, ]
-      resistance.intensity.refugia = head(resistance.intensity.refugia, n=max.generations)
+      resistance.intensity.refugia = head(resistance.intensity.refugia, n=maximum.generations)
       resistance.intensity.treatment = simulation.array[[1]]["treatment", insecticide, ]
-      resistance.intensity.treatment = head(resistance.intensity.treatment, n=max.generations)
+      resistance.intensity.treatment = head(resistance.intensity.treatment, n=maximum.generations)
       resistance.intensity = c(resistance.intensity.refugia, resistance.intensity.treatment)
       
-      site.refugia = rep("refugia", times = max.generations)
-      site.treatment = rep("treatment", times = max.generations)
+      site.refugia = rep("refugia", times = maximum.generations)
+      site.treatment = rep("treatment", times = maximum.generations)
       site = c(site.refugia, site.treatment)
       
       deployed = simulation.array[[2]]
-      deployed_temp = head(deployed, n = max.generations)
+      deployed_temp = head(deployed, n = maximum.generations)
       insecticide.deployed = rep(deployed_temp, times = 2) #2 times as refugia and treatment
       
       data.list[[insecticide]]= data.frame(insecticide.tracked, 
@@ -61,3 +73,9 @@ get_simulation_dataframe = function(simulation.array, max.generations, number.of
   final_df = do.call(rbind, data.list)
   return(final_df)
 }
+
+
+
+
+#This function returns a dataframe that has 5 columns. And the number of rows is n*2 (refugia and treatment)
+# times the duration. Where n is the number of insecticides included in the simulation.

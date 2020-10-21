@@ -35,8 +35,8 @@ calculate_half_population_survival = function(desired.resistance,
   if(sd.population.resistance < 0){stop("sd.population.resistance must be greater than or equal to 0.")}
   
   #Warning messages
-  if(minimum.resistance.value > 10){warning("High input for minimum.resistance.value, bioassay survival could be out of range.")}
-  if(maximum.resistance.value < 1000){warning("Low input for maximum.bioassay.survival.proportion, bioassay survival could be out of range.")}
+  if(minimum.resistance.value > 50){warning("High input for minimum.resistance.value, bioassay survival could be out of range.")}
+  if(maximum.resistance.value < 2000){warning("Low input for maximum.bioassay.survival.proportion, bioassay survival could be out of range.")}
   if(half.population.bioassay.survival.resistance < minimum.resistance.value |
      half.population.bioassay.survival.resistance > maximum.resistance.value){warning("half.population.survival.resistance outside resistance value range")}
   

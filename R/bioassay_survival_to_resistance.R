@@ -34,7 +34,7 @@ bioassay_survival_to_resistance = function(maximum.bioassay.survival.proportion 
   
   #Warning messages
   if(minimum.resistance.value > 10){warning("High input for minimum.resistance.value, bioassay survival could be out of range.")}
-  if(maximum.resistance.value < 1000){warning("Low input for maximum.bioassay.survival.proportion, bioassay survival could be out of range.")}
+  if(maximum.resistance.value < 2000){warning("Low input for maximum.bioassay.survival.proportion, bioassay survival could be out of range.")}
   if(half.population.bioassay.survival.resistance < minimum.resistance.value |
      half.population.bioassay.survival.resistance > maximum.resistance.value){warning("half.population.survival.resistance outside resistance value range")}
   
