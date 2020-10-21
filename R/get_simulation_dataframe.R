@@ -43,7 +43,7 @@ get_simulation_dataframe = function(simulation.array, maximum.generations, numbe
       
       deployed = simulation.array[[2]]
       deployed_temp = head(deployed, n = maximum.generations)
-      insecticide.deployed = rep(deployed_temp, times = 2) #2 times as refugia and treatment
+      insecticide.deployed = as.character(rep(deployed_temp, times = 2)) #2 times as refugia and treatment
       
       data.list[[insecticide]]= data.frame(insecticide.tracked, 
                                            resistance.intensity, 
@@ -60,7 +60,7 @@ get_simulation_dataframe = function(simulation.array, maximum.generations, numbe
       site = c(rep("refugia", times =  (sim.duration-1)), #first is refugia
                rep("treatment", times = (sim.duration-1))) #second is treatment
       
-      insecticide.deployed = rep(head(simulation.array[[2]], n=(sim.duration-1)), times = 2) #2 times as refugia and treatment
+      insecticide.deployed = as.character(rep(head(simulation.array[[2]], n=(sim.duration-1)), times = 2)) #2 times as refugia and treatment
       
       data.list[[insecticide]]= data.frame(insecticide.tracked,
                                            resistance.intensity,
