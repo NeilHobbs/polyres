@@ -1,4 +1,4 @@
-#' This function adds the effect of migration to the resistance intensity of the refugia (and calls the costs function too)
+#' @title The effect of migration on the resistance intensity in the refugia
 #' 
 #' @param initial.refugia.resistance The current IR intensity in the refugia.
 #' @param resistance.cost The cost of having IR
@@ -12,7 +12,8 @@
 #' @param maximum.female.insecticide.exposure Proportion of females exposed at intervention site (default = 0.9)
 #' @param min.intervention.coverage Proportion of the insect population in the treated intervention area (default is 0.1) 
 #' @param max.intervention.coverage Proportion of the insect population in the treated intervention area (default is 0.9)  
-#' @param min.dispersal.rate Proportion of population exchanged between intervention and refugia areas per generation (default 0.1)
+#' @param min.dispersal.rate Proportion of population exchanged between the treatment and refugia sites per generation (default 0.1)
+#' @param max.dispersal.rate Proportion of the population exchanged between the treatment and refugia sites per generation 
 #' 
 #' @return track.refugia.resistance A vector length nsim of resistance intensity values in the refugia
 
@@ -68,7 +69,7 @@ refugia_migration_effect = function(
                     minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                     maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) * 
     migration_refugia_to_treatment(
-                    nsim = 1000, 
+                    nsim = nsim, 
                     min.intervention.coverage = min.intervention.coverage, 
                     max.intervention.coverage = max.intervention.coverage, 
                     min.dispersal.rate = min.dispersal.rate,
@@ -80,3 +81,5 @@ refugia_migration_effect = function(
   
   return(track.refugia.resistance)
 }
+
+#This is equation 9B in the MS
