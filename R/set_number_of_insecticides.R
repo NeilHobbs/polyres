@@ -13,4 +13,6 @@ set_number_of_insecticides = function(total.insecticides = 3){
 
 
 
+#Unclear if this function actually does anything??????????????????
+#Think this was to be used as part of the sequence/rotation insecticide selection but no longer seems necessary.
 
