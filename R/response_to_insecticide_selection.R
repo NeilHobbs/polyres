@@ -1,4 +1,4 @@
-#' Function to turn insecticide selection into selection response, using the Breeder's Equation
+#' @title Convert insecticide selection into selection response, using the Breeder's Equation
 #'
 #' @import stats
 #' @importFrom stats runif
@@ -34,6 +34,21 @@ response_to_insecticide_selection = function(exposure.scaling.factor = 10,
                                              minimum.female.insecticide.exposure = 0.4, 
                                              maximum.female.insecticide.exposure = 0.9){
   
+  #Error Messages to prevent incorrect parameter values being included.
+  if(0 > minimum.insecticide.resistance.hertitability |minimum.insecticide.resistance.hertitability > 1){stop("minimum.insecticide.resistance.hertitability must be between 0 and 1")}
+  if(0 > maximum.insecticide.resistance.hertitability |maximum.insecticide.resistance.hertitability > 1){stop("maximum.insecticide.resistance.hertitability must be between 0 and 1")}
+  if(minimum.insecticide.resistance.hertitability > maximum.insecticide.resistance.hertitability){stop("minimum.insecticide.resistance.hertitability is greater than maximum.insecticide.resistance.hertitability")}
+
+  if(0 > minimum.male.insecticide.exposure | minimum.male.insecticide.exposure > 1){stop("minimum.male.insecticide.exposure must be between 0 and 1")}
+  if(0 > maximum.male.insecticide.exposure | maximum.male.insecticide.exposure > 1){stop("maximum.male.insecticide.exposure must be between 0 and 1")}
+  if(minimum.male.insecticide.exposure > maximum.male.insecticide.exposure){stop("minimum.male.insecticide.exposure is greater than maximum.male.insecticide.exposure")}
+
+  if(0 > minimum.female.insecticide.exposure | minimum.female.insecticide.exposure > 1){stop("minimum.female.insecticide.exposure must be between 0 and 1")}
+  if(0 > maximum.female.insecticide.exposure | maximum.female.insecticide.exposure > 1){stop("maximum.female.insecticide.exposure must be between 0 and 1")}
+  if(minimum.female.insecticide.exposure > maximum.female.insecticide.exposure){stop("minimum.female.insecticide.exposure is greater than maximum.female.insecticide.exposure")}
+
+  
+  
   insecticide.resistance.hertitability = runif(nsim, 
                                                min = minimum.insecticide.resistance.hertitability, 
                                                max = maximum.insecticide.resistance.hertitability)
@@ -52,5 +67,6 @@ response_to_insecticide_selection = function(exposure.scaling.factor = 10,
   return(resistance.selection.reponse) ##Return insecticide selection response as a vector
 }
 
+#This is equation 4 in the MS
 
 
