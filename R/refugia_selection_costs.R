@@ -1,4 +1,4 @@
-#' This is equation 9A
+#' @title Implement the selection costs in the refugia
 #' 
 #' @param initial.refugia.resistance,
 #' @param resistance.cost,
@@ -11,7 +11,7 @@
 #' @param minimum.female.insecticide.exposure = 0.4, 
 #' @param maximum.female.insecticide.exposure = 0.9
 #' 
-#' @return track.refugia.resistance is the resistance intensity in the refugia.
+#' @return track.refugia.resistance is the resistance intensity in the refugia (a vector of length nsim).
 
 refugia_selection_costs = function(initial.refugia.resistance,
                                    resistance.cost,
@@ -39,3 +39,5 @@ refugia_selection_costs = function(initial.refugia.resistance,
   
   return(track.refugia.resistance)
 }
+
+#This is equation 9A in the  MS
