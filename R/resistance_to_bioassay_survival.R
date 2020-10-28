@@ -1,4 +1,4 @@
-#' Function to convert mean population resistance intensity to bioassay survival
+#' @title Convert insecticide resistance intensity to bioassay survival proportion
 #' 
 #' @param maximum.bioassay.survival.proportion Should be set as 1.
 #' @param mean.population.resistance The mean resistance intensity of the population.
@@ -16,6 +16,12 @@ resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion 
                                            half.population.bioassay.survival.resistance = 900,
                                            sd.population.resistance = 10, 
                                            nsim = 1000){ 
+  
+  #Error Messages
+  if(michaelis.menten.slope != 1){stop("michaelis.menten.slope must equal 1")}
+  if(maximum.bioassay.survival.proportion != 1){stop("maximum.bioassay.survival.proportion must equal 1.")}
+  if(sd.population.resistance < 0){stop("sd.population.resistance must be greater than or equal to 0.")}
+
   
   #Generate a Normal distribution around the population mean of insecticide resistance values
   resistance.values = rnorm(nsim, 
