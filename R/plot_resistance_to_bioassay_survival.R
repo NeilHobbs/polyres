@@ -54,3 +54,4 @@ plot_resistance_to_bioassay_survival = function(maximum.bioassay.survival.propor
     theme_classic()
 }
 
+#Note: This is being really slow at plotting.
