@@ -1,22 +1,35 @@
-#' #' This function runs the model in the absence of dispersal, but with selection costs. 
-#' #' @param number.of.insecticides how many insecticides are available in the arsenal. 
-#' #' @param exposure.scaling.factor = 10,
-#' #' @param nsim = 1000, 
-#' #' @param minimum.insecticide.resistance.hertitability = 0.05, 
-#' #' @param maximum.insecticide.resistance.hertitability = 0.30,
-#' #' @param minimum.male.insecticide.exposure = 0,
-#' #' @param maximum.male.insecticide.exposure = 1, 
-#' #' @param minimum.female.insecticide.exposure = 0.4, 
-#' #' @param maximum.female.insecticide.exposure = 0.9,
-#' #' @param resistance.cost = default set to 0
-#' #' @param initial.resistance.intensity,
-#' #' @param min.intervention.coverage = 0.1, 
-#' #' @param max.intervention.coverage = 0.9, 
-#' #' @param initial.refugia.resistance,
-#' #' @param min.dispersal.rate = 0.1,
-#' #' @param max.dispersal.rate = 0.9
-#' #' @param irm.strategy To be able to set the resistance management strategy (rotation, sequence)
+#' @title Run the insecticide resistance management simulation for sequences and rotations.
 #' 
+#' @description This is the main wrapper function that implements the running of the insecticide resistance management
+#' simulations. Currently the simulations allows for the comparison of sequence and rotation strategies. At the moment,
+#' each insecticide acts completely independently; such that there is no cross resistance and cross selection. 
+#' For the "sequence" irm.strategy a single insecticide is continually deployed until it reaches the threshold for withdrawal,
+#' at this point the next insecticide is deployed (at the next deployment opportunity). For the "rotation" irm.strategy, the
+#' insecticide is changed at each deployment interval. It is therefore not recommend to compare rotations and sequences when
+#' the number.of.insecticides = 1; as this will mean that the rotation strategy lasts a single deployment duration.
+#' 
+#' @param number.of.insecticides how many insecticides are available in the arsenal. 
+#' @param exposure.scaling.factor = 10,
+#' @param nsim = 1000, 
+#' @param minimum.insecticide.resistance.hertitability = 0.05, 
+#' @param maximum.insecticide.resistance.hertitability = 0.30,
+#' @param minimum.male.insecticide.exposure = 0,
+#' @param maximum.male.insecticide.exposure = 1, 
+#' @param minimum.female.insecticide.exposure = 0.4, 
+#' @param maximum.female.insecticide.exposure = 0.9,
+#' @param resistance.cost = default set to 0
+#' @param initial.resistance.intensity,
+#' @param min.intervention.coverage = 0.1, 
+#' @param max.intervention.coverage = 0.9, 
+#' @param initial.refugia.resistance,
+#' @param min.dispersal.rate = 0.1,
+#' @param max.dispersal.rate = 0.9
+#' @param irm.strategy To be able to set the resistance management strategy (rotation, sequence)
+#' @param half.population.bioassay.survival.resistance
+#' @param withdrawal.threshold.value
+#' @param return.threshold.value
+#' @param deployment.frequency
+#' @param maximum.resistance.value  It is recommended that this be set as approximately 20*half.population.bioassay.survival.resistance
 #' 
 #' Currently this function runs.
 #' 
@@ -37,7 +50,7 @@ run_simulation_intervention= function(number.of.insecticides = 2,
                                    min.dispersal.rate = 0.1,
                                    max.dispersal.rate = 0.9,
                                    maximum.generations = 500,
-                                   irm.strategy = sequence, #will be sequence or rotation (plus mixture later on),
+                                   irm.strategy = "sequence", #will be sequence or rotation (plus mixture later on),
                                    half.population.bioassay.survival.resistance = 900,
                                    withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
                                    return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
@@ -66,10 +79,12 @@ run_simulation_intervention= function(number.of.insecticides = 2,
   #treatment site starting resistance intensity (where the insecticide can be deployed)
   sim.array['treatment', , 1] = starting.treatment.site.intensity
   
-  available.vector = seq(1, number.of.insecticides, by = 1)
+  available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.
+                                                            #At the beginning all insecticides are available for deployment. 
   withdrawn.vector = c() #creates an empty vector to hold the withdrawn insecticides.
   
-  deployed.insecticide = rep(1, times = deployment.frequency)
+  deployed.insecticide = rep(1, times = deployment.frequency)#Always start with insecticide 1. 
+                                                          #This is fine as all insecticides have equivalent properties.
   
   
   insecticide.info = list(available.vector, withdrawn.vector, deployed.insecticide)
