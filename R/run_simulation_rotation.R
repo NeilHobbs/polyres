@@ -1,21 +1,21 @@
-#' #' This function runs the model in the absence of dispersal, but with selection costs. 
-#' #' @param number.of.insecticides how many insecticides are available in the arsenal. 
-#' #' @param exposure.scaling.factor = 10,
-#' #' @param nsim = 1000, 
-#' #' @param minimum.insecticide.resistance.hertitability = 0.05, 
-#' #' @param maximum.insecticide.resistance.hertitability = 0.30,
-#' #' @param minimum.male.insecticide.exposure = 0,
-#' #' @param maximum.male.insecticide.exposure = 1, 
-#' #' @param minimum.female.insecticide.exposure = 0.4, 
-#' #' @param maximum.female.insecticide.exposure = 0.9,
-#' #' @param resistance.cost = default set to 0
-#' #' @param initial.resistance.intensity,
-#' #' @param min.intervention.coverage = 0.1, 
-#' #' @param max.intervention.coverage = 0.9, 
-#' #' @param initial.refugia.resistance,
-#' #' @param min.dispersal.rate = 0.1,
-#' #' @param max.dispersal.rate = 0.9
-#' #' @param irm.strategy To be able to set the resistance management strategy (rotation, sequence)
+#' This function runs the model in the absence of dispersal, but with selection costs. 
+#' @param number.of.insecticides how many insecticides are available in the arsenal. 
+#' @param exposure.scaling.factor = 10,
+#' @param nsim = 1000, 
+#' @param minimum.insecticide.resistance.hertitability = 0.05, 
+#' @param maximum.insecticide.resistance.hertitability = 0.30,
+#' @param minimum.male.insecticide.exposure = 0,
+#' @param maximum.male.insecticide.exposure = 1, 
+#' @param minimum.female.insecticide.exposure = 0.4, 
+#' @param maximum.female.insecticide.exposure = 0.9,
+#' @param resistance.cost = default set to 0
+#' @param initial.resistance.intensity,
+#' @param min.intervention.coverage = 0.1, 
+#' @param max.intervention.coverage = 0.9, 
+#' @param initial.refugia.resistance,
+#' @param min.dispersal.rate = 0.1,
+#' @param max.dispersal.rate = 0.9
+#' @param irm.strategy To be able to set the resistance management strategy (rotation, sequence)
 #' 
 #' 
 #' Currently this function runs.
