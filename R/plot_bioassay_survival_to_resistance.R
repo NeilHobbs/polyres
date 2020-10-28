@@ -62,8 +62,14 @@ plot_bioassay_survival_to_resistance = function(maximum.bioassay.survival.propor
       maximum.resistance.value=maximum.resistance.value)) ##plotting with sigma as 0.1 or 25 made no difference to plots
   
   ggplot2::ggplot(df, aes(x=resistance.values, y = bioassay.survival.values)) +
-    geom_point(colour = "red") +
+    geom_line(colour = "red") +
     xlab("Insecticide Resistance Intensity") +
     ylab("Bioassay Survival Proportion") +
     theme_classic()
 }
+
+
+#Need to figure out a way to get rid of the weird up-tick
+#Also:
+  #Dotted line for 10% Survival
+  #Dotted line for 50% Survival
