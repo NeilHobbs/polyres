@@ -1,5 +1,5 @@
-#This function removes all the required insecticides from the arsenal. 
-
+#' @title Withdraws all the required insecticides from the arsenal
+#' 
 #' @param number.of.insecticides = the number of insecticides in the simulation
 #' @param current.generation = the generation in the simulation
 #' @param withdrawal.threshold = the resistance intensity for withdrawal
@@ -14,9 +14,9 @@ withdrawal_of_insecticides_from_arsenal = function(number.of.insecticides,
                                  available.vector,
                                  withdrawn.vector){
   all.insecticides = seq(1, number.of.insecticides, by = 1)
-  
+
   for(i in 1:length(all.insecticides)){
-    
+
     A = if(check_insecticide_withdrawal(insecticide = all.insecticides[i],
                                         current.generation = current.generation,
                                         withdrawal.threshold = withdrawal.threshold,
