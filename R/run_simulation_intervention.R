@@ -11,8 +11,8 @@
 #' @param number.of.insecticides how many insecticides are available in the arsenal. 
 #' @param exposure.scaling.factor = 10,
 #' @param nsim = 1000, 
-#' @param minimum.insecticide.resistance.hertitability = 0.05, 
-#' @param maximum.insecticide.resistance.hertitability = 0.30,
+#' @param minimum.insecticide.resistance.heritability = 0.05, 
+#' @param maximum.insecticide.resistance.heritability = 0.30,
 #' @param minimum.male.insecticide.exposure = 0,
 #' @param maximum.male.insecticide.exposure = 1, 
 #' @param minimum.female.insecticide.exposure = 0.4, 
@@ -36,8 +36,8 @@
 run_simulation_intervention= function(number.of.insecticides = 2,
                                    exposure.scaling.factor = 10,
                                    nsim = 1000,
-                                   minimum.insecticide.resistance.hertitability = 0.05,
-                                   maximum.insecticide.resistance.hertitability = 0.30,
+                                   minimum.insecticide.resistance.heritability = 0.05,
+                                   maximum.insecticide.resistance.heritability = 0.30,
                                    minimum.male.insecticide.exposure = 0,
                                    maximum.male.insecticide.exposure = 1,
                                    minimum.female.insecticide.exposure = 0.4,
@@ -72,6 +72,10 @@ run_simulation_intervention= function(number.of.insecticides = 2,
                                     maximum.generations = maximum.generations)
   
   
+  #Maybe create a separate function: set_starting_conditions() for the following chunk of code. In doing so;
+    #be able to set each insecticide having a unique starting intensity. And would set the insecticide.info
+    #and calculating the withdrawal and return thresholds. 
+  
   #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
   #refugia site starting resistace intensity
   sim.array['refugia', , 1] = starting.refugia.intensity
@@ -92,6 +96,7 @@ run_simulation_intervention= function(number.of.insecticides = 2,
   #the user to input the half.population.bioassay.survival.resistance; the required thresholds; and maximum.resistance.value [this will be incase,
   #a user decides to use a high Z50 value]. But we should recommend the Z50 to be 900.
   
+
   calc.withdrawal.threshold = bioassay_survival_to_resistance(maximum.bioassay.survival.proportion = 1,
                                                               michaelis.menten.slope = 1, #must be set to 1 to work properly
                                                               half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
@@ -112,8 +117,10 @@ run_simulation_intervention= function(number.of.insecticides = 2,
                                                           minimum.resistance.value = 0,
                                                           maximum.resistance.value = maximum.resistance.value)
   
-
-  #start at generation 2, as generation 1 has intensities set.
+  
+  #Also worth considering turning the for generation and for insecticide loops into functions,
+    #as the code is other wise very large and chunky and therefore complicated to edit and adapt.
+  #start at generation 2, as generation 1 has intensities set at 0.
   for(generation in 2:maximum.generations){
     
     #Stop the simulation if there is no insecticide being deployed anymore.
@@ -129,8 +136,8 @@ run_simulation_intervention= function(number.of.insecticides = 2,
           resistance.cost = resistance.cost,
           exposure.scaling.factor = exposure.scaling.factor,
           nsim = nsim,
-          minimum.insecticide.resistance.hertitability = minimum.insecticide.resistance.hertitability,
-          maximum.insecticide.resistance.hertitability = maximum.insecticide.resistance.hertitability,
+          minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
+          maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
           minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
           maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
           minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
@@ -149,8 +156,8 @@ run_simulation_intervention= function(number.of.insecticides = 2,
           mean(insecticide_deployed_migration(#note: this function calls insecticide_deployed_selection_costs
             exposure.scaling.factor = exposure.scaling.factor,
             nsim = nsim,
-            minimum.insecticide.resistance.hertitability = minimum.insecticide.resistance.hertitability,
-            maximum.insecticide.resistance.hertitability = maximum.insecticide.resistance.hertitability,
+            minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
+            maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
             minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
@@ -170,8 +177,8 @@ run_simulation_intervention= function(number.of.insecticides = 2,
             initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1], # use previous generation info in refugia
             exposure.scaling.factor = exposure.scaling.factor,
             nsim = nsim,
-            minimum.insecticide.resistance.hertitability = minimum.insecticide.resistance.hertitability,
-            maximum.insecticide.resistance.hertitability = maximum.insecticide.resistance.hertitability,
+            minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
+            maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
             minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
@@ -182,14 +189,17 @@ run_simulation_intervention= function(number.of.insecticides = 2,
             max.dispersal.rate = max.dispersal.rate
           )))#end insecticide not deployed
         
-      }}#end of insecticide loop
+      }}#end of forinsecticide loop
     
-    #return the mean population IR each year.
+    #returns the mean population insecticide resistance each generation.
     
     
     #Which irm.strategy is being used: sequence or rotation
   
+    #May be worth making the following chunk of code into its own function as it is a bit chunky
+    #at the moment.
     #Update insecticide each time the deployment.frequency is reached:
+    if(generation < maximum.generations){
     update.insecticide.info = if(generation %% deployment.frequency == 0){
       if(irm.strategy == "rotation"){
                                   irm_strategy_rotation(
@@ -225,10 +235,7 @@ run_simulation_intervention= function(number.of.insecticides = 2,
     if(generation %% deployment.frequency == 0){available.vector = update.insecticide.info[[1]]}
     if(generation %% deployment.frequency == 0){withdrawn.vector = update.insecticide.info[[2]]}
     if(generation %% deployment.frequency == 0){deployed.insecticide = update.insecticide.info[[3]]}
-    
-    #Issue is that it is only ever deploying insecticide 1; and is doing so even after threshold reached
-    
-    
+    }
     #A break point to stop simuation if there is no insecticide deployed
     #if(is.na(deployed.insecticide[generation])){break}
     
@@ -238,40 +245,40 @@ run_simulation_intervention= function(number.of.insecticides = 2,
   #need to develop an quick and easy way to turn array into dataframes for plotting purposes
   return(list(sim.array, deployed.insecticide))
 }
-#' 
-#' 
-#' test_simulation = run_simulation_test(number.of.insecticides = 2,
-#'                        exposure.scaling.factor = 10,
-#'                        nsim = 1000,
-#'                         minimum.insecticide.resistance.hertitability = 0.3,
-#'                                maximum.insecticide.resistance.hertitability = 0.30,
-#'                                minimum.male.insecticide.exposure = 1,
-#'                                maximum.male.insecticide.exposure = 1,
-#'                                minimum.female.insecticide.exposure = 0.9,
-#'                                maximum.female.insecticide.exposure = 0.9,
-#'                                resistance.cost = 0,
-#'                                starting.treatment.site.intensity = 0,
-#'                                starting.refugia.intensity = 0,
-#'                                min.intervention.coverage = 0.1,
-#'                                max.intervention.coverage = 0.9,
-#'                                min.dispersal.rate = 0.1,
-#'                                max.dispersal.rate = 0.1,
-#'                                maximum.generations = 500,
-#'                                irm.strategy = sequence, #will be sequence or rotation (plus mixture later on),
-#'                                half.population.bioassay.survival.resistance = 900,
-#'                                withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
-#'                                return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
-#'                                deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
-#'                                maximum.resistance.value = 25000 #have arbitrarily high just in case
-#'                                
-#' )
-#' 
-#' test_simulation[[1]]
-#' test_simulation[[2]]
-#' print(test_simulation)
-#' 
-#' 
-#' 
-#' 
-#' 
-#' 
+
+
+# test_simulation = run_simulation_intervention(number.of.insecticides = 2,
+#                        exposure.scaling.factor = 10,
+#                        nsim = 1000,
+#                         minimum.insecticide.resistance.heritability = 0.3,
+#                                maximum.insecticide.resistance.heritability = 0.30,
+#                                minimum.male.insecticide.exposure = 1,
+#                                maximum.male.insecticide.exposure = 1,
+#                                minimum.female.insecticide.exposure = 0.9,
+#                                maximum.female.insecticide.exposure = 0.9,
+#                                resistance.cost = 0,
+#                                starting.treatment.site.intensity = 0,
+#                                starting.refugia.intensity = 0,
+#                                min.intervention.coverage = 0.1,
+#                                max.intervention.coverage = 0.9,
+#                                min.dispersal.rate = 0.1,
+#                                max.dispersal.rate = 0.1,
+#                                maximum.generations = 500,
+#                                irm.strategy = sequence, #will be sequence or rotation (plus mixture later on),
+#                                half.population.bioassay.survival.resistance = 900,
+#                                withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+#                                return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+#                                deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+#                                maximum.resistance.value = 25000 #have arbitrarily high just in case
+# 
+# )
+# # 
+# # test_simulation[[1]]
+# # test_simulation[[2]]
+# # print(test_simulation)
+
+
+
+
+
+

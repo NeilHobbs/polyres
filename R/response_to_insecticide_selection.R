@@ -6,8 +6,8 @@
 #'
 #'@param exposure.scaling.factor This factor converts exposure to selection differential. This requires empirically setting.
 #'@param nsim number of simulations of the runif functions.
-#'@param minimum.insecticide.resistance.hertitability The minimum heritability of insecticide resistance (set at 0.05)
-#'@param maximum.insecticide.resistance.hertitability The maximum heritability of insecticide resistance (set at 0.3)
+#'@param minimum.insecticide.resistance.heritability The minimum heritability of insecticide resistance (set at 0.05)
+#'@param maximum.insecticide.resistance.heritability The maximum heritability of insecticide resistance (set at 0.3)
 #'@param minimum.male.insecticide.exposure Proportion of males exposed to insecticide as a proportion of females. Set at 0.
 #'@param maximum.male.insecticide.exposure  Proportion of males exposed to insecticide as a proportion of females. Set at 1.
 #'@param minimum.female.insecticide.exposure Mininum proportion of females exposed to insecticide (set at 0.4)
@@ -18,8 +18,8 @@
 #'@example response_to_insecticide_selection(
 #' exposure.scaling.factor = 10,
 #' nsim = 1000, 
-#' minimum.insecticide.resistance.hertitability = 0.05, 
-#' maximum.insecticide.resistance.hertitability = 0.3,
+#' minimum.insecticide.resistance.heritability = 0.05, 
+#' maximum.insecticide.resistance.heritability = 0.3,
 #' minimum.male.insecticide.exposure = 0,
 #' maximum.male.insecticide.exposure = 1, 
 #' minimum.female.insecticide.exposure = 0.4, 
@@ -27,17 +27,17 @@
 
 response_to_insecticide_selection = function(exposure.scaling.factor = 10,
                                              nsim = 1000, 
-                                             minimum.insecticide.resistance.hertitability = 0.05, 
-                                             maximum.insecticide.resistance.hertitability = 0.30,
+                                             minimum.insecticide.resistance.heritability = 0.05, 
+                                             maximum.insecticide.resistance.heritability = 0.30,
                                              minimum.male.insecticide.exposure = 0,
                                              maximum.male.insecticide.exposure = 1, 
                                              minimum.female.insecticide.exposure = 0.4, 
                                              maximum.female.insecticide.exposure = 0.9){
   
   #Error Messages to prevent incorrect parameter values being included.
-  if(0 > minimum.insecticide.resistance.hertitability |minimum.insecticide.resistance.hertitability > 1){stop("minimum.insecticide.resistance.hertitability must be between 0 and 1")}
-  if(0 > maximum.insecticide.resistance.hertitability |maximum.insecticide.resistance.hertitability > 1){stop("maximum.insecticide.resistance.hertitability must be between 0 and 1")}
-  if(minimum.insecticide.resistance.hertitability > maximum.insecticide.resistance.hertitability){stop("minimum.insecticide.resistance.hertitability is greater than maximum.insecticide.resistance.hertitability")}
+  if(0 > minimum.insecticide.resistance.heritability |minimum.insecticide.resistance.heritability > 1){stop("minimum.insecticide.resistance.heritability must be between 0 and 1")}
+  if(0 > maximum.insecticide.resistance.heritability |maximum.insecticide.resistance.heritability > 1){stop("maximum.insecticide.resistance.heritability must be between 0 and 1")}
+  if(minimum.insecticide.resistance.heritability > maximum.insecticide.resistance.heritability){stop("minimum.insecticide.resistance.heritability is greater than maximum.insecticide.resistance.heritability")}
 
   if(0 > minimum.male.insecticide.exposure | minimum.male.insecticide.exposure > 1){stop("minimum.male.insecticide.exposure must be between 0 and 1")}
   if(0 > maximum.male.insecticide.exposure | maximum.male.insecticide.exposure > 1){stop("maximum.male.insecticide.exposure must be between 0 and 1")}
@@ -49,9 +49,9 @@ response_to_insecticide_selection = function(exposure.scaling.factor = 10,
 
   
   
-  insecticide.resistance.hertitability = runif(nsim, 
-                                               min = minimum.insecticide.resistance.hertitability, 
-                                               max = maximum.insecticide.resistance.hertitability)
+  insecticide.resistance.heritability = runif(nsim, 
+                                               min = minimum.insecticide.resistance.heritability, 
+                                               max = maximum.insecticide.resistance.heritability)
   
   male.insecticide.exposure.proportion = runif(nsim,
                                                min = minimum.male.insecticide.exposure, 
@@ -62,7 +62,7 @@ response_to_insecticide_selection = function(exposure.scaling.factor = 10,
                                                 max = maximum.female.insecticide.exposure)
   #Breeders Equation
  
-  resistance.selection.reponse = exposure.scaling.factor*((insecticide.resistance.hertitability) * female.insecticide.exposure.proportion * (1 + male.insecticide.exposure.proportion)/2)
+  resistance.selection.reponse = exposure.scaling.factor*((insecticide.resistance.heritability) * female.insecticide.exposure.proportion * (1 + male.insecticide.exposure.proportion)/2)
   
   return(resistance.selection.reponse) ##Return insecticide selection response as a vector
 }
