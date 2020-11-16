@@ -2,8 +2,8 @@ test_that("returns correct vector length", {
   expect_equal(length(insecticide_deployed_selection_cost (
     exposure.scaling.factor = 10,
     nsim = 1000, 
-    minimum.insecticide.resistance.hertitability = 0.05, 
-    maximum.insecticide.resistance.hertitability = 0.30,
+    minimum.insecticide.resistance.heritability = 0.05, 
+    maximum.insecticide.resistance.heritability = 0.30,
     minimum.male.insecticide.exposure = 0,
     maximum.male.insecticide.exposure = 1, 
     minimum.female.insecticide.exposure = 0.4, 
@@ -24,14 +24,14 @@ test_that("heritability min error", {
   expect_error(insecticide_deployed_selection_cost (
     exposure.scaling.factor = 10,
     nsim = 1000, 
-    minimum.insecticide.resistance.hertitability = test.values[i], 
-    maximum.insecticide.resistance.hertitability = 0.30,
+    minimum.insecticide.resistance.heritability = test.values[i], 
+    maximum.insecticide.resistance.heritability = 0.30,
     minimum.male.insecticide.exposure = 0,
     maximum.male.insecticide.exposure = 1, 
     minimum.female.insecticide.exposure = 0.4, 
     maximum.female.insecticide.exposure = 0.9,
     resistance.cost = 0.1,
-    initial.resistance.intensity = 0), "minimum.insecticide.resistance.hertitability must be between 0 and 1")
+    initial.resistance.intensity = 0), "minimum.insecticide.resistance.heritability must be between 0 and 1")
   
   
 })}
@@ -42,14 +42,14 @@ for(i in 1:length(test.values)){
     expect_error(insecticide_deployed_selection_cost (
       exposure.scaling.factor = 10,
       nsim = 1000, 
-      minimum.insecticide.resistance.hertitability = 0.1, 
-      maximum.insecticide.resistance.hertitability = test.values[i],
+      minimum.insecticide.resistance.heritability = 0.1, 
+      maximum.insecticide.resistance.heritability = test.values[i],
       minimum.male.insecticide.exposure = 0,
       maximum.male.insecticide.exposure = 1, 
       minimum.female.insecticide.exposure = 0.4, 
       maximum.female.insecticide.exposure = 0.9,
       resistance.cost = 0.1,
-      initial.resistance.intensity = 0), "maximum.insecticide.resistance.hertitability must be between 0 and 1")
+      initial.resistance.intensity = 0), "maximum.insecticide.resistance.heritability must be between 0 and 1")
   })}
 
 
@@ -58,14 +58,14 @@ test_that("heritability min>max error", {
     expect_error(insecticide_deployed_selection_cost (
       exposure.scaling.factor = 10,
       nsim = 1000, 
-      minimum.insecticide.resistance.hertitability = 0.3, 
-      maximum.insecticide.resistance.hertitability = 0.1,
+      minimum.insecticide.resistance.heritability = 0.3, 
+      maximum.insecticide.resistance.heritability = 0.1,
       minimum.male.insecticide.exposure = 0,
       maximum.male.insecticide.exposure = 1, 
       minimum.female.insecticide.exposure = 0.4, 
       maximum.female.insecticide.exposure = 0.9,
       resistance.cost = 0.1,
-      initial.resistance.intensity = 0), "minimum.insecticide.resistance.hertitability is greater than maximum.insecticide.resistance.hertitability")
+      initial.resistance.intensity = 0), "minimum.insecticide.resistance.heritability is greater than maximum.insecticide.resistance.heritability")
 })
 
 
@@ -76,8 +76,8 @@ for(i in 1:length(test.values)){
     expect_error(insecticide_deployed_selection_cost (
       exposure.scaling.factor = 10,
       nsim = 1000, 
-      minimum.insecticide.resistance.hertitability = 0.1, 
-      maximum.insecticide.resistance.hertitability = 0.30,
+      minimum.insecticide.resistance.heritability = 0.1, 
+      maximum.insecticide.resistance.heritability = 0.30,
       minimum.male.insecticide.exposure = test.values[i],
       maximum.male.insecticide.exposure = 1, 
       minimum.female.insecticide.exposure = 0.4, 
@@ -94,8 +94,8 @@ for(i in 1:length(test.values)){
     expect_error(insecticide_deployed_selection_cost (
       exposure.scaling.factor = 10,
       nsim = 1000, 
-      minimum.insecticide.resistance.hertitability = 0.1, 
-      maximum.insecticide.resistance.hertitability = 0.3,
+      minimum.insecticide.resistance.heritability = 0.1, 
+      maximum.insecticide.resistance.heritability = 0.3,
       minimum.male.insecticide.exposure = 0,
       maximum.male.insecticide.exposure = test.values[i], 
       minimum.female.insecticide.exposure = 0.4, 
@@ -110,8 +110,8 @@ test_that("male.exposure min>max error", {
   expect_error(insecticide_deployed_selection_cost (
     exposure.scaling.factor = 10,
     nsim = 1000, 
-    minimum.insecticide.resistance.hertitability = 0.1, 
-    maximum.insecticide.resistance.hertitability = 0.4,
+    minimum.insecticide.resistance.heritability = 0.1, 
+    maximum.insecticide.resistance.heritability = 0.4,
     minimum.male.insecticide.exposure = 0.5,
     maximum.male.insecticide.exposure = 0.4, 
     minimum.female.insecticide.exposure = 0.4, 
@@ -127,8 +127,8 @@ for(i in 1:length(test.values)){
     expect_error(insecticide_deployed_selection_cost (
       exposure.scaling.factor = 10,
       nsim = 1000, 
-      minimum.insecticide.resistance.hertitability = 0.1, 
-      maximum.insecticide.resistance.hertitability = 0.30,
+      minimum.insecticide.resistance.heritability = 0.1, 
+      maximum.insecticide.resistance.heritability = 0.30,
       minimum.male.insecticide.exposure = 0,
       maximum.male.insecticide.exposure = 1, 
       minimum.female.insecticide.exposure = test.values[i], 
@@ -144,8 +144,8 @@ for(i in 1:length(test.values)){
     expect_error(insecticide_deployed_selection_cost (
       exposure.scaling.factor = 10,
       nsim = 1000, 
-      minimum.insecticide.resistance.hertitability = 0.1, 
-      maximum.insecticide.resistance.hertitability = 0.3,
+      minimum.insecticide.resistance.heritability = 0.1, 
+      maximum.insecticide.resistance.heritability = 0.3,
       minimum.male.insecticide.exposure = 0,
       maximum.male.insecticide.exposure = 0.4, 
       minimum.female.insecticide.exposure = 0.4, 
@@ -160,8 +160,8 @@ test_that("female.exposure min>max error", {
   expect_error(insecticide_deployed_selection_cost (
     exposure.scaling.factor = 10,
     nsim = 1000, 
-    minimum.insecticide.resistance.hertitability = 0.2, 
-    maximum.insecticide.resistance.hertitability = 0.4,
+    minimum.insecticide.resistance.heritability = 0.2, 
+    maximum.insecticide.resistance.heritability = 0.4,
     minimum.male.insecticide.exposure = 0.1,
     maximum.male.insecticide.exposure = 0.5, 
     minimum.female.insecticide.exposure = 0.9, 
