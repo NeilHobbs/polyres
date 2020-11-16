@@ -11,8 +11,8 @@
 Test_3 = run_simulation (number.of.insecticides = 3,
                          exposure.scaling.factor = 10,
                          nsim = 1000, #default
-                         minimum.insecticide.resistance.hertitability = 0.1, #default 
-                         maximum.insecticide.resistance.hertitability = 0.1, #default
+                         minimum.insecticide.resistance.heritability = 0.1, #default 
+                         maximum.insecticide.resistance.heritability = 0.1, #default
                          minimum.male.insecticide.exposure = 0.5, #default
                          maximum.male.insecticide.exposure = 0.5, #default
                          minimum.female.insecticide.exposure = 0.7, #default

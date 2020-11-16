@@ -11,13 +11,13 @@ df = data.frame(randomLHS(2000, 6))
 #uses the run_simulation_endpoint function in file called "modified runs" in the statsanalysis folder
 
 df = df%>%
-  rename(insecticide.resistance.hertiability = X1)%>%
+  rename(insecticide.resistance.heritability = X1)%>%
   rename(male.insecticide.exposure = X2)%>%
   rename(female.insecticide.exposure = X3)%>%
   rename(resistance.cost = X4)%>%
   rename(intervention.coverage = X5)%>%
   rename(dispersal = X6)%>%
-  mutate(insecticide.resistance.hertiability = qunif(insecticide.resistance.hertiability, 0.05, 0.3))%>%
+  mutate(insecticide.resistance.heritability = qunif(insecticide.resistance.heritability, 0.05, 0.3))%>%
   mutate(male.insecticide.exposure = qunif(male.insecticide.exposure, 0, 1))%>%
   mutate(female.insecticide.exposure = qunif(female.insecticide.exposure, 0.4, 0.9))%>%
   mutate(resistance.cost = qunif(resistance.cost, 0.01, 0.2))%>%
@@ -27,8 +27,8 @@ df = df%>%
   mutate(T500 = (run_simulation_endpoint(number.of.insecticides = 3,
                                         exposure.scaling.factor = 10,
                                         nsim = 1, #only needs to be 1, as min and max values equal
-                                        minimum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
-                                        maximum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
+                                        minimum.insecticide.resistance.heritability = insecticide.resistance.heritability,
+                                        maximum.insecticide.resistance.heritability = insecticide.resistance.heritability,
                                         minimum.male.insecticide.exposure = male.insecticide.exposure,
                                         maximum.male.insecticide.exposure = male.insecticide.exposure,
                                         minimum.female.insecticide.exposure = female.insecticide.exposure,
@@ -44,8 +44,8 @@ df = df%>%
   mutate(T300 = (run_simulation_endpoint(number.of.insecticides = 3,
                                          exposure.scaling.factor = 10,
                                          nsim = 1, #only needs to be 1, as min and max values equal
-                                         minimum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
-                                         maximum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
+                                         minimum.insecticide.resistance.heritability = insecticide.resistance.heritability,
+                                         maximum.insecticide.resistance.heritability = insecticide.resistance.heritability,
                                          minimum.male.insecticide.exposure = male.insecticide.exposure,
                                          maximum.male.insecticide.exposure = male.insecticide.exposure,
                                          minimum.female.insecticide.exposure = female.insecticide.exposure,
@@ -61,8 +61,8 @@ df = df%>%
   mutate(T100 = (run_simulation_endpoint(number.of.insecticides = 3,
                                          exposure.scaling.factor = 10,
                                          nsim = 1, #only needs to be 1, as min and max values equal
-                                         minimum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
-                                         maximum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
+                                         minimum.insecticide.resistance.heritability = insecticide.resistance.heritability,
+                                         maximum.insecticide.resistance.heritability = insecticide.resistance.heritability,
                                          minimum.male.insecticide.exposure = male.insecticide.exposure,
                                          maximum.male.insecticide.exposure = male.insecticide.exposure,
                                          minimum.female.insecticide.exposure = female.insecticide.exposure,
@@ -78,8 +78,8 @@ df = df%>%
            mutate(R500 = (run_simulation_endpoint(number.of.insecticides = 3,
                                                   exposure.scaling.factor = 10,
                                                   nsim = 1, #only needs to be 1, as min and max values equal
-                                                  minimum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
-                                                  maximum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
+                                                  minimum.insecticide.resistance.heritability = insecticide.resistance.heritability,
+                                                  maximum.insecticide.resistance.heritability = insecticide.resistance.heritability,
                                                   minimum.male.insecticide.exposure = male.insecticide.exposure,
                                                   maximum.male.insecticide.exposure = male.insecticide.exposure,
                                                   minimum.female.insecticide.exposure = female.insecticide.exposure,
@@ -95,8 +95,8 @@ df = df%>%
   mutate(R300 = (run_simulation_endpoint(number.of.insecticides = 3,
                                          exposure.scaling.factor = 10,
                                          nsim = 1, #only needs to be 1, as min and max values equal
-                                         minimum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
-                                         maximum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
+                                         minimum.insecticide.resistance.heritability = insecticide.resistance.heritability,
+                                         maximum.insecticide.resistance.heritability = insecticide.resistance.heritability,
                                          minimum.male.insecticide.exposure = male.insecticide.exposure,
                                          maximum.male.insecticide.exposure = male.insecticide.exposure,
                                          minimum.female.insecticide.exposure = female.insecticide.exposure,
@@ -112,8 +112,8 @@ df = df%>%
   mutate(R100 = (run_simulation_endpoint(number.of.insecticides = 3,
                                          exposure.scaling.factor = 10,
                                          nsim = 1, #only needs to be 1, as min and max values equal
-                                         minimum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
-                                         maximum.insecticide.resistance.hertitability = insecticide.resistance.hertiability,
+                                         minimum.insecticide.resistance.heritability = insecticide.resistance.heritability,
+                                         maximum.insecticide.resistance.heritability = insecticide.resistance.heritability,
                                          minimum.male.insecticide.exposure = male.insecticide.exposure,
                                          maximum.male.insecticide.exposure = male.insecticide.exposure,
                                          minimum.female.insecticide.exposure = female.insecticide.exposure,
@@ -145,25 +145,25 @@ df = read.csv(".\\SimParamSpace.csv")
 
 #partial correlation needs each endpoint as the final column. Does not want to be correlating with earlier/later timepoints
 dfT100 = df%>%
-  select("insecticide.resistance.hertiability", "resistance.cost", "male.insecticide.exposure",
+  select("insecticide.resistance.heritability", "resistance.cost", "male.insecticide.exposure",
          "intervention.coverage", "dispersal", "female.insecticide.exposure", "T100")
 
 dfT300 = df%>%
-  select("insecticide.resistance.hertiability", "resistance.cost", "male.insecticide.exposure",
+  select("insecticide.resistance.heritability", "resistance.cost", "male.insecticide.exposure",
          "intervention.coverage", "dispersal", "female.insecticide.exposure", "T300")
 dfT500 = df%>%
-  select("insecticide.resistance.hertiability", "resistance.cost", "male.insecticide.exposure",
+  select("insecticide.resistance.heritability", "resistance.cost", "male.insecticide.exposure",
          "intervention.coverage", "dispersal", "female.insecticide.exposure", "T500")
 
 dfR100 = df%>%
-  select("insecticide.resistance.hertiability", "resistance.cost", "male.insecticide.exposure",
+  select("insecticide.resistance.heritability", "resistance.cost", "male.insecticide.exposure",
          "intervention.coverage", "dispersal", "female.insecticide.exposure", "R100")
 
 dfR300 = df%>%
-  select("insecticide.resistance.hertiability", "resistance.cost", "male.insecticide.exposure",
+  select("insecticide.resistance.heritability", "resistance.cost", "male.insecticide.exposure",
          "intervention.coverage", "dispersal", "female.insecticide.exposure", "R300")
 dfR500 = df%>%
-  select("insecticide.resistance.hertiability", "resistance.cost", "male.insecticide.exposure",
+  select("insecticide.resistance.heritability", "resistance.cost", "male.insecticide.exposure",
          "intervention.coverage", "dispersal", "female.insecticide.exposure", "R500")
 
 
@@ -260,7 +260,7 @@ colnames(parameter.space)
 ##Get only the random parameter variables
 parameter.space = df[,2:7]
 parameter.space = parameter.space%>%
-  rename(Heritability = insecticide.resistance.hertiability)%>%
+  rename(Heritability = insecticide.resistance.heritability)%>%
   rename(`Male Exposure` = male.insecticide.exposure)%>%
   rename(`Female Exposure` = female.insecticide.exposure)%>%
   rename(`Intervention Coverage` = intervention.coverage)%>%

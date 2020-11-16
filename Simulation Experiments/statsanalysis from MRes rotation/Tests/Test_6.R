@@ -15,8 +15,8 @@
 Test_6A = run_simulation (number.of.insecticides = 3,
                          exposure.scaling.factor = 10,
                          nsim = 1000, #default
-                         minimum.insecticide.resistance.hertitability = 0.1, #default for testing 
-                         maximum.insecticide.resistance.hertitability = 0.1, #default
+                         minimum.insecticide.resistance.heritability = 0.1, #default for testing 
+                         maximum.insecticide.resistance.heritability = 0.1, #default
                          minimum.male.insecticide.exposure = 0, #default
                          maximum.male.insecticide.exposure = 0, #default
                          minimum.female.insecticide.exposure = 0.7, #default
@@ -32,8 +32,8 @@ Test_6A = run_simulation (number.of.insecticides = 3,
 Test_6B = run_simulation (number.of.insecticides = 3,
                          exposure.scaling.factor = 10,
                          nsim = 1000, #default
-                         minimum.insecticide.resistance.hertitability = 0.1, #default for testing 
-                         maximum.insecticide.resistance.hertitability = 0.1, #default
+                         minimum.insecticide.resistance.heritability = 0.1, #default for testing 
+                         maximum.insecticide.resistance.heritability = 0.1, #default
                          minimum.male.insecticide.exposure = 0.5, #default
                          maximum.male.insecticide.exposure = 0.5, #default
                          minimum.female.insecticide.exposure = 0.7, #default
@@ -49,8 +49,8 @@ Test_6B = run_simulation (number.of.insecticides = 3,
 Test_6C = run_simulation (number.of.insecticides = 3,
                          exposure.scaling.factor = 10,
                          nsim = 1000, #default
-                         minimum.insecticide.resistance.hertitability = 0.1, #default for testing 
-                         maximum.insecticide.resistance.hertitability = 0.1, #default
+                         minimum.insecticide.resistance.heritability = 0.1, #default for testing 
+                         maximum.insecticide.resistance.heritability = 0.1, #default
                          minimum.male.insecticide.exposure = 1, #default
                          maximum.male.insecticide.exposure = 1, #default
                          minimum.female.insecticide.exposure = 0.7, #default
