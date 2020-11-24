@@ -11,7 +11,8 @@ insecticide_not_deployed_with_cross_selection = function(exposure.scaling.factor
                                                          initial.resistance.intensity = 0,
                                                          cross.selection.matrix,
                                                          currently.deployed.insecticide,
-                                                         currently.tracked.insecticide){
+                                                         currently.tracked.insecticide,
+                                                         number.of.insecticides){
   
   track.resistance.intensity = insecticide_not_deployed_direct_cross_selection(exposure.scaling.factor = exposure.scaling.factor,
                                                                               nsim = nsim, 
@@ -37,8 +38,30 @@ insecticide_not_deployed_with_cross_selection = function(exposure.scaling.factor
                                                                                 resistance.cost = resistance.cost,
                                                                                 cross.selection.matrix = cross.selection.matrix,
                                                                                 currently.deployed.insecticide = currently.deployed.insecticide,
-                                                                                currently.tracked.insecticide = currently.tracked.insecticide)
+                                                                                currently.tracked.insecticide = currently.tracked.insecticide,
+                                                                                number.of.insecticides = number.of.insecticides)
   
   
     return(track.resistance.intensity)
 }
+
+
+# temp.matrix = make_cross_selection_matrix(number.of.insecticides = 3,
+#                                           min.cross.selection = -1,
+#                                           max.cross.selection = 1)
+# 
+# insecticide_not_deployed_with_cross_selection(exposure.scaling.factor = 10,
+#                                                          nsim = 1000,
+#                                                          minimum.insecticide.resistance.heritability = 0.05,
+#                                                          maximum.insecticide.resistance.heritability = 0.30,
+#                                                          minimum.male.insecticide.exposure = 0,
+#                                                          maximum.male.insecticide.exposure = 1,
+#                                                          minimum.female.insecticide.exposure = 0.4,
+#                                                          maximum.female.insecticide.exposure = 0.9,
+#                                                          resistance.cost = 0.1,
+#                                                          initial.resistance.intensity = 0,
+#                                                          cross.selection.matrix = temp.matrix,
+#                                                          currently.deployed.insecticide = 1,
+#                                                          currently.tracked.insecticide = 2,
+#                                                          number.of.insecticides = 3)
+

@@ -1,41 +1,18 @@
-
-
-@imports
-
-library(gridExtra)
-
-
-temp.df = get_simulation_dataframe(run_simulation_intervention_test(number.of.insecticides = 2,
-                                                               exposure.scaling.factor = 10,
-                                                               nsim = 1,
-                                                               minimum.insecticide.resistance.heritability = 0.30,
-                                                               maximum.insecticide.resistance.heritability = 0.30,
-                                                               minimum.male.insecticide.exposure = 0.9,
-                                                               maximum.male.insecticide.exposure = 0.9,
-                                                               minimum.female.insecticide.exposure = 0.9,
-                                                               maximum.female.insecticide.exposure = 0.9,
-                                                               resistance.cost = 0.1,
-                                                               starting.treatment.site.intensity = 0,
-                                                               starting.refugia.intensity = 0,
-                                                               min.intervention.coverage = 0.9,
-                                                               max.intervention.coverage = 0.9,
-                                                               min.dispersal.rate = 0.5,
-                                                               max.dispersal.rate = 0.5,
-                                                               maximum.generations = 500,
-                                                               irm.strategy = "rotation", #will be sequence or rotation (plus mixture later on),
-                                                               half.population.bioassay.survival.resistance = 900,
-                                                               withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
-                                                               return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
-                                                               deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
-                                                               maximum.resistance.value = 25000 #have arbitrarily high just in case
-
-),
-                         number.of.insecticides = 2,
-                         maximum.generations = 500)
-
-
-
-
+#'@title Plot the Insecticide Resistance Management Simulation
+#'
+#'@description
+#'
+#'@import magrittr dplyr ggplot2
+#'@importFrom magrittr %>%
+#'@name %>%
+#'
+#'@param  simulation.dataframe The dataframe of the simulation created using the get_simualation_dataframe function
+#'@param half.population.bioassay.survival.resistance The resistance intensity that gives 50% bioassay survival. This must be identical to the value used in the simulation.
+#'@param withdrawal.threshold The bioassay survival proportion that leads to the withdrawal of the insecticide. This must be identitical to the value used in the simulation.
+#'@param return.threshold The bioassay survival proportion that allows the return of the insecticide to the arsenal. This must be identical to the value used in the simulation.
+#'
+#'@return A two panel ggplot of the bioassay survival in the Intervention Site and Refugia. 
+#'
 
 plot_simulation = function(simulation.dataframe,
                            half.population.bioassay.survival.resistance,

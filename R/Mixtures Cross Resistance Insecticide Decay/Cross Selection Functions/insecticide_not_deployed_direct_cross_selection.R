@@ -16,7 +16,7 @@ insecticide_not_deployed_direct_cross_selection = function(exposure.scaling.fact
   
  
   track.resistance.intensity = initial.resistance.intensity + 
-                                                 mean((response_to_insecticide_selection(
+                                                 ((response_to_insecticide_selection(
                                                                                       exposure.scaling.factor = exposure.scaling.factor,
                                                                                       nsim = nsim, 
                                                                                       minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
@@ -37,7 +37,7 @@ insecticide_not_deployed_direct_cross_selection = function(exposure.scaling.fact
                                                    maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)) *  
                                                             cross.selection.matrix[currently.deployed.insecticide, currently.tracked.insecticide]) +
                             
-                 mean((response_to_insecticide_selection(
+                 ((response_to_insecticide_selection(
                                                         exposure.scaling.factor = exposure.scaling.factor,
                                                         nsim = nsim, 
                                                         minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
@@ -63,3 +63,22 @@ insecticide_not_deployed_direct_cross_selection = function(exposure.scaling.fact
   
   return(track.resistance.intensity)
 }
+
+
+# temp.matrix = make_cross_selection_matrix(number.of.insecticides = 3,
+#                                           min.cross.selection = 0,
+#                                           max.cross.selection = 0)
+# 
+# insecticide_not_deployed_direct_cross_selection(exposure.scaling.factor = 10,
+#                                                     nsim = 1,
+#                                                     minimum.insecticide.resistance.heritability = 1,
+#                                                     maximum.insecticide.resistance.heritability = 1,
+#                                                     minimum.male.insecticide.exposure = 1,
+#                                                     maximum.male.insecticide.exposure = 1,
+#                                                     minimum.female.insecticide.exposure = 1,
+#                                                     maximum.female.insecticide.exposure = 1,
+#                                                     resistance.cost = 0,
+#                                                     initial.resistance.intensity = 0,
+#                                                     cross.selection.matrix = temp.matrix,
+#                                                     currently.deployed.insecticide = 1,
+#                                                     currently.tracked.insecticide = 2)

@@ -41,7 +41,7 @@ refugia_migration_effect_insecticide_deployed = function(initial.refugia.resista
                                                           min.dispersal.rate = 0.1,
                                                           max.dispersal.rate = 0.9){
   
-  track.refugia.resistance = (refugia_selection_costs( #Allows selectio then migration in refugia
+  track.refugia.resistance = (refugia_selection_costs( #Allows selection then migration in refugia
     initial.refugia.resistance = initial.refugia.resistance,
     resistance.cost = resistance.cost,
     exposure.scaling.factor = exposure.scaling.factor,

@@ -57,6 +57,28 @@ insecticide_deployed_cross_selection = function(currently.deployed.insecticide,
       maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)) * (cross.selection.matrix[currently.deployed.insecticide, j])
 }
 
-cross.selection.value = sum(cross.selection.values)
+cross.selection.value = sum(cross.selection.values, na.rm = TRUE)
   return(cross.selection.value)
 }
+
+
+
+
+# temp.matrix = make_cross_selection_matrix(number.of.insecticides = 3,
+#                                           min.cross.selection = 1,
+#                                           max.cross.selection = 1)
+# 
+# insecticide_deployed_cross_selection(currently.deployed.insecticide = 1,
+#                                      number.of.insecticides = 3,
+#                                      cross.selection.matrix = temp.matrix,
+#                                      exposure.scaling.factor = 10,
+#                                      nsim = 1,
+#                                      minimum.insecticide.resistance.heritability = 1,
+#                                      maximum.insecticide.resistance.heritability = 1,
+#                                      minimum.male.insecticide.exposure = 1,
+#                                      maximum.male.insecticide.exposure = 1,
+#                                      minimum.female.insecticide.exposure = 1,
+#                                      maximum.female.insecticide.exposure = 1,
+#                                      resistance.cost = 0)
+
+

@@ -44,3 +44,22 @@ refugia_with_cross_selection = function(resistance.cost = 0,
   
   return(track.refugia.resistance)
 }
+
+# temp.matrix = make_cross_selection_matrix(number.of.insecticides = 3,
+#                                           min.cross.selection = -1,
+#                                           max.cross.selection = 1)
+# 
+# 
+# refugia_with_cross_selection(resistance.cost = 0.1,
+#                                         exposure.scaling.factor = 10,
+#                                         nsim = 1000,
+#                                         minimum.insecticide.resistance.heritability = 0.05,
+#                                         maximum.insecticide.resistance.heritability = 0.30,
+#                                         minimum.male.insecticide.exposure = 0,
+#                                         maximum.male.insecticide.exposure = 1,
+#                                         minimum.female.insecticide.exposure = 0.4,
+#                                         maximum.female.insecticide.exposure = 0.9,
+#                                         number.of.insecticides = 3,
+#                                         currently.tracked.insecticide =1,
+#                                         cross.selection.matrix = temp.matrix,
+#                                         initial.refugia.resistance = 10)

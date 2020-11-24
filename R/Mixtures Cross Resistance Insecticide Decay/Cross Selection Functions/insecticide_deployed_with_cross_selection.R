@@ -15,8 +15,8 @@ insecticide_deployed_with_cross_selection = function(resistance.cost = 0,
   
   
   track.resistance.intensity = 
-                          inititial.resistance.intensity + 
-                              response_to_insecticide_selection(exposure.scaling.factor = exposure.scaling.factor,
+                 initial.resistance.intensity + 
+                                response_to_insecticide_selection(exposure.scaling.factor = exposure.scaling.factor,
                                                                 nsim = nsim, 
                                                                 minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
                                                                 maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
@@ -33,7 +33,8 @@ insecticide_deployed_with_cross_selection = function(resistance.cost = 0,
                                                        maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                        minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                                        maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) +
-                          insecticide_deployed_cross_selection(currently.deployed.insecticide = currently.deployed.insecticide,
+    
+                                insecticide_deployed_cross_selection(currently.deployed.insecticide = currently.deployed.insecticide,
                                                                number.of.insecticides = number.of.insecticides,
                                                                cross.selection.matrix = cross.selection.matrix,
                                                                exposure.scaling.factor = exposure.scaling.factor,
@@ -51,3 +52,42 @@ insecticide_deployed_with_cross_selection = function(resistance.cost = 0,
   
   return(track.resistance.intensity)
 }
+
+
+# temp.matrix = make_cross_selection_matrix(number.of.insecticides = 3,
+#                                           min.cross.selection = 0,
+#                                           max.cross.selection = 0)
+# 
+# 
+# insecticide_deployed_with_cross_selection(resistance.cost = 0,
+#                                                      exposure.scaling.factor = 10,
+#                                                      nsim = 1,
+#                                                      minimum.insecticide.resistance.heritability = 1,
+#                                                      maximum.insecticide.resistance.heritability = 1,
+#                                                      minimum.male.insecticide.exposure = 1,
+#                                                      maximum.male.insecticide.exposure = 1,
+#                                                      minimum.female.insecticide.exposure = 1,
+#                                                      maximum.female.insecticide.exposure = 1,
+#                                                      initial.resistance.intensity = 0,
+#                                                      currently.deployed.insecticide = 1,
+#                                                      number.of.insecticides = 3,
+#                                                      cross.selection.matrix = temp.matrix)
+# 
+# 
+# response_to_insecticide_selection(exposure.scaling.factor = 10,
+#                                   nsim = 1,
+#                                   minimum.insecticide.resistance.heritability = 1,
+#                                   maximum.insecticide.resistance.heritability = 1,
+#                                   minimum.male.insecticide.exposure = 1,
+#                                   maximum.male.insecticide.exposure = 1,
+#                                   minimum.female.insecticide.exposure = 1,
+#                                   maximum.female.insecticide.exposure = 1)+
+# effect_of_fitness_cost(resistance.cost = 0,
+#                        exposure.scaling.factor = 10,
+#                        nsim = 1,
+#                        minimum.insecticide.resistance.heritability = 1,
+#                        maximum.insecticide.resistance.heritability = 1,
+#                        minimum.male.insecticide.exposure = 1,
+#                        maximum.male.insecticide.exposure = 1,
+#                        minimum.female.insecticide.exposure = 1,
+#                        maximum.female.insecticide.exposure = 1)
