@@ -44,19 +44,23 @@ insecticide_not_deployed_selection_cost = function(
   
   
   
-  track.resistance.intensity = initial.resistance.intensity + #made negative in effect_of_fitness_cost function
-                                effect_of_fitness_cost(resistance.cost = resistance.cost,
-                                                       exposure.scaling.factor = exposure.scaling.factor,
-                                                       nsim = nsim, 
-                                                       minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                                       maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                                                       minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                                                       maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                                                       minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                                       maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
+ 
+  effect.of.fitness.cost = effect_of_fitness_cost(resistance.cost = resistance.cost,
+                                                  exposure.scaling.factor = exposure.scaling.factor,
+                                                  nsim = nsim, 
+                                                  minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
+                                                  maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                  minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                  maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                  minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                  maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
+  
+  
+                                                    #made negative in effect_of_fitness_cost function
+  track.resistance.intensity = initial.resistance.intensity + effect.of.fitness.cost
   
   #To prevent resistance.intensity being less than zero:
-  track.resistance.intensity = ifelse(track.resistance.intensity < 0, 0, track.resistance.intensity)
+  track.resistance.intensity = ifelse(track.resistance.intensity < 0, yes = 0, no = track.resistance.intensity)
   
   return(track.resistance.intensity)
 }

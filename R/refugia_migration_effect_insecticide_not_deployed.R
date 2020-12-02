@@ -41,49 +41,42 @@ refugia_migration_effect_insecticide_not_deployed = function(initial.refugia.res
                                                               min.dispersal.rate = 0.1,
                                                               max.dispersal.rate = 0.9){
   
-  track.refugia.resistance = (refugia_selection_costs( #allow selection in refugia; followed by migration
-    initial.refugia.resistance = initial.refugia.resistance,
-    resistance.cost = resistance.cost,
-    exposure.scaling.factor = exposure.scaling.factor,
-    nsim = nsim, 
-    minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-    maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-    minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-    maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-    minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-    maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) *
-      (1 - 
-         (migration_refugia_to_treatment(
-           nsim = nsim, 
-           min.intervention.coverage = min.intervention.coverage, 
-           max.intervention.coverage = max.intervention.coverage, 
-           min.dispersal.rate = min.dispersal.rate,
-           max.dispersal.rate = max.dispersal.rate)))) +
+  
+  refugia.selection.costs = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
+                                                    resistance.cost = resistance.cost,
+                                                    exposure.scaling.factor = exposure.scaling.factor,
+                                                    nsim = nsim, 
+                                                    minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
+                                                    maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                    minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                    maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                    minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                    maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
     
-    #note: should this depend on whether the insecticide is being deployed? 
-    #Currently using as though there is no selection pressure (not deployed). 
-    #As updated first in the simulation does it matter??
-    (insecticide_not_deployed_selection_cost(#allow selection in treatment site; then migration.
-      initial.resistance.intensity = initial.resistance.intensity,
-      resistance.cost = resistance.cost,
-      exposure.scaling.factor = exposure.scaling.factor,
-      nsim = nsim, 
-      minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-      maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-      minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-      maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-      minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-      maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) * 
-       migration_refugia_to_treatment(
-         nsim = nsim, 
-         min.intervention.coverage = min.intervention.coverage, 
-         max.intervention.coverage = max.intervention.coverage, 
-         min.dispersal.rate = min.dispersal.rate,
-         max.dispersal.rate = max.dispersal.rate))
+    
+  treatment.selection.costs =insecticide_not_deployed_selection_cost(initial.resistance.intensity = initial.resistance.intensity,
+                                                                       resistance.cost = resistance.cost,
+                                                                       exposure.scaling.factor = exposure.scaling.factor,
+                                                                       nsim = nsim, 
+                                                                       minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
+                                                                       maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                                       minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                                       maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                                       minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                                       maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
+   
+    
+  migration = migration_refugia_to_treatment(nsim = nsim, 
+                                             min.intervention.coverage = min.intervention.coverage, 
+                                             max.intervention.coverage = max.intervention.coverage, 
+                                             min.dispersal.rate = min.dispersal.rate,
+                                             max.dispersal.rate = max.dispersal.rate)
+        
   
-  
-  #Prevent resistance intensity going below 0
-  track.refugia.resistance = ifelse(track.refugia.resistance < 0, 0, track.refugia.resistance)
+
+  track.refugia.resistance = (refugia.selection.costs *(1 - migration)) + (treatment.selection.costs * migration)
+    #Prevent resistance intensity going below 0
+  track.refugia.resistance = ifelse(track.refugia.resistance < 0, yes = 0, no = track.refugia.resistance)
   
   return(track.refugia.resistance)
   
