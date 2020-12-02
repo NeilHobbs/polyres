@@ -2,12 +2,12 @@
 ## Incorporating polygenic resistance into Insecticide Resistance Management
 
 ## Description
-**polyres** enables the user to incorporate poygenic insecticide resistance (and the associated resistance intensity) into insecticide resistance models. This is achieved through converting bioassay survival (eg. from CDC Bottle Bioassays or WHO Cylinders) to a resistance intensity score using the Hill variant of the Michaelis-Menten equation. This package is developed based around the *Anopheles gambiae* mosquito. 
+**polyres** enables the user to incorporate poygenic insecticide resistance (and the associated resistance intensity) into insecticide resistance models. This is achieved through a quantitative genetics framework. Resistance intensity is converted to bioassay survival  using the Hill variant of the Michaelis-Menten equation. This package is developed primarily around the *Anopheles gambiae* mosquito, but is applicable to most bloodfeeding insects. 
 
 ## Getting Started
 
 ###### General Notes:
-1. Functions in ```polyres``` are named with ```_``` between the names. Parameters are named with ```.``` between the names.
+1. Functions in ```polyres``` are named with ```_``` between the names. Parameters and inputs are named with ```.``` between the names.
 2. Unless otherwise stated, all survival and mortality values used are proportions.
 
 ###### Step 1: Deciding upon intitial scale of insecticide resistance intensity. 
@@ -162,7 +162,7 @@ This function will return a vector of length of ```nsim``` of the change in the 
 
 ## Running Simulations
 
-Insecticide resistance management simulations are run using the ```run_simulation_intervention``` function. This function is designed around giving a large amount of user flexibility to be able to test IRM strategies under multiple scenarios. This function returns a list of the simulation array holding the resistance intensities to the insecticides in both the refugia and the treatment site. 
+Insecticide resistance management simulations are run currently using the ```run_simulation_intervention_test``` or ```run_simulation_intervention_cross_selection_test``` functions. These function is designed around giving a large amount of user flexibility to be able to test IRM strategies under multiple scenarios. This function returns a list of the simulation array holding the resistance intensities to the insecticides in both the refugia and the treatment site. The ```run_simulation_cross_selection_test``` function allows for the incorporating of cross selection into the model. It should be noted that this function is slower than the ```run_simulation_intervention_test```; therefore if running simulations without cross selection it is recommended to use the ```run_simulation_intervention_test``` function to reduce computational time. 
 
 Sequences: The ```irm.strategy = "sequence"``` runs the simulations using the sequence strategy for choosing and deploying insecticides. An insecticide is continually deployed until the ```withdrawal.threshold``` is reached, then the next insecticide is deployed. 
 
@@ -200,9 +200,13 @@ Changing the minimum and maximum parameter to be different values from one anoth
 
 ## Getting the data from the simulations
 
+The simulation functions return an array of the resistance intensities in the sites, and a vector of the deployed insecticide. The ```get_simulation_dataframe``` function is used to convert this array and vector into a single usable dataframe; which can be used for plotting or additional analyses. 
 
+```
+simulation.output = run_simulaton_intervention_test()
 
-
+simulation.dataframe = get_simulation_dataframe()
+```
 
 
 
