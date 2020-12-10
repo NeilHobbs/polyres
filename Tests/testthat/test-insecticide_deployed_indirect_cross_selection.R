@@ -1,0 +1,56 @@
+temp.matrix = make_cross_selection_matrix(number.of.insecticides = 3,
+                                          min.cross.selection = 0,
+                                          max.cross.selection = 0)
+
+
+test_that("When cross selection is 0, there is no impact", {
+  expect_equal(insecticide_deployed_indirect_cross_selection(currently.deployed.insecticide = 1,
+                                                             number.of.insecticides = 3,
+                                                             cross.selection.matrix = temp.matrix,
+                                                             exposure.scaling.factor = 10,
+                                                             nsim = 1000, 
+                                                             minimum.insecticide.resistance.heritability = 0.30, 
+                                                             maximum.insecticide.resistance.heritability = 0.30,
+                                                             minimum.male.insecticide.exposure = 0.5,
+                                                             maximum.male.insecticide.exposure = 0.5, 
+                                                             minimum.female.insecticide.exposure = 0.7, 
+                                                             maximum.female.insecticide.exposure = 0.7,
+                                                             resistance.cost = 0,
+                                                             initial.resistance.intensity = 30), 
+               insecticide_deployed_selection_cost(exposure.scaling.factor = 10,
+                                                      nsim = 1000, 
+                                                      minimum.insecticide.resistance.heritability = 0.30, 
+                                                      maximum.insecticide.resistance.heritability = 0.30,
+                                                      minimum.male.insecticide.exposure = 0.5,
+                                                      maximum.male.insecticide.exposure = 0.5, 
+                                                      minimum.female.insecticide.exposure = 0.7, 
+                                                      maximum.female.insecticide.exposure = 0.7,
+                                                      resistance.cost = 0,
+                                                      initial.resistance.intensity = 30))
+})
+
+test_that("When cross selection is 0, there is no impact with resistance.cost great than 0", {
+expect_equal(insecticide_deployed_indirect_cross_selection(currently.deployed.insecticide = 1,
+                                                                          number.of.insecticides = 3,
+                                                                          cross.selection.matrix = temp.matrix,
+                                                                          exposure.scaling.factor = 10,
+                                                                          nsim = 1000, 
+                                                                          minimum.insecticide.resistance.heritability = 0.30, 
+                                                                          maximum.insecticide.resistance.heritability = 0.30,
+                                                                          minimum.male.insecticide.exposure = 0.5,
+                                                                          maximum.male.insecticide.exposure = 0.5, 
+                                                                          minimum.female.insecticide.exposure = 0.7, 
+                                                                          maximum.female.insecticide.exposure = 0.7,
+                                                                          resistance.cost = 0.3,
+                                                                          initial.resistance.intensity = 30), 
+                            insecticide_deployed_selection_cost(exposure.scaling.factor = 10,
+                                                                nsim = 1000, 
+                                                                minimum.insecticide.resistance.heritability = 0.30, 
+                                                                maximum.insecticide.resistance.heritability = 0.30,
+                                                                minimum.male.insecticide.exposure = 0.5,
+                                                                maximum.male.insecticide.exposure = 0.5, 
+                                                                minimum.female.insecticide.exposure = 0.7, 
+                                                                maximum.female.insecticide.exposure = 0.7,
+                                                                resistance.cost = 0.3,
+                                                                initial.resistance.intensity = 30))
+})
