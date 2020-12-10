@@ -1,19 +1,36 @@
-#Equation 7a(i)
+#' @title Incorporate cross selection that occurs from changes to other traits as a result of an insecticide being deployed
+#' 
+#' @description When insecticide i is deployed there is selection on traits J,K,L etc; which leads to a change in trait I
+#' as a result of the genetic correlation between trait J, K, L etc. and trait I.
+#' 
+#' @param currently.deployed.insecticide = The insecticide that is currently being deployed deployed.insecticide[generation]
+#' @param number.of.insecticides = The total number of insecticides available in the simulation
+#' @param cross.selection.matrix = A matrix containing the cross selection values between each insecticide and trait. Made from the make_cross_selection_matrix function
+#' @param exposure.scaling.factor = 10,
+#' @param nsim = 1000, 
+#' @param minimum.insecticide.resistance.heritability = 0.05, 
+#' @param maximum.insecticide.resistance.heritability = 0.30,
+#' @param minimum.male.insecticide.exposure = 0,
+#' @param maximum.male.insecticide.exposure = 1, 
+#' @param minimum.female.insecticide.exposure = 0.4, 
+#' @param maximum.female.insecticide.exposure = 0.9,
+#' @param resistance.cost = The fitness cost associated with having insecticide resistance.
+#' @param initial.resistance.intensity = The resistance intensity in the previous generation to the insecticide ["treatment", insecticide, generation - 1]
 
-
+#Equation 7a(i), incorporating cross selection
 insecticide_deployed_indirect_cross_selection  = function(currently.deployed.insecticide,
-                                                               number.of.insecticides,
-                                                               cross.selection.matrix,
-                                                               exposure.scaling.factor = 10,
-                                                               nsim = 1000, 
-                                                               minimum.insecticide.resistance.heritability = 0.05, 
-                                                               maximum.insecticide.resistance.heritability = 0.30,
-                                                               minimum.male.insecticide.exposure = 0,
-                                                               maximum.male.insecticide.exposure = 1, 
-                                                               minimum.female.insecticide.exposure = 0.4, 
-                                                               maximum.female.insecticide.exposure = 0.9,
-                                                               resistance.cost = 0.1,
-                                                               initial.resistance.intensity){
+                                                          number.of.insecticides,
+                                                          cross.selection.matrix,
+                                                          exposure.scaling.factor = 10,
+                                                          nsim = 1000, 
+                                                          minimum.insecticide.resistance.heritability = 0.05, 
+                                                          maximum.insecticide.resistance.heritability = 0.30,
+                                                          minimum.male.insecticide.exposure = 0,
+                                                          maximum.male.insecticide.exposure = 1, 
+                                                          minimum.female.insecticide.exposure = 0.4, 
+                                                          maximum.female.insecticide.exposure = 0.9,
+                                                          resistance.cost = 0.1,
+                                                          initial.resistance.intensity){
   
   
   #This is the response of insecticide i on trait I
