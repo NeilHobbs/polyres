@@ -17,14 +17,10 @@
 #' @param max.dispersal.rate = 0.9
 #' @param irm.strategy To be able to set the resistance management strategy (rotation, sequence)
 
+#This function allows for the prespecification of the deployed order of insecticides. And does not take into account 
+  #the need to withdraw/return insecticides. It is a practice function.
 
-#Notes:
-    #There does not appear to be migration to the refugia from the treatment site, as refugia values remain 0.00000. 
-
-
- #And need to figure out how to save into an array!
-
- run_simulation = function(number.of.insecticides = 2,
+run_simulation = function(number.of.insecticides = 2,
                                         exposure.scaling.factor = 10,
                                         nsim = 1000,
                                         minimum.insecticide.resistance.heritability = 0.05,
