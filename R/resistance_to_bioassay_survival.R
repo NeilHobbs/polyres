@@ -24,9 +24,9 @@ resistance_to_bioassay_survival = function(maximum.bioassay.survival.proportion 
 
   
   #Generate a Normal distribution around the population mean of insecticide resistance values
-  resistance.values = rnorm(nsim, 
+  resistance.values = rnorm(nsim = nsim, 
                             mean = mean.population.resistance, 
-                            sd = sd.population.resistance) 
+                            sd = sd.population.resistance) s
   
   
   #Prevent Insecticide Resistance being less than 0, as this would give survival less than 0.
