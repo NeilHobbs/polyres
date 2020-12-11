@@ -1,3 +1,9 @@
+#' @title Make mixtures with a continous overlap
+#' 
+#' @description Makes insecticidal mixtures in a way that the is an overlap between each mixture. 
+#' 
+#' @param number.of.insecticides = The total number of insecticides in the simulation.
+
 make_mixture_sequential_continous = function(number.of.insecticides){
   
   if(number.of.insecticides == 2){
