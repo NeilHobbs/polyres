@@ -9,4 +9,4 @@ deploy_mixture : currently written
 resistance_intensity_to_other_part_of_mixture : currently written
 
 
-switching_mixtures
+switching_mixtures: irm_strategy_rotation_mixture AND irm_strategy_sequence_mixture
