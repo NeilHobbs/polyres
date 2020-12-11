@@ -6,6 +6,8 @@
 #'@importFrom magrittr %>%
 #'@name %>%
 #'
+#'@importFrom gridExtra grid.arrange
+#'
 #'@param  simulation.dataframe The dataframe of the simulation created using the get_simualation_dataframe function
 #'@param half.population.bioassay.survival.resistance The resistance intensity that gives 50% bioassay survival. This must be identical to the value used in the simulation.
 #'@param withdrawal.threshold The bioassay survival proportion that leads to the withdrawal of the insecticide. This must be identitical to the value used in the simulation.
