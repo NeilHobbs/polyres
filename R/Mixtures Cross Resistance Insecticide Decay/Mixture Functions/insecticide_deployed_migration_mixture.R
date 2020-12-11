@@ -1,8 +1,7 @@
-#' @title The effect of dispersal and resistance costs when the insecticide is deployed.
+#' @title The effect of dispersal and resistance costs when an insecticide is deployed in a mixture.
 #'
-#' @description 
-#' This function returns the population mean resistance for the treated location, when
-#' insecticide is deployed, after migration and selection costs.
+#' @description This function returns the population mean resistance for the treated location, when an
+#' insecticide is deployed in a mixture, after migration and selection and fitness costs have happened for that generation.
 #' 
 #' @param exposure.scaling.factor = 10,
 #' @param nsim = 1000, 
@@ -19,6 +18,8 @@
 #' @param initial.refugia.resistance,
 #' @param min.dispersal.rate = 0.1
 #' @param max.dispersal.rate = 0.9
+#' @param intensity.to.other.mixture.part = The resistance intensity of the second part of the insecticide mixture
+#' @param half.population.bioassay.survival.resistance = The resistance intensity that gives 50% bioassay survival
 #' 
 #' @return resistance.intensity.migration A vector of length nsim
 
