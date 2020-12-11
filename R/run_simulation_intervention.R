@@ -99,9 +99,9 @@ run_simulation_intervention= function(number.of.insecticides = 2,
                                                               michaelis.menten.slope = 1, #must be set to 1 to work properly
                                                               half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
                                                               bioassay.survival = withdrawal.threshold.value,
-                                                              estimate.precision = 0.01,
-                                                              sd.population.resistance = 0.01,
-                                                              nsim = 1000,
+                                                              estimate.precision = 0.001,
+                                                              sd.population.resistance = 0,
+                                                              nsim = nsim,
                                                               minimum.resistance.value = 0,
                                                               maximum.resistance.value = maximum.resistance.value)
   
@@ -109,9 +109,9 @@ run_simulation_intervention= function(number.of.insecticides = 2,
                                                           michaelis.menten.slope = 1, #must be set to 1 to work properly
                                                           half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
                                                           bioassay.survival = return.threshold.value,
-                                                          estimate.precision = 0.01,
-                                                          sd.population.resistance = 0.01,
-                                                          nsim = 1000,
+                                                          estimate.precision = 0.001,
+                                                          sd.population.resistance = 0,
+                                                          nsim = nsim,
                                                           minimum.resistance.value = 0,
                                                           maximum.resistance.value = maximum.resistance.value)
   
