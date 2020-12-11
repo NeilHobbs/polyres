@@ -31,8 +31,12 @@
 #' @param deployment.frequency
 #' @param maximum.resistance.value  It is recommended that this be set as approximately 20*half.population.bioassay.survival.resistance
 #' 
-#' Currently this function runs.
-#' 
+
+      #Current Error
+# Error in if (is.na(deployed.mixture$mixture.id[generation])) { : 
+#     argument is of length zero
+
+
 run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
                                                      exposure.scaling.factor = 10,
                                                      nsim = 1000,
@@ -51,7 +55,7 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
                                                      max.dispersal.rate = 0.9,
                                                      maximum.generations = 500,
                                                      irm.deployment.strategy = "mixtures", #single, mixtures
-                                                     #mixture.strategy = "mix.sequential.discrete", #can be: random.mixtures; pyrethroid.plus; mix.sequential.continous; mix.sequential.discrete
+                                                     mixture.strategy = "mix.sequential.discrete", #can be: random.mixtures; pyrethroid.plus; mix.sequential.continous; mix.sequential.discrete
                                                      irm.switch.strategy = "sequence", #will be sequence or rotation;default should be sequence
                                                      half.population.bioassay.survival.resistance = 900,
                                                      withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
@@ -94,26 +98,34 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
     if(mixture.strategy == "mix.sequential.discrete"){
     mixture.df = make_mixture_sequential_discrete(number.of.insecticides = number.of.insecticides)
     }
-    # if(mixture.strategy == "mix.sequential.continous"){
-    #   mixture.df = make_mixture_sequential_continous(number.of.insecticides = number.of.insecticides)
-    # }
-    # 
-    # if(mixture.strategy == "random.mixtures"){
-    #   
-    #   mixture.df = choose_mixture_combinations(number.of.mixtures = number.of.insecticides,#make it so there is the same number of mixtures as there is number of insecticides
-    #                                            potential.mixtures = make_all_possible_mixtures(number.of.insecticides = number.of.insecticides))
-    #   
-    # }
-    # if(mixture.strategy == "pyrethroid.plus"){
-    #   mixture.df = make_pyrethroid_mixtures(number.of.insecticides = number.of.insecticides)
-    # }
+    if(mixture.strategy == "mix.sequential.continous"){
+      mixture.df = make_mixture_sequential_continous(number.of.insecticides = number.of.insecticides)
+    }
+
+    if(mixture.strategy == "random.mixtures"){
+
+      mixture.df = choose_mixture_combinations(number.of.mixtures = number.of.insecticides,#make it so there is the same number of mixtures as there is number of insecticides
+                                               potential.mixtures = make_all_possible_mixtures(number.of.insecticides = number.of.insecticides))
+
+    }
+    if(mixture.strategy == "pyrethroid.plus"){
+      mixture.df = make_pyrethroid_mixtures(number.of.insecticides = number.of.insecticides)
+    }
     
-    deployed.mixture.id = rep(mixture.df[1, 1], times = freq.deployment)
-    deployed.mixture.1 = rep(mixture.df[1, 2], times = freq.deployment)
-    deployed.mixture.2 = rep(mixture.df[1, 3], times = freq.deployment)
-    deployed.mixture = data.frame(deployed.mixture.id, deployed.mixture.1, deployed.mixture.2)
+    mixture.id = rep(mixture.df[1, 1], times = deployment.frequency)#first row, first column
+    mixture.part.1 = rep(mixture.df[1, 2], times = deployment.frequency)#first row, second column
+    mixture.part.2 = rep(mixture.df[1, 3], times = deployment.frequency)#first row, third column
+    
+    #The dataframe that holds the mixture deployment information
+    deployed.mixture = data.frame(mixture.id, mixture.part.1, mixture.part.2)
     
   }
+  
+  available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.
+  #At the beginning all insecticides are available for deployment. 
+  withdrawn.vector = c() #creates an empty vector to hold the withdrawn insecticides.
+  
+  available.mixtures = mixture.df #at the start all mixtures will be available
   
   mixture.info = list(available.mixtures, available.vector, withdrawn.vector, deployed.mixture)
   
@@ -144,12 +156,12 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
   for(generation in 2:maximum.generations){
     
     #Stop the simulation if there is no insecticide being deployed anymore.
-    if(is.na(deployed.insecticide[generation])){break}else{
+    if(is.na(deployed.mixture$mixture.id[generation])){break}else{
       
       for(insecticide in 1:number.of.insecticides){ #track the resistance intensity for each insecticide
                     ##                                                   #ask whether insecticide is the same as deployed insecticide
-        sim.array['treatment', insecticide, generation] = if(insecticide == deployed.mixture$deployed.mixture.1[generation] |
-                                                             deployed.mixture$deployed.mixture.2[generation]){#Insecticide is deployed in treatment site
+        sim.array['treatment', insecticide, generation] = if(insecticide == deployed.mixture$mixture.part.1[generation] |
+                                                             deployed.mixture$mixture.part.2[generation]){#Insecticide is deployed in treatment site
           #calculate population mean from previous population mean when insecticide present
           mean(insecticide_deployed_migration_mixture(#note: this function calls insecticide_deployed_selection_costs_mixture
             exposure.scaling.factor = exposure.scaling.factor,
@@ -194,8 +206,8 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
         
       #Do refugia second, updating each generation for each insecticide
         #calculate the population mean from the previous population mean
-        sim.array['refugia', insecticide, generation] = if(insecticide == deployed.mixture$deployed.mixture.1[generation] |
-                                                           deployed.mixture$deployed.mixture.2[generation]){#Insecticide is deployed in treatment site
+        sim.array['refugia', insecticide, generation] = if(insecticide == deployed.mixture$mixture.part.1[generation] |
+                                                           deployed.mixture$mixture.part.2[generation]){#Insecticide is deployed in treatment site
           #calculate population mean from previous population mean when insecticide present
           mean(refugia_migration_effect_insecticide_deployed_mixture(initial.refugia.resistance = sim.array["refugia", insecticide, generation - 1],
                                                                      initial.resistance.intensity = sim.array["treatment", insecticide, generation - 1],
@@ -252,40 +264,40 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
     #at the moment.
     #Update insecticide each time the deployment.frequency is reached:
     if(generation < maximum.generations){
-      update.insecticide.info = if(generation %% deployment.frequency == 0){
+      update.mixture.info = if(generation %% deployment.frequency == 0){
         if(irm.switch.strategy == "rotation"){
-          irm_strategy_rotation(
-            number.of.insecticides = number.of.insecticides,
-            current.generation = generation,
-            withdrawal.threshold = calc.withdrawal.threshold,
-            return.threshold = calc.return.threshold,
-            simulation.array = sim.array,
-            available.vector = available.vector,
-            withdrawn.vector = withdrawn.vector,
-            current.insecticide = deployed.insecticide[generation],
-            deployment.frequency = deployment.frequency,
-            deployment.vector = deployed.insecticide)} else{
+          irm_strategy_rotation_mixture(number.of.insecticides = number.of.insecticides,
+                                        current.generation = generation,
+                                        withdrawal.threshold = calc.withdrawal.threshold,
+                                        return.threshold = calc.return.threshold,
+                                        simulation.array = sim.array,
+                                        available.vector = available.vector,
+                                        withdrawn.vector = withdrawn.vector,
+                                        mixture.df = mixture.df,
+                                        current.mixture = deployed.mixture$mixture.id[generation],
+                                        deployment.frequency = deployment.frequency,
+                                        deployment.df = deployed.mixture)} else{
               if(irm.switch.strategy == "sequence"){
-                irm_strategy_sequence(
-                  number.of.insecticides = number.of.insecticides,
-                  current.generation = generation,
-                  withdrawal.threshold = calc.withdrawal.threshold,
-                  return.threshold = calc.return.threshold,
-                  simulation.array = sim.array,
-                  available.vector = available.vector,
-                  withdrawn.vector = withdrawn.vector,
-                  current.insecticide = deployed.insecticide[generation],
-                  deployment.frequency = deployment.frequency,
-                  deployment.vector = deployed.insecticide) 
+                irm_strategy_sequence_mixture(number.of.insecticides = number.of.insecticides,
+                                              current.generation = generation,
+                                              withdrawal.threshold = calc.withdrawal.threshold,
+                                              return.threshold = calc.return.threshold,
+                                              simulation.array = sim.array,
+                                              available.vector = available.vector,
+                                              withdrawn.vector = withdrawn.vector,
+                                              mixture.df = mixture.df,
+                                              current.mixture = deployed.mixture$mixture.id[generation],
+                                              deployment.frequency = deployment.frequency,
+                                              deployment.df = deployed.mixture)
               }
             } 
         
         # mixture.info = list(available.mixtures, available.vector, withdrawn.vector, deployed.mixture)
       }
-      if(generation %% deployment.frequency == 0){available.mixtures = mixture.info[[1]]}
-      if(generation %% deployment.frequency == 0){available.vector = mixture.info[[2]]}
-      if(generation %% deployment.frequency == 0){withdrawn.vector = mixture.info[[3]]}
-      if(generation %% deployment.frequency == 0){deployed.mixture = mixture.info[[4]]}
+      if(generation %% deployment.frequency == 0){available.mixtures = update.mixture.info[[1]]}
+      if(generation %% deployment.frequency == 0){available.vector = update.mixture.info[[2]]}
+      if(generation %% deployment.frequency == 0){withdrawn.vector = update.mixture.info[[3]]}
+      if(generation %% deployment.frequency == 0){deployed.mixture = update.mixture.info[[4]]}
     }
     #A break point to stop simuation if there is no insecticide deployed
     #if(is.na(deployed.insecticide[generation])){break}
@@ -298,38 +310,36 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
 }
 
 
-# test_simulation = run_simulation_intervention(number.of.insecticides = 2,
-#                        exposure.scaling.factor = 10,
-#                        nsim = 1000,
-#                         minimum.insecticide.resistance.heritability = 0.3,
-#                                maximum.insecticide.resistance.heritability = 0.30,
-#                                minimum.male.insecticide.exposure = 1,
-#                                maximum.male.insecticide.exposure = 1,
-#                                minimum.female.insecticide.exposure = 0.9,
-#                                maximum.female.insecticide.exposure = 0.9,
-#                                resistance.cost = 0,
-#                                starting.treatment.site.intensity = 0,
-#                                starting.refugia.intensity = 0,
-#                                min.intervention.coverage = 0.1,
-#                                max.intervention.coverage = 0.9,
-#                                min.dispersal.rate = 0.1,
-#                                max.dispersal.rate = 0.1,
-#                                maximum.generations = 500,
-#                                irm.strategy = sequence, #will be sequence or rotation (plus mixture later on),
-#                                half.population.bioassay.survival.resistance = 900,
-#                                withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
-#                                return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
-#                                deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
-#                                maximum.resistance.value = 25000 #have arbitrarily high just in case
-# 
-# )
-# # 
-# # test_simulation[[1]]
-# # test_simulation[[2]]
-# # print(test_simulation)
+A = run_simulation_intervention_test_mixtures(number.of.insecticides = 4,
+                                              exposure.scaling.factor = 10,
+                                              nsim = 1,
+                                              minimum.insecticide.resistance.heritability = 1,
+                                              maximum.insecticide.resistance.heritability = 1,
+                                              minimum.male.insecticide.exposure = 1,
+                                              maximum.male.insecticide.exposure = 1,
+                                              minimum.female.insecticide.exposure = 1,
+                                              maximum.female.insecticide.exposure = 1,
+                                              resistance.cost = 0,
+                                              starting.treatment.site.intensity = 10,
+                                              starting.refugia.intensity = 0,
+                                              min.intervention.coverage = 1,
+                                              max.intervention.coverage = 1,
+                                              min.dispersal.rate = 0,
+                                              max.dispersal.rate = 0,
+                                              maximum.generations = 50,
+                                              irm.deployment.strategy = "mixtures", #single, mixtures
+                                              mixture.strategy = "mix.sequential.discrete", #can be: random.mixtures; pyrethroid.plus; mix.sequential.continous; mix.sequential.discrete
+                                              irm.switch.strategy = "sequence", #will be sequence or rotation;default should be sequence
+                                              half.population.bioassay.survival.resistance = 900,
+                                              withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+                                              return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+                                              deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+                                              maximum.resistance.value = 25000)
 
 
 
-
+B = get_simulation_dataframe_mixtures(simulation.array = A,
+                                    number.of.insecticides = 2,
+                                    maximum.generations = 50)
 
 
