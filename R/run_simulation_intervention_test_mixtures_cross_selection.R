@@ -1,12 +1,6 @@
-#' @title Run the insecticide resistance management simulation for sequences and rotations.
+#' @title Run the insecticide resistance management simulation for mixtures and cross selection.
 #' 
-#' @description This is the main wrapper function that implements the running of the insecticide resistance management
-#' simulations. Currently the simulations allows for the comparison of sequence and rotation strategies. At the moment,
-#' each insecticide acts completely independently; such that there is no cross resistance and cross selection. 
-#' For the "sequence" irm.strategy a single insecticide is continually deployed until it reaches the threshold for withdrawal,
-#' at this point the next insecticide is deployed (at the next deployment opportunity). For the "rotation" irm.strategy, the
-#' insecticide is changed at each deployment interval. It is therefore not recommend to compare rotations and sequences when
-#' the number.of.insecticides = 1; as this will mean that the rotation strategy lasts a single deployment duration.
+#' @description
 #' 
 #' @param number.of.insecticides how many insecticides are available in the arsenal. 
 #' @param exposure.scaling.factor = 10,
