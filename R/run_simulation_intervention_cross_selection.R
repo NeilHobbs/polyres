@@ -30,6 +30,10 @@
 #' @param return.threshold.value
 #' @param deployment.frequency
 #' @param maximum.resistance.value  It is recommended that this be set as approximately 20*half.population.bioassay.survival.resistance
+#' @param min.cross.selection 
+#' @param max.cross.selection
+#' 
+#' 
 #' 
 #' Currently this function runs.
 #' 
