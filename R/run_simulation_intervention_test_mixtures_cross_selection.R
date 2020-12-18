@@ -30,11 +30,6 @@
 #' @param return.threshold.value
 #' @param deployment.frequency
 #' @param maximum.resistance.value  It is recommended that this be set as approximately 20*half.population.bioassay.survival.resistance
-#' 
-
-#Current Error
-# Error in if (is.na(deployed.mixture$mixture.id[generation])) { : 
-#     argument is of length zero
 
 
 run_simulation_intervention_test_mixtures_cross_selection = function(number.of.insecticides = 2,
