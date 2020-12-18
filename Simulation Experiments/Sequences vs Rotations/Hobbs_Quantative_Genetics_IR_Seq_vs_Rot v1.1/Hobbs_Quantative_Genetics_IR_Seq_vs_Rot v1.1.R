@@ -5,26 +5,36 @@ library(devtools)
 load_all() #loads in polyres
 library(lhs) #for latin hypercube
 library(ppcor) #for parameter space testing
-library(ggplot2)
-#Make latin hypercube for sampling, that allows x simulations total. There are 6 inputs that can be changed
-df = data.frame(randomLHS(5000, 6))
+library(ggplot2) #for plotting
+
+
+#Make latin hypercube for sampling, that allows x simulations total. There are 7 inputs that can be changed
+#insecticide.resistance.hertiability
+#male.insecticide.exposure
+#female.insecticide.exposure
+#resistance.cost
+#intervention.coverage
+#dispersal
+
+df = data.frame(lhs::randomLHS(5000, 7))
 
 #Rename columns; and change distributions to be correct
 #for easier tracking of which variable is which.
 
 df = df%>%
-  rename(insecticide.resistance.hertiability = X1)%>%
-  rename(male.insecticide.exposure = X2)%>%
-  rename(female.insecticide.exposure = X3)%>%
-  rename(resistance.cost = X4)%>%
-  rename(intervention.coverage = X5)%>%
-  rename(dispersal = X6)%>%
-  mutate(insecticide.resistance.hertiability = qunif(insecticide.resistance.hertiability, 0.003, 0.97))%>%
-  mutate(male.insecticide.exposure = qunif(male.insecticide.exposure, 0, 1))%>%
-  mutate(female.insecticide.exposure = qunif(female.insecticide.exposure, 0.4, 0.9))%>%
-  mutate(resistance.cost = qunif(resistance.cost, 0.01, 0.2))%>%
-  mutate(intervention.coverage = qunif(intervention.coverage, 0.1, 0.9))%>%
-  mutate(dispersal = qunif(dispersal, 0.1, 0.9))
+  dplyr::rename(insecticide.resistance.hertiability = X1)%>%
+  dplyr::rename(male.insecticide.exposure = X2)%>%
+  dplyr:: rename(female.insecticide.exposure = X3)%>%
+  dplyr::rename(resistance.cost = X4)%>%
+  dplyr::rename(intervention.coverage = X5)%>%
+  dplyr::rename(dispersal = X6)%>%
+  dplyr::rename(cross.selection = X7)%>%
+  dplyr::mutate(insecticide.resistance.hertiability = qunif(insecticide.resistance.hertiability, 0.003, 0.97))%>%
+  dplyr::mutate(male.insecticide.exposure = qunif(male.insecticide.exposure, 0, 1))%>%
+  dplyr::mutate(female.insecticide.exposure = qunif(female.insecticide.exposure, 0.4, 0.9))%>%
+  dplyr::mutate(resistance.cost = qunif(resistance.cost, 0.01, 0.2))%>%
+  dplyr::mutate(intervention.coverage = qunif(intervention.coverage, 0.1, 0.9))%>%
+  dplyr::mutate(dispersal = qunif(dispersal, 0.1, 0.9))
 
 write.csv(df, ".//lhs_values.csv") #only has the randomly selected values
 
@@ -33,13 +43,14 @@ df = read.csv("./lhs_values.csv")
 
 parameter.space = df[,2:7]
 parameter.space = parameter.space%>%
-  rename(Heritability = insecticide.resistance.hertiability)%>%
-  rename(`Male Exposure` = male.insecticide.exposure)%>%
-  rename(`Female Exposure` = female.insecticide.exposure)%>%
-  rename(`Intervention Coverage` = intervention.coverage)%>%
-  rename(`Fitness Cost` = resistance.cost)%>%
-  rename(Dispersal = dispersal)
+  dplyr::dplyr::rename(Heritability = insecticide.resistance.hertiability)%>%
+  dplyr::rename(`Male Exposure` = male.insecticide.exposure)%>%
+  dplyr::rename(`Female Exposure` = female.insecticide.exposure)%>%
+  dplyr::rename(`Intervention Coverage` = intervention.coverage)%>%
+  dplyr::rename(`Fitness Cost` = resistance.cost)%>%
+  dplyr::rename(Dispersal = dispersal)
 
+#Visually check suitable parameter space coverage - eg no patches with large gaps.
 plot(parameter.space)
 
 
