@@ -23,15 +23,18 @@ migration_treatment_to_refugia = function(nsim = 1000,
   if(0 > max.dispersal.rate | max.dispersal.rate > 1){stop("max.dispersal.rate must be between 0 and 1")}
   if(min.dispersal.rate > max.dispersal.rate){stop("min.dispersal.rate is greater than max.dispersal.rate")}
 
+
+  coverage =  runif(n = nsim, 
+                    min = min.intervention.coverage,
+                    max = max.intervention.coverage)
   
-  exchange.treatment.to.refugia = (1 - runif(nsim, 
-                                             min = min.intervention.coverage,
-                                             max = max.intervention.coverage)) * 
-                                     runif(nsim, 
-                                           min = min.dispersal.rate, 
-                                           max= max.dispersal.rate)
-  
-  return(exchange.treatment.to.refugia)
+  dispersal = runif(n = nsim, 
+                    min = min.dispersal.rate, 
+                    max= max.dispersal.rate)
+    
+  exchange.treatment.to.refugia = (1 - coverage) * dispersal
+                                  
+    return(exchange.treatment.to.refugia)
 }
 
 #This is equation 6A in the MS
