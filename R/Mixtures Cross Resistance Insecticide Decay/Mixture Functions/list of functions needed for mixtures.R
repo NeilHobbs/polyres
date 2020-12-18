@@ -10,3 +10,5 @@ resistance_intensity_to_other_part_of_mixture : currently written
 
 
 switching_mixtures: irm_strategy_rotation_mixture AND irm_strategy_sequence_mixture
+
+plot_simulation_mixture :: may be easier/better to ammend plot_simulation.

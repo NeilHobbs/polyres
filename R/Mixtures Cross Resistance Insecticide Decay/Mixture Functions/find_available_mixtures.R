@@ -26,9 +26,4 @@ available.mixtures = na.omit(mixture.df)
 return(available.mixtures)
 }
 
-                                           
-
-
-
-
-
+                                          
