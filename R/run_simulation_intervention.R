@@ -18,10 +18,10 @@
 #' @param minimum.female.insecticide.exposure = 0.4, 
 #' @param maximum.female.insecticide.exposure = 0.9,
 #' @param resistance.cost = default set to 0
-#' @param initial.resistance.intensity,
+#' @param initial.resistance.intensity = A vector of length number.of.insecticides containing the starting resistance intensities for the intervention site.
 #' @param min.intervention.coverage = 0.1, 
 #' @param max.intervention.coverage = 0.9, 
-#' @param initial.refugia.resistance,
+#' @param initial.refugia.resistance = A vector of length number.of.insecticides containing the starting resistance intensities for the refugia site.
 #' @param min.dispersal.rate = 0.1,
 #' @param max.dispersal.rate = 0.9
 #' @param irm.strategy To be able to set the resistance management strategy (rotation, sequence)
@@ -75,11 +75,14 @@ run_simulation_intervention= function(number.of.insecticides = 2,
   #and calculating the withdrawal and return thresholds. 
   
   #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
-  #refugia site starting resistace intensity
-  sim.array['refugia', , 1] = starting.refugia.intensity
+  for(i in 1:number.of.insecticides){
+    sim.array['refugia', i , 1] = starting.refugia.intensity[i]
+  }
   
   #treatment site starting resistance intensity (where the insecticide can be deployed)
-  sim.array['treatment', , 1] = starting.treatment.site.intensity
+  for(i in 1:number.of.insecticides){
+    sim.array['treatment', i , 1] = starting.treatment.site.intensity[i]
+  }
   
   available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.
   #At the beginning all insecticides are available for deployment. 
