@@ -61,7 +61,9 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
                                                      withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
                                                      return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
                                                      deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
-                                                     maximum.resistance.value = 25000){
+                                                     maximum.resistance.value = 25000,
+                                                     conversion.factor = 0.48,
+                                                     intercept = 0.15){
   
   #Start by creating an array (calls the array_named function):
   #dimension 1: site = c("refugia", "treatment"), which hold resistance intensities.
@@ -183,7 +185,9 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
                                                                                             generation = generation,
                                                                                             insecticide = insecticide,
                                                                                             sim.array = sim.array),
-            half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance))} #end of insecticide deployed
+            half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
+            conversion.factor = conversion.factor,
+            intercept = intercept))} #end of insecticide deployed
         else( #insecticide is not deployed
           #calculate population mean when insecticide not deployed from previous population mean
            mean(insecticide_not_deployed_migration(#this function calls insecticide_not_deployed_selection_costs
@@ -201,7 +205,9 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
             min.intervention.coverage = min.intervention.coverage,
             max.intervention.coverage = max.intervention.coverage,
             min.dispersal.rate = min.dispersal.rate,
-            max.dispersal.rate = max.dispersal.rate
+            max.dispersal.rate = max.dispersal.rate,
+            conversion.factor = conversion.factor,
+            intercept = intercept
           )))#end insecticide not deployed    
         
       #Do refugia second, updating each generation for each insecticide
@@ -228,7 +234,9 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
                                                                                                                                                      generation = generation,
                                                                                                                                                      insecticide = insecticide,
                                                                                                                                                      sim.array = sim.array),
-                                                                     half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance))}
+                                                                     half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
+                                                                     conversion.factor = conversion.factor,
+                                                                     intercept = intercept))}
           #calculate population mean when insecticide not deployed from previous population mean
           else(mean(refugia_migration_effect_insecticide_not_deployed(
             initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],#use previous generation info in treatment site

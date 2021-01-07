@@ -39,7 +39,9 @@ insecticide_deployed_migration_mixture = function(exposure.scaling.factor = 10,
                                           min.dispersal.rate = 0.1,
                                           max.dispersal.rate = 0.9,
                                           intensity.to.other.mixture.part,
-                                          half.population.bioassay.survival.resistance){
+                                          half.population.bioassay.survival.resistance,
+                                          conversion.factor = 0.48,
+                                          intercept = 0.15){
   
   selection.treatment = insecticide_deployed_selection_cost_mixture(exposure.scaling.factor = exposure.scaling.factor,
                                                                     nsim = nsim, 
@@ -52,7 +54,9 @@ insecticide_deployed_migration_mixture = function(exposure.scaling.factor = 10,
                                                                     resistance.cost = resistance.cost,
                                                                     initial.resistance.intensity = initial.resistance.intensity,
                                                                     intensity.to.other.mixture.part = intensity.to.other.mixture.part,
-                                                                    half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance)
+                                                                    half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
+                                                                    conversion.factor = conversion.factor,
+                                                                    intercept = intercept)
      
   
   migration = migration_treatment_to_refugia(nsim = nsim, #for runif function coverage and dispersal uniformly distributed

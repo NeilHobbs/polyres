@@ -41,7 +41,9 @@ refugia_migration_effect_insecticide_deployed_mixture = function(initial.refugia
                                                                  min.dispersal.rate = 0.1,
                                                                  max.dispersal.rate = 0.9,
                                                                  intensity.to.other.mixture.part,
-                                                                 half.population.bioassay.survival.resistance){
+                                                                 half.population.bioassay.survival.resistance,
+                                                                 conversion.factor = 0.48,
+                                                                 intercept = 0.15){
   
   
   treatment.site.selection =insecticide_deployed_selection_cost_mixture(exposure.scaling.factor = exposure.scaling.factor,
@@ -55,7 +57,9 @@ refugia_migration_effect_insecticide_deployed_mixture = function(initial.refugia
                                                                         resistance.cost = resistance.cost,
                                                                         initial.resistance.intensity = initial.resistance.intensity,
                                                                         intensity.to.other.mixture.part = intensity.to.other.mixture.part,
-                                                                        half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance)
+                                                                        half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
+                                                                        conversion.factor = conversion.factor,
+                                                                        intercept = intercept)
   
   
   refugia.selection = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,

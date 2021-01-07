@@ -31,7 +31,9 @@ insecticide_deployed_selection_cost_mixture = function(exposure.scaling.factor =
                                                        resistance.cost = 0.1,
                                                        initial.resistance.intensity = 0,
                                                        intensity.to.other.mixture.part,
-                                                       half.population.bioassay.survival.resistance){#The resistance intensity in the previous generation. Set zero for generation 1
+                                                       half.population.bioassay.survival.resistance,
+                                                       conversion.factor = 0.48,
+                                                       intercept = 0.15){#The resistance intensity in the previous generation. Set zero for generation 1
   
   #Warning and error messages
   if(0 > minimum.insecticide.resistance.heritability |minimum.insecticide.resistance.heritability > 1){stop("minimum.insecticide.resistance.heritability must be between 0 and 1")}
@@ -75,8 +77,13 @@ insecticide_deployed_selection_cost_mixture = function(exposure.scaling.factor =
                                                                   sd.population.resistance = 0, 
                                                                   nsim = nsim)
   
+  
+  field.survival = convert_bioassay_survival_to_field(bioassay.survival = survival.to.other.insecticide,
+                                                      conversion.factor = conversion.factor,
+                                                      intercept = intercept)
+  
   #plus sign used as made negative effect put in effect_of_fitness_cost function   
-  resistance.intensity.values = initial.resistance.intensity + ((response.to.insecticide.selection + effect.of.fitness.cost) * survival.to.other.insecticide)
+  resistance.intensity.values = initial.resistance.intensity + ((response.to.insecticide.selection + effect.of.fitness.cost) * field.survival)
   
   #Resistance intensity cannot be below 0. Set values below zero as zero
   resistance.intensity.values = ifelse(resistance.intensity.values < 0, yes = 0, no = resistance.intensity.values)

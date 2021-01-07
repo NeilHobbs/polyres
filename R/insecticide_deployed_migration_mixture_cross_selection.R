@@ -21,7 +21,9 @@ insecticide_deployed_migration_mixture_cross_selection = function(exposure.scali
                                                                   max.intervention.coverage = 0.9, 
                                                                   min.dispersal.rate = 0.1,
                                                                   max.dispersal.rate = 0.9,
-                                                                  number.of.insecticides){
+                                                                  number.of.insecticides,
+                                                                  conversion.factor = 0.48,
+                                                                  intercept = 0.15){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost = resistance.cost,
@@ -49,7 +51,9 @@ insecticide_deployed_migration_mixture_cross_selection = function(exposure.scali
                                                                                        half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
                                                                                        currently.deployed.insecticide = currently.deployed.insecticide,
                                                                                        cross.selection.matrix = cross.selection.matrix,
-                                                                                       number.of.insecticides = number.of.insecticides)
+                                                                                       number.of.insecticides = number.of.insecticides,
+                                                                                       conversion.factor = conversion.factor,
+                                                                                       intercept = intercept)
   
   
   migration = migration_treatment_to_refugia(nsim = nsim, 

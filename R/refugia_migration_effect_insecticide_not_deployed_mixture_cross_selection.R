@@ -21,7 +21,9 @@ refugia_migration_effect_insecticide_not_deployed_mixture_cross_selection = func
                                                                                      initial.refugia.resistance,
                                                                                      deployed.mixture.1,
                                                                                      deployed.mixture.2,
-                                                                                     currently.tracked.insecticide){
+                                                                                     currently.tracked.insecticide,
+                                                                                     conversion.factor = 0.48,
+                                                                                     intercept = 0.15){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost = resistance.cost,
@@ -34,20 +36,22 @@ refugia_migration_effect_insecticide_not_deployed_mixture_cross_selection = func
                                               minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                               maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
   
-  intervention.intensity = insecticide_not_deployed_mixtures_indirect_cross_selection(exposure.scaling.factor = exposure.scaling.factor,
-                                                                                      nsim = nsim, 
-                                                                                      minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                                                                      maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                                                                                      minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                                                                                      maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                                                                                      minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                                                                      maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-                                                                                      resistance.cost = resistance.cost,
-                                                                                      initial.resistance.intensity = initial.resistance.intensity,
-                                                                                      cross.selection.matrix = cross.selection.matrix,
-                                                                                      deployed.mixture.1 = deployed.mixture.1,
-                                                                                      deployed.mixture.2 = deployed.mixture.2,
-                                                                                      currently.tracked.insecticide = currently.tracked.insecticide)
+  intervention.intensity = insecticide_not_deployed_mixtures_cross_selection(exposure.scaling.factor = exposure.scaling.factor,
+                                                                             nsim = nsim, 
+                                                                             minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
+                                                                             maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                                             minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                                             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                                             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                                             maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
+                                                                             resistance.cost = resistance.cost,
+                                                                             initial.resistance.intensity = initial.resistance.intensity,
+                                                                             cross.selection.matrix = cross.selection.matrix,
+                                                                             deployed.mixture.1 = deployed.mixture.1,
+                                                                             deployed.mixture.2 = deployed.mixture.2,
+                                                                             currently.tracked.insecticide = currently.tracked.insecticide,
+                                                                             conversion.factor = conversion.factor,
+                                                                             intercept = intercept)
   
   migration = migration_refugia_to_treatment(nsim = nsim, 
                                              min.intervention.coverage = min.intervention.coverage, 

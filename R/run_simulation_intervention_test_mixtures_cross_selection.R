@@ -52,7 +52,9 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
                                                      deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
                                                      maximum.resistance.value = 25000,
                                                      min.cross.selection = -1,
-                                                     max.cross.selection = 1){
+                                                     max.cross.selection = 1,
+                                                     conversion.factor = 0.48,
+                                                     intercept = 0.15){
   
   #Start by creating an array (calls the array_named function):
   #dimension 1: site = c("refugia", "treatment"), which hold resistance intensities.
@@ -182,10 +184,12 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
             half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
             currently.deployed.insecticide = insecticide,
             cross.selection.matrix = genetic.correlation.matrix,
-            number.of.insecticides = number.of.insecticides))} #end of insecticide deployed
+            number.of.insecticides = number.of.insecticides,
+            conversion.factor = conversion.factor,
+            intercept = intercept))} #end of insecticide deployed
         else( #insecticide is not deployed
           #calculate population mean when insecticide not deployed from previous population mean
-          mean(insecticide_not_deployed_migration_cross_selection(#this function calls insecticide_not_deployed_selection_costs
+          mean(insecticide_not_deployed_migration_mixture_cross_selection(#this function calls insecticide_not_deployed_selection_costs
             initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],#use previous generation info in treatment site
             resistance.cost = resistance.cost,
             initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1], # use previous generation info in refugia
@@ -204,7 +208,9 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
             cross.selection.matrix = genetic.correlation.matrix,
             deployed.mixture.1 = deployed.mixture$mixture.part.1[generation],
             deployed.mixture.2 = deployed.mixture$mixture.part.2[generation],
-            currently.tracked.insecticide = insecticide
+            currently.tracked.insecticide = insecticide,
+            conversion.factor = conversion.factor,
+            intercept = intercept
           )))#end insecticide not deployed    
         
         #Do refugia second, updating each generation for each insecticide
@@ -234,7 +240,9 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
                                                                      half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
                                                                      currently.deployed.insecticide = insecticide,
                                                                      cross.selection.matrix = genetic.correlation.matrix,
-                                                                     number.of.insecticides = number.of.insecticides))}
+                                                                     number.of.insecticides = number.of.insecticides,
+                                                                     conversion.factor = conversion.factor,
+                                                                     intercept = intercept))}
         #calculate population mean when insecticide not deployed from previous population mean
         else(mean(refugia_migration_effect_insecticide_not_deployed_cross_selection(
           initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],#use previous generation info in treatment site

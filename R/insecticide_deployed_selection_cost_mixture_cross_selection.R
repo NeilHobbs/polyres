@@ -17,7 +17,9 @@ insecticide_deployed_selection_cost_mixture_cross_selection = function(exposure.
                                                                        half.population.bioassay.survival.resistance,
                                                                        currently.deployed.insecticide,
                                                                        cross.selection.matrix,
-                                                                       number.of.insecticides){
+                                                                       number.of.insecticides,
+                                                                       conversion.factor = 0.48,
+                                                                       intercept = 0.15){
   
   
   previous.intensity = initial.resistance.intensity
@@ -64,13 +66,16 @@ insecticide_deployed_selection_cost_mixture_cross_selection = function(exposure.
                                                                   half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
                                                                   sd.population.resistance = 0, 
                                                                   nsim = nsim)
-  
+  #convert to field based survival:
+  field.survival = convert_bioassay_survival_to_field(bioassay.survival = survival.to.other.insecticide,
+                                                      conversion.factor = conversion.factor,
+                                                      intercept = intercept)
   
   
   track.resistance.intensity = previous.intensity + ((direct.insecticide.selection +
                                                         direct.fitness.costs +
                                                         indirect.selection.and.fitness)*
-                                                       survival.to.other.insecticide)
+                                                       field.survival)
   
   return(track.resistance.intensity)
 }

@@ -19,7 +19,9 @@ insecticide_not_deployed_migration_mixture_cross_selection = function(nsim,
                                                                       cross.selection.matrix,
                                                                       deployed.mixture.1,
                                                                       deployed.mixture.2,
-                                                                      currently.tracked.insecticide){
+                                                                      currently.tracked.insecticide,
+                                                                      conversion.factor = 0.48,
+                                                                      intercept = 0.15){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost,
@@ -45,7 +47,9 @@ insecticide_not_deployed_migration_mixture_cross_selection = function(nsim,
                                                                                            cross.selection.matrix = cross.selection.matrix,
                                                                                            deployed.mixture.1 = deployed.mixture.1,
                                                                                            deployed.mixture.2 = deployed.mixture.2,
-                                                                                           currently.tracked.insecticide = currently.tracked.insecticide)
+                                                                                           currently.tracked.insecticide = currently.tracked.insecticide,
+                                                                                           conversion.factor = conversion.factor,
+                                                                                           intercept = intercept)
   
   migration = migration_treatment_to_refugia(nsim = nsim, 
                                              min.intervention.coverage = min.intervention.coverage, 

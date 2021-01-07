@@ -19,7 +19,9 @@ refugia_migration_effect_insecticide_deployed_mixture_cross_selection = function
                                                                                  min.dispersal.rate = 0.1,
                                                                                  max.dispersal.rate = 0.9,
                                                                                  initial.refugia.resistance,
-                                                                                 number.of.insecticides){
+                                                                                 number.of.insecticides,
+                                                                                 conversion.factor = 0.48,
+                                                                                 intercept = 0.15){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost = resistance.cost,
@@ -46,7 +48,9 @@ refugia_migration_effect_insecticide_deployed_mixture_cross_selection = function
                                                                                        half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
                                                                                        currently.deployed.insecticide = currently.deployed.insecticide,
                                                                                        cross.selection.matrix = cross.selection.matrix,
-                                                                                       number.of.insecticides = number.of.insecticides)
+                                                                                       number.of.insecticides = number.of.insecticides,
+                                                                                       conversion.factor = conversion.factor,
+                                                                                       intercept = intercept)
   
   migration = migration_refugia_to_treatment(nsim = nsim, 
                                              min.intervention.coverage = min.intervention.coverage, 
