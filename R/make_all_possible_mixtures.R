@@ -19,11 +19,16 @@ make_all_possible_mixtures = function(number.of.insecticides){
   mixture.part.1 = rep(seq(1, number.of.insecticides, by = 1), times = number.of.insecticides)
   mixture.part.2 = sort(rep(seq(1, number.of.insecticides, by = 1), times = number.of.insecticides), decreasing = TRUE)
   
+  
   mixture.df = data.frame(mixture.part.1, mixture.part.2)
   
   mixture.df = mixture.df%>%
     dplyr::filter(mixture.part.1 != mixture.part.2)%>%
     dplyr::filter(mixture.part.1 < mixture.part.2)
+  
+  mixture.id = seq(1, nrow(mixture.df), by = 1)
+  
+  mixture.df(mixture.id, mixture.df)
   
   return(mixture.df)
   

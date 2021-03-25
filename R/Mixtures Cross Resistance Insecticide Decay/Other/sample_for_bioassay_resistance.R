@@ -1,5 +1,5 @@
 #standard deviation could be a composite of of the quality of the bioassays done and the inheriant variability of the 
-  #the mosquito population.
+  #the mosquito population. 
 
 sample_for_bioassay_resistance = function(number.of.bioassays,
                                           resistance.intensity.intervention,
@@ -42,7 +42,6 @@ A = sample_for_bioassay_resistance(number.of.bioassays = 17,
                                    resistance.intensity.refugia = 50,
                                    standard.deviation = 5,
                                    intervention.coverage = 0.7)
-
 
 
 sample.values = c()
