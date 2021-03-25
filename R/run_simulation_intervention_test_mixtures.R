@@ -83,14 +83,24 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
   #and calculating the withdrawal and return thresholds. 
   
   #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
-  for(i in 1:number.of.insecticides){
-    sim.array['refugia', i , 1] = starting.refugia.intensity[i]
-  }
+  if(length(starting.refugia.intensity) == 1){
+    sim.array['refugia', , 1] = starting.refugia.intensity
+    
+  }  else(
+    
+    #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
+    for(i in 1:number.of.insecticides){
+      sim.array['refugia', i , 1] = starting.refugia.intensity[i]
+    })
   
-  #treatment site starting resistance intensity (where the insecticide can be deployed)
-  for(i in 1:number.of.insecticides){
-    sim.array['treatment', i , 1] = starting.treatment.site.intensity[i]
-  }
+  if(length(starting.treatment.site.intensity) == 1){
+    sim.array['treatment', , 1] = starting.treatment.site.intensity
+  }else(
+    
+    #treatment site starting resistance intensity (where the insecticide can be deployed)
+    for(i in 1:number.of.insecticides){
+      sim.array['treatment', i , 1] = starting.treatment.site.intensity[i]
+    })
   
   available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.
   #At the beginning all insecticides are available for deployment. 
@@ -100,22 +110,8 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
     #Note we may decide that all insecticides are mixed to a pyrethroid (eg 1,2 ; 1,3; 1,4); with withdrawal/return decisions
     #only being made on the non-pyrethroid insecticide. 
   if(irm.deployment.strategy == "mixtures"){
-    if(mixture.strategy == "mix.sequential.discrete"){
-    mixture.df = make_mixture_sequential_discrete(number.of.insecticides = number.of.insecticides)
-    }
-    if(mixture.strategy == "mix.sequential.continous"){
-      mixture.df = make_mixture_sequential_continous(number.of.insecticides = number.of.insecticides)
-    }
-
-    if(mixture.strategy == "random.mixtures"){
-
-      mixture.df = choose_mixture_combinations(number.of.mixtures = number.of.insecticides,#make it so there is the same number of mixtures as there is number of insecticides
-                                               potential.mixtures = make_all_possible_mixtures(number.of.insecticides = number.of.insecticides))
-
-    }
-    if(mixture.strategy == "pyrethroid.plus"){
-      mixture.df = make_pyrethroid_mixtures(number.of.insecticides = number.of.insecticides)
-    }
+mixture.df = select_mixing_stategy(mixture.strategy = mixture.strategy,
+                                   number.of.insecticides = number.of.insecticides)
     
     mixture.id = rep(mixture.df[1, 1], times = deployment.frequency)#first row, first column
     mixture.part.1 = rep(mixture.df[1, 2], times = deployment.frequency)#first row, second column
@@ -123,7 +119,6 @@ run_simulation_intervention_test_mixtures = function(number.of.insecticides = 2,
     
     #The dataframe that holds the mixture deployment information
     deployed.mixture = data.frame(mixture.id, mixture.part.1, mixture.part.2)
-    
   }
   
   available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.

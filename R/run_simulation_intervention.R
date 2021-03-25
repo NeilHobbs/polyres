@@ -74,15 +74,24 @@ run_simulation_intervention= function(number.of.insecticides = 2,
   #be able to set each insecticide having a unique starting intensity. And would set the insecticide.info
   #and calculating the withdrawal and return thresholds. 
   
+if(length(starting.refugia.intensity) == 1){
+  sim.array['refugia', , 1] = starting.refugia.intensity
+  
+}  else(
+  
   #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
   for(i in 1:number.of.insecticides){
     sim.array['refugia', i , 1] = starting.refugia.intensity[i]
-  }
+  })
+  
+if(length(starting.treatment.site.intensity) == 1){
+  sim.array['treatment', , 1] = starting.treatment.site.intensity
+}else(
   
   #treatment site starting resistance intensity (where the insecticide can be deployed)
   for(i in 1:number.of.insecticides){
     sim.array['treatment', i , 1] = starting.treatment.site.intensity[i]
-  }
+  })
   
   available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.
   #At the beginning all insecticides are available for deployment. 
