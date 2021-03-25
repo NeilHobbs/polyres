@@ -1,7 +1,7 @@
 #Hobbs_Quantatitive_Genetics_IR_Seq_vs_Rot_Simulations v1.2.R
 
 ##################################################################
-#1. Simulations: Sequences and Rotations without Cross Selection.#
+#Set 1. Simulations: Sequences and Rotations without Cross Selection.#
 ##################################################################
 library(devtools)
 load_all() #loads in polyres if opened the polyres R project first
