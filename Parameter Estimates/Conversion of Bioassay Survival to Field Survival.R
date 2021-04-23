@@ -14,6 +14,7 @@ churcher.data = churcher.data%>%
   dplyr::mutate(hut.survival = 1 - hut.mortality)%>%
   dplyr::mutate(bioassay.survival = 1 - bioassay.mortality)
 
+
 plot(churcher.data$bioassay.survival, churcher.data$hut.survival)
 
 
@@ -108,4 +109,6 @@ for(i in 1:101){
 }
 
 plot(bio_surv, field_surv) #when resistance.intensity is 0; field survival still above 0 (useful for mixtures)
+
+
 
