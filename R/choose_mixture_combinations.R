@@ -8,6 +8,10 @@
 #' 
 #' @param number.of.mixtures = The total number of mixtures that are allowed to be made for use in the simulations.
 #' @param potential.mixtures = A master dataframe of mixtures that are to be sampled from. 
+#' 
+#' @import  dplyr
+#' @importFrom dplyr sample_n
+
 
 choose_mixture_combinations = function(number.of.mixtures,
                                        potential.mixtures){
