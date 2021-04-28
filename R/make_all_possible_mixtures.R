@@ -28,7 +28,7 @@ make_all_possible_mixtures = function(number.of.insecticides){
   
   mixture.id = seq(1, nrow(mixture.df), by = 1)
   
-  mixture.df(mixture.id, mixture.df)
+  mixture.df = data.frame(mixture.id, mixture.df)
   
   return(mixture.df)
   
