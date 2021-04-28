@@ -5,6 +5,8 @@ library(epiR)
 library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
+library(rpart)
+library(rpart.plot)
 
 #Analysis to compare sequences and rotations in the absence of cross resistance
 
@@ -92,51 +94,87 @@ rot.duration = rot.cross.df$simulation.duration
 seq.duration = seq.cross.df$simulation.duration
 mix.duration = mix.cross.df$simulation.duration
 cross.resistance = mix.cross.df$cross.resistance
+
 outcome = c()
-
-
 for(i in 1:length(rot.duration)){
-  if(rot.duration[i] > seq.duration[i] & mix.duration[i]){outcome[i] = "rotation.win"}
-  if(seq.duration[i] > rot.duration[i] & mix.duration[i]){outcome[i] = "sequence.win"}
-  if(mix.duration[i] > seq.duration[i] & rot.duration[i]){outcome[i] = "mixture.win"}
-  if(rot.duration[i] == seq.duration[i] & mix.duration[i]){outcome[i] = "draw"}
+  if(rot.duration[i] > seq.duration[i] &
+     rot.duration[i] > mix.duration[i]){outcome[i] = "rotation.win"}
+  if(seq.duration[i] > rot.duration[i] & 
+     seq.duration[i] > mix.duration[i]){outcome[i] = "sequence.win"}
+  if(mix.duration[i] > seq.duration[i] &
+     mix.duration[i] > rot.duration[i]){outcome[i] = "mixture.win"}
+  if(rot.duration[i] == seq.duration[i] & 
+     rot.duration[i] == mix.duration[i]){outcome[i] = "draw"}
+  if(rot.duration[i] > seq.duration[i] & 
+     rot.duration[i] == mix.duration[i]){outcome[i] = "sequence.loss"}
+  if(seq.duration[i] > rot.duration[i] & 
+     seq.duration[i] == mix.duration[i]){outcome[i] = "rotation.loss"}
     
 }
+table(outcome)
+24568+7954+92+2386#35000
+
+prop.diff.seq.mix = 1 - (seq.duration/mix.duration)
+prop.diff.seq.rot = 1 - (seq.duration/rot.duration)
+prop.diff.rot.mix = 1 - (rot.duration/mix.duration)
+
+operational.outcome = c()
+for(i in 1:length(seq.duration)){
+  
+  if(prop.diff.seq.mix[i] >= 0.1 &
+     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "sequence only"}
+  if(prop.diff.rot.mix[i] >= 0.1 &
+     prop.diff.seq.mix[i] < 0.1 ){operational.outcome[i] = "rotation only"}
+  if(prop.diff.seq.mix[i] >= 0.1 &
+     prop.diff.rot.mix[i] >= 0.1 ){operational.outcome[i] = "rotation and sequence"}
+  if(prop.diff.seq.mix[i] < 0.1 &
+     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = NA}
+}
+
+table(operational.outcome)
+6979+2136
+
 
 outcome.cross.df = data.frame(rot.duration,
                               seq.duration,
                               mix.duration,
                               cross.resistance,
-                              outcome)
-
+                              outcome,
+                              operational.outcome)
 
 
 outcome.df = data.frame(table(outcome.cross.df$outcome, outcome.cross.df$cross.resistance))
 outcome.df$proportion = outcome.df$Freq/5000
-cross.resistance.vec = c(rep(-0.3, 3), rep(-0.2, 3), rep(-0.1, 3),
-                         rep(0, 3), rep(0.1, 3), rep(0.2, 3), rep(0.3, 3))
 
-outcome.df$Var1 = factor(outcome.df$Var1, levels = c("mixture.win", "draw",
-                         "sequence.win", "rotation.win"))
-outcome.df$cross.resistance = cross.resistance.vec
+outcome.df$outcome = factor(outcome.df$Var1, levels = c("mixture.win", "draw",
+                         "sequence.loss", "rotation.loss"))
+
+outcome.df$cross.resistance = c(rep(-0.3, 4),
+                                rep(-0.2, 4),
+                                rep(-0.1, 4),
+                                rep(0, 4),
+                                rep(0.1, 4),
+                                rep(0.2, 4),
+                                rep(0.3, 4))
+                                
+
+
 
 ggplot(outcome.df, aes(x=cross.resistance, 
                      y=proportion, 
-                     fill=Var1)) + 
+                     fill=outcome)) + 
   geom_area(alpha = 0.8)+
-  scale_fill_manual(values = c("#3690c0", "#b2df8a", "#ff7f00"))+
   scale_x_continuous(breaks = c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3))+
+  scale_fill_manual(values = c("#3690c0", "#b2df8a", "#ffff33", "#f03b20"))+
   ylab("Proportion of Simulations")+
   xlab("Degree of Cross Resistance")+
-  theme_classic()+
-  theme(legend.position = "none")
+  labs(fill = "Outcome")+
+  theme_classic()
 
 
-temp.df = data.frame(seq.cross.df, outcome)
+outcome.df.set.4 = data.frame(seq.cross.df, outcome, operational.outcome)
 
-library(rpart)
-library(partykit)
-library(rpart.plot)
+
 
 set.4.tree.fit = rpart(outcome ~
                          Heritability +
@@ -147,14 +185,40 @@ set.4.tree.fit = rpart(outcome ~
                          Intervention.Coverage+
                          cross.resistance,
                        method = "class",
-                       data = temp.df
+                       data = outcome.df.set.4
                 )
 
+
+set.4.tree.fit.operational = rpart(operational.outcome ~
+                         Heritability +
+                         Fitness.Cost +
+                         Male.Insecticide.Exposure+
+                         Female.Insecticide.Exposure+
+                         Dispersal +
+                         Intervention.Coverage+
+                         cross.resistance,
+                       method = "class",
+                       minsplit = 250,
+                       data = outcome.df.set.4
+)
+
+par(mfrow = c(2,1))
 rpart.plot(set.4.tree.fit,
            type = 0,
            tweak = 1,
+           main="A",
            extra = 100,
-           box.palette = list("#b2df8a", "#3690c0", "#ff7f00"))
+           box.palette = list( "#b2df8a", "#3690c0"))
+
+
+rpart.plot(set.4.tree.fit.operational,
+           type = 0,
+           main = "B",
+           tweak = 1,
+           extra = 100,
+           box.palette = list("#c51b8a", "#ffff33"))
+
+par(mfrow = c(1,1))
 
 seq.rot.mix.cross.df$max.duration = 500
 

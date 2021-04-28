@@ -4,6 +4,8 @@ library(epiR)
 library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
+library(rpart)
+library(rpart.plot)
 
 #Analysis to compare sequences and rotations in the absence of cross resistance
 
@@ -56,6 +58,31 @@ rotations.zero.cross.df = rotations.zero.cross.df%>%
 
 set.2.df = rbind(sequences.set.2.df, rotations.set.2.df, sequences.zero.cross.df, rotations.zero.cross.df)
 
+rotations.set.2.df.all = rbind(rotations.set.2.df, rotations.zero.cross.df)
+sequences.set.2.df.all = rbind(sequences.set.2.df, sequences.zero.cross.df)
+
+diff.duration = rotations.set.2.df.all$simulation.duration - sequences.set.2.df.all$simulation.duration
+proportion.difference = 1 - (sequences.set.2.df.all$simulation.duration/rotations.set.2.df.all$simulation.duration)
+
+sequences.set.2.df.all$diff.duration = diff.duration
+sequences.set.2.df.all$proportion.difference = proportion.difference
+
+operational.outcome = ifelse(proportion.difference <= -0.1,
+                             yes = "Sequence.Operational.Win",
+                             no = ifelse(proportion.difference >= 0.1,
+                                         yes = "Rotation.Operational.Win",
+                                         no = NA))
+sequences.set.2.df.all$operational.outcome = operational.outcome
+
+#Get the operationally relevant wins
+operationally.relevant.df = sequences.set.2.df.all%>%
+  dplyr::filter(proportion.difference <= -0.1 | proportion.difference >= 0.1)
+
+table(sequences.set.2.df.all$operational.outcome,
+      sequences.set.2.df.all$cross.resistance)
+
+min(set.2.df$simulation.duration)
+
 make_comparison_dataframes = function(X, dataset){
   
   set.2.df.seq = dataset%>%
@@ -87,6 +114,7 @@ set.2.df.pos.03 = make_comparison_dataframes(0.3, set.2.df)
 win_lose_draw = function(dataset, X){
 
 dataset$results = dataset$simulation.duration.rot - dataset$simulation.duration.seq
+
 
 cross.resistance = X
 
@@ -354,8 +382,7 @@ for(i in 1:nrow(seq.cross.set.2.df)){
 outcome.df = data.frame(seq.cross.set.2.df,
                        outcome)
 
-library(rpart)
-library(rpart.plot)
+par(mfrow=c(2,1))
 
 set.2.tree.fit = rpart(outcome ~ 
                          Heritability +
@@ -368,10 +395,36 @@ set.2.tree.fit = rpart(outcome ~
                        data = outcome.df,
                        method = "class")
 
-
-
 rpart.plot(set.2.tree.fit,
            type = 0,
            tweak = 1.2,
            extra = 100,
+           main = "A",
            box.palette = list("#b2df8a", "#984ea3", "#ff7f00"))
+
+
+
+
+set.2.tree.fit.operational = rpart(operational.outcome ~ 
+                                     Heritability +
+                                     Fitness.Cost +
+                                     Male.Insecticide.Exposure+
+                                     Female.Insecticide.Exposure+
+                                     Dispersal +
+                                     Intervention.Coverage+
+                                     cross.resistance,
+                                   data = operationally.relevant.df,
+                                   method = "class")
+
+rpart.plot(set.2.tree.fit.operational,
+           type = 0,
+           tweak = 1,
+           main = "B",
+           extra = 100,
+           box.palette = list( "#984ea3", "#ff7f00"))
+
+
+par(mfrow=c(1,1))
+
+
+

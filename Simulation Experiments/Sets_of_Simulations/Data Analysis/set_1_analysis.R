@@ -16,7 +16,7 @@ sequences.rotations.set.1.df = rbind(sequences.set.1.df, rotations.set.1.df)
 sequences.duration = sequences.set.1.df$simulation.duration
 rotations.duration = rotations.set.1.df$simulation.duration
 
-#Calculate difference in duration
+#Calculate difference in duration sequence - rotations
 duration.difference = sequences.duration-rotations.duration
 
 #Calculate proportion difference 
@@ -64,18 +64,18 @@ rotation.wins = nrow(seq.rot.set.1%>%
                        dplyr::filter(duration.difference < 0))
 print(rotation.wins)#7033 / 45000
 
-7033/45000*100
-37967/45000*100
+7033/45000*100 #percentage rotation wins
+37967/45000*100 #perentage draws
 
 #Operationally relevant wins:
 operationally.relevant.wins = nrow(seq.rot.set.1%>%
                                      dplyr::filter(proportion.difference >= 0.1))
-print(operationally.relevant.wins)#2227
-4292/7033
+print(operationally.relevant.wins)#4292
+4292/7033 #proportion operationally relevant wins for rotations.
 
-
-
+#find the shortest simulation duration
 min(sequences.rotations.set.1.df$simulation.duration)
+
 
 #Plot only for rotation wins.
 make_diff_duration_plot = function(){
@@ -217,7 +217,7 @@ make_control_failure_plot = function(){
 make_control_failure_plot()
 
 
-
+  
 
 make_diff_peak_survival_plot = function(){
   #Creates a dataset for putting in labels for putting in the 
@@ -232,6 +232,7 @@ make_diff_peak_survival_plot = function(){
     label_y_coord = c(-9, -9, -9)
   )
   
+  #draws with higher peak seq
   draws = seq.rot.set.1%>%
     dplyr::filter(duration.difference == 0)%>%
     dplyr::rowwise()%>%
@@ -241,6 +242,7 @@ make_diff_peak_survival_plot = function(){
                                                                      half.population.bioassay.survival.resistance = 900,
                                                                      sd.population.resistance = 0, 
                                                                      nsim = 1)*100))
+  
   
   #This is currently Figure 2
   #Scatterplot of difference in duration (n=16815).
@@ -356,7 +358,7 @@ make_pcor_plot = function(){
   pcor.df.all = pcor.df.all%>%
     dplyr::rename(`IRM Strategy` = IRM.Strategy)
   
-  #This is Figure 65
+  
   pals = c("#b8e186", "#7fbc41", "#4d9221", "#f1b6da", "#de77ae", "#c51b7d")
   
   
@@ -576,7 +578,9 @@ ggplot(sequences.rotations.set.1.df, aes(x= as.factor(dep.freq), y=exceedance.ge
 #I think the issue is to do with sequences actually being withdrawn (and therefore cannot be used again 
 #until they reach the 5% threshold). Rotations, because they are deployed one after another, do not worry about returning
 #back to 5% as all the insecticides will be expected to be withdrawn in the following deployment intervals. 
+#Re-run all the simulations where the duration difference was 100+ generations but at 9% return threshold
 sequences.set.1.df$rotation.duration = rotations.duration
+sequences.set.1.df$duration.difference.rotation = sequences.set.1.df$simulation.duration - rotations.duration
 
 sequences.set.1.df_short = sequences.set.1.df%>%
   dplyr::filter(duration.difference.rotation <= -100)
@@ -604,7 +608,7 @@ for(v in 1:nrow(sequences.set.1.df_short)){
                                                                irm.strategy = "sequence", 
                                                                half.population.bioassay.survival.resistance = 900, 
                                                                withdrawal.threshold.value = 0.10, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
-                                                               return.threshold.value = 0.10, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+                                                               return.threshold.value = 0.09, #this is the survival proportion in a bioassay that would return insecticide to arsenal
                                                                deployment.frequency = sequences.set.1.df_short$Deployment.Interval[v], #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
                                                                maximum.resistance.value = 25000 #have arbitrarily high just in case
   ) , 500, sequences.set.1.df_short$Number.of.Insecticides[v])
@@ -622,10 +626,6 @@ sequences.set.1.df_short$duration.update = sequences.set.1.higherreturn
 sequences.set.1.df_short$difference.update = sequences.set.1.df_short$duration.update - sequences.set.1.df_short$rotation.duration
 sequences.set.1.df_short$replicate = seq(1, nrow(sequences.set.1.df_short), 1)
 hist(sequences.set.1.df_short$difference.update)
-
-ggplot(sequences.set.1.df_short, aes(x=replicate, y = difference.update))+
-  geom_point()
-
 
 sequences.set.1.df_short_space = sequences.set.1.df_short%>%
   dplyr::filter(difference.update <= - 100)%>%
@@ -741,3 +741,4 @@ plot_simulation(simulation.dataframe = rot.return.5,
                 half.population.bioassay.survival.resistance = 900,
                 withdrawal.threshold = 0.1,
                 return.threshold = 0.05)
+

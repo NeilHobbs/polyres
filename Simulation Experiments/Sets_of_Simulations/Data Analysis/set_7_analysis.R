@@ -610,7 +610,8 @@ find_critical_parameter_value = function(X.heritability,
                                          X.fitness,
                                          X.dispersal,
                                          X.coverage,
-                                         X.dep){
+                                         X.dep, 
+                                         start.resistance){
 
 seq.df = get_simulation_dataframe(simulation.array = run_simulation_intervention(number.of.insecticides = 3,
                                                                         exposure.scaling.factor = 10,
@@ -622,8 +623,8 @@ seq.df = get_simulation_dataframe(simulation.array = run_simulation_intervention
                                                                         minimum.female.insecticide.exposure = 0.7946055 + X.female,
                                                                         maximum.female.insecticide.exposure = 0.7946055 + X.female,
                                                                         resistance.cost = 0.1836585 + X.fitness,
-                                                                        starting.treatment.site.intensity = 0,
-                                                                        starting.refugia.intensity = 0,
+                                                                        starting.treatment.site.intensity = start.resistance,
+                                                                        starting.refugia.intensity = start.resistance,
                                                                         min.intervention.coverage = 0.8778145 + X.coverage,
                                                                         max.intervention.coverage = 0.8778145 + X.coverage,
                                                                         min.dispersal.rate = 0.3401694 + X.dispersal,
@@ -650,8 +651,8 @@ rot.df = get_simulation_dataframe(simulation.array = run_simulation_intervention
                                                                                  minimum.female.insecticide.exposure = 0.7946055 + X.female,
                                                                                  maximum.female.insecticide.exposure = 0.7946055 + X.female,
                                                                                  resistance.cost = 0.1836585 + X.fitness,
-                                                                                 starting.treatment.site.intensity = 0,
-                                                                                 starting.refugia.intensity = 0,
+                                                                                 starting.treatment.site.intensity = start.resistance,
+                                                                                 starting.refugia.intensity = start.resistance,
                                                                                  min.intervention.coverage = 0.8778145 + X.coverage,
                                                                                  max.intervention.coverage = 0.8778145 + X.coverage,
                                                                                  min.dispersal.rate = 0.3401694 + X.dispersal,
@@ -665,27 +666,30 @@ rot.df = get_simulation_dataframe(simulation.array = run_simulation_intervention
                                                                                  maximum.resistance.value = 25000),
                                   maximum.generations = 500, number.of.insecticides = 3)
 
-A = plot_simulation(simulation.dataframe = seq.df,
-                    half.population.bioassay.survival.resistance = 900,
-                    withdrawal.threshold = 0.1,
-                    return.threshold = 0.09)
+# A = plot_simulation(simulation.dataframe = seq.df,
+#                     half.population.bioassay.survival.resistance = 900,
+#                     withdrawal.threshold = 0.1,
+#                     return.threshold = 0.09)
+# 
+# B = plot_simulation(simulation.dataframe = rot.df,
+#                     half.population.bioassay.survival.resistance = 900,
+#                     withdrawal.threshold = 0.1,
+#                     return.threshold = 0.09)
 
-B = plot_simulation(simulation.dataframe = rot.df,
-                    half.population.bioassay.survival.resistance = 900,
-                    withdrawal.threshold = 0.1,
-                    return.threshold = 0.09)
+diff.dur = max(seq.df$time.in.generations) - max(rot.df$time.in.generations)
 
-the.plot = gridExtra::grid.arrange(A, B)
-return(the.plot)
+# the.plot = gridExtra::grid.arrange(A, B)
+return(diff.dur)
 }
 
 
-find_critical_parameter_value(X.heritability = -0.063, #can reduce by -0.063 until no operational difference
+find_critical_parameter_value(X.heritability = 0, #can reduce by -0.063 until no operational difference
                               X.male = 0,
                               X.female = 0,
                               X.fitness = 0,
                               X.dispersal = 0,
                               X.coverage = 0,
-                              X.dep = 0)
+                              X.dep = 0,
+                              start.resistance = 20)
 
 
