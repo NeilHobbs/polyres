@@ -1,6 +1,11 @@
 #' @title Calculate the bioassay survival to the second part of the mixture.
 
 #' @description The purpose of this function is to find the bioassay survival to the second part of the insecticide mixture.
+#' 
+#' @param deployed.mixture = dataframe of the deployed mixtures
+#' @param generation = The current generation of the simulation
+#' @param insecticide = The currently tracked insecticide in the loop
+#' @param sim.array = The array holding the simulation.
 
 resistance_intensity_to_other_part_of_mixture = function(deployed.mixture,
                                                          generation,
