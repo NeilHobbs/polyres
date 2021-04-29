@@ -92,7 +92,7 @@ insecticide_deployed_selection_cost_mixture = function(exposure.scaling.factor =
   
 }
 
-#This is equation 7Aii in the MS
+
 
 
 
