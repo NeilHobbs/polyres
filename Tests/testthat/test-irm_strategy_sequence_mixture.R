@@ -14,7 +14,7 @@ available.vector = c(1, 2, 3)
 withdrawn.vector = c(4)
 
 test_that("deploys for correct duration", {
-  expect_equal(irm_strategy_sequence_mixture(number.of.insecticides = 4,
+  expect_equal(nrow(irm_strategy_sequence_mixture(number.of.insecticides = 4,
                                              current.generation = 100,
                                              withdrawal.threshold = 100,
                                              return.threshold = 100,
@@ -24,9 +24,9 @@ test_that("deploys for correct duration", {
                                              mixture.df = make_mixture_sequential_discrete(4),
                                              current.mixture = 1,
                                              deployment.frequency = 20,
-                                             deployment.df = deployed.mixture)[[4]], 30)
+                                             deployment.df = deployed.mixture)[[4]]), 30)
   
-  expect_equal(irm_strategy_sequence_mixture(number.of.insecticides = 4,
+  expect_equal(nrow(irm_strategy_sequence_mixture(number.of.insecticides = 4,
                                              current.generation = 100,
                                              withdrawal.threshold = 100,
                                              return.threshold = 100,
@@ -36,5 +36,5 @@ test_that("deploys for correct duration", {
                                              mixture.df = make_mixture_sequential_discrete(4),
                                              current.mixture = 1,
                                              deployment.frequency = 10,
-                                             deployment.df = deployed.mixture)[[4]], 20)
+                                             deployment.df = deployed.mixture)[[4]]), 20)
 })
