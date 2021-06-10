@@ -49,7 +49,7 @@ plot_resistance_to_bioassay_survival = function(maximum.bioassay.survival.propor
   
     ggplot(df, aes(x=resistance.values, y = bioassay.survival.proportion)) + ##logging to increase ease of readibility
     geom_point(colour = "blue") +
-    xlab("Insecticide Resistance Intensity") + ##applying log(z) makes it more readable at the lower z levels.
+    xlab("Polygenic Resistance Score") + ##applying log(z) makes it more readable at the lower z levels.
     ylab("Bioassay Survival Proportion")+ #note: this label may need to be changed depending on what we calibrate against
     theme_classic()
 }
