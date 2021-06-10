@@ -63,7 +63,7 @@ plot_bioassay_survival_to_resistance = function(maximum.bioassay.survival.propor
   
   ggplot2::ggplot(df, aes(x=resistance.values, y = bioassay.survival.values)) +
     geom_line(colour = "red") +
-    xlab("Insecticide Resistance Intensity") +
+    xlab("Polygenic Resistance Score") +
     ylab("Bioassay Survival Proportion") +
     theme_classic()
 }
