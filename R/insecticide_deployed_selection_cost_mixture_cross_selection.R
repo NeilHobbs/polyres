@@ -1,4 +1,23 @@
-#Equation 7a(iii)
+#'@title 
+#'
+#'
+#'@param exposure.scaling.factor = 10,
+#'@para nsim = 1000, 
+#'@param minimum.insecticide.resistance.heritability = 0.05, 
+#'@para maximum.insecticide.resistance.heritability = 0.30,
+#'@param minimum.male.insecticide.exposure = 0,
+#'@param maximum.male.insecticide.exposure = 1, 
+#'@param minimum.female.insecticide.exposure = 0.4, 
+#'@param maximum.female.insecticide.exposure = 0.9,
+#'@param resistance.cost = 0.1,
+#'@param initial.resistance.intensity = 0,
+#'@param intensity.to.other.mixture.part,
+#'@param half.population.bioassay.survival.resistance,
+#'@param currently.deployed.insecticide,
+#'@param cross.selection.matrix,
+#'@param number.of.insecticides,
+#'@param conversion.factor = 0.48,
+#'@param intercept = 0.15
 
 #See insecticide_deployed_selection_cost_cross_selection and
   #insecticide_deployed_selection_cost_mixture
