@@ -63,7 +63,7 @@ refugia_migration_effect_deployed_cross_resistance = function(exposure.scaling.f
                                                                            maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
                                                                            resistance.cost = resistance.cost,
                                                                            initial.resistance.intensity = initial.resistance.intensity)
-    
+  
   
   migration = migration_refugia_to_treatment(min.dispersal.rate = min.dispersal.rate,
                                              max.dispersal.rate = max.dispersal.rate,
