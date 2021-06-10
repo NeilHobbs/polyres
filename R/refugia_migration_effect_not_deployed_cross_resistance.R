@@ -63,14 +63,17 @@ refugia_migration_effect_not_deployed_cross_resistance = function(exposure.scali
                                                                                initial.resistance.intensity = initial.resistance.intensity)
     
   
-  migration.values = migration_refugia_to_treatment(min.dispersal.rate = min.dispersal.rate,
+  migration = migration_refugia_to_treatment(min.dispersal.rate = min.dispersal.rate,
                                                     max.dispersal.rate = max.dispersal.rate,
                                                     min.intervention.coverage = min.intervention.coverage, 
                                                     max.intervention.coverage = max.intervention.coverage,
                                                     nsim = nsim)
   
   
-  track.refugia.resistance = (refugia.selection * (1 - migration.values)) + (treatment.site.selection * migration.values)
+  
+  
+  track.refugia.resistance = (refugia.selection * (1 - migration)) + (treatment.site.selection * migration)
+  
   
   #Prevent resistance intensity going below 0
   track.refugia.resistance = ifelse(track.refugia.resistance < 0, yes=  0, no = track.refugia.resistance)
