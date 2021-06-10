@@ -1,25 +1,36 @@
-library(devtools)
-load_all()
-library(epiR)
-library(dplyr)
-library(ggplot2)
+#Set 1::: Analysis to compare sequences and rotations in the absence of cross resistance
 
-#Analysis to compare sequences and rotations in the absence of cross resistance
+#SIMULATION SET 1: Comparing Sequences against Rotations:
+  #Compared at 2,3 and 4 insecticides and 5, 10 and 20 deployment intervals.
+  #There is no cross resistance/selection between the insecticides. 
+
+#load in the required packages:
+library(devtools)
+load_all("polyres") #loads in the polyres package to allow simulation plotting examples
+library(epiR) #used for partial rank correlation
+library(dplyr) #used for general data manipulation
+library(ggplot2) #used for data visualisation
+library(rpart) #used for regression decision trees
+library(rpart.plot) #used to plot the regression decision trees
+
+#Simulation data obtained from
+#Sets_of_Simulations --> Running Simulations --> set_1_rotations & set_1_sequences
 
 #Read in datasets from simulations from set 1:
 sequences.set.1.df = read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/sequence.set1.csv")
 rotations.set.1.df = read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/rotation.set1.csv")
 
+#Combine together to make a single dataframe of the set 1 simulations. 
 sequences.rotations.set.1.df = rbind(sequences.set.1.df, rotations.set.1.df)
 
 #Find difference in simulations durations:
 sequences.duration = sequences.set.1.df$simulation.duration
 rotations.duration = rotations.set.1.df$simulation.duration
 
-#Calculate difference in duration sequence - rotations
-duration.difference = sequences.duration-rotations.duration
+#Calculate difference in duration sequence - rotations (negative number favours rotations, postive sequence)
+duration.difference = sequences.duration-rotations.duration 
 
-#Calculate proportion difference 
+#Calculate proportion difference
 proportion.difference = 1 - (sequences.duration/rotations.duration)
 
 
@@ -29,7 +40,7 @@ difference.control.failure.generations = sequences.set.1.df$exceedance.generatio
 #Find difference in mean intensity to deployed insecticide:
 difference.mean.intensity = sequences.set.1.df$mean.resistance.intensity. - rotations.set.1.df$mean.resistance.intensity.
 
-#Find difference in peak resistance intensity:
+#Find difference in peak polygenic resistance score:
 difference.peak = sequences.set.1.df$peak.resistance - rotations.set.1.df$peak.resistance
 
 #vectors of parameters:
@@ -37,13 +48,13 @@ sim.replicate = seq(1, 45000, 1)
 insecticides = sequences.set.1.df$Number.of.Insecticides
 deployment.interval = sequences.set.1.df$Deployment.Interval
 
-#parameters:
+#have a dataframe that contains only the simulation parameters:
 parameters.df = rotations.set.1.df%>%
   dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
                 "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure", "simulation.duration")
 
 
-#create data frame for analysis:
+#create data frame for comparison:
 seq.rot.set.1 = data.frame(sim.replicate, insecticides, deployment.interval, duration.difference,
                            difference.mean.intensity, difference.control.failure.generations, difference.peak,
                            proportion.difference)
@@ -64,10 +75,12 @@ rotation.wins = nrow(seq.rot.set.1%>%
                        dplyr::filter(duration.difference < 0))
 print(rotation.wins)#7033 / 45000
 
+#Calculate as percentages
 7033/45000*100 #percentage rotation wins
 37967/45000*100 #perentage draws
 
-#Operationally relevant wins:
+#Operationally relevant wins: 
+#Operationally relevant wins are defined as having a simulation duration 10%+ longer than the other
 operationally.relevant.wins = nrow(seq.rot.set.1%>%
                                      dplyr::filter(proportion.difference >= 0.1))
 print(operationally.relevant.wins)#4292
@@ -76,8 +89,36 @@ print(operationally.relevant.wins)#4292
 #find the shortest simulation duration
 min(sequences.rotations.set.1.df$simulation.duration)
 
+rot.duration = rotations.set.1.df$simulation.duration
+seq.duration = sequences.set.1.df$simulation.duration
 
-#Plot only for rotation wins.
+outcome = c()
+for(i in 1:length(rot.duration)){
+  if(rot.duration[i] > seq.duration[i]){outcome[i] = "rotation.win"}
+  if(seq.duration[i] > rot.duration[i]){outcome[i] = "sequence.win"}
+  if(rot.duration[i] == seq.duration[i]){outcome[i] = "draw"}
+}
+
+prop.diff.seq.rot = 1 - (seq.duration/rot.duration)
+
+operational.outcome = c()
+for(i in 1:length(seq.duration)){
+  if(prop.diff.seq.rot[i] > 0.1 ){operational.outcome[i] = "rotation win"}
+  if(prop.diff.seq.rot[i] < -0.1 ){operational.outcome[i] = "sequence win"}
+  if(prop.diff.seq.rot[i] < 0.1 ){operational.outcome[i] = "no operational win"}
+}
+
+sequences.set.1.df$outcome = outcome
+sequences.set.1.df$operational.outcome = operational.outcome
+
+#For the draws calculate the proportion differences in control failure gens, peak and mean bioassay survival.
+#Find differences in control failure generations:
+prop.diff.control.failure = rotations.set.1.df$exceedance.generations.deployed/sequences.set.1.df$exceedance.generations.deployed
+
+#Find difference in mean intensity to deployed insecticide:
+prop.diff.mean.intensity = rotations.set.1.df$mean.resistance.intensity./sequences.set.1.df$mean.resistance.intensity.
+
+#Plot only for rotation wins (n=7033).
 make_diff_duration_plot = function(){
 #Creates a dataset for putting in labels for putting in the 
 label.df = data.frame(
@@ -116,12 +157,9 @@ figure = ggplot(rot.wins, aes(x = sim.replicate, y=duration.difference)) +
 
 return(figure)
 }
-
 make_diff_duration_plot()
 
-
-
-
+#Compare the draws (n = 37967)
 make_diff_mean_intensity_plot = function(){
   #Creates a dataset for putting in labels for putting in the 
   label.df = data.frame(
@@ -169,9 +207,7 @@ make_diff_mean_intensity_plot = function(){
   
   return(figure)
 }
-
 make_diff_mean_intensity_plot()
-
 
 make_control_failure_plot = function(){
   #Creates a dataset for putting in labels for putting in the 
@@ -213,11 +249,7 @@ make_control_failure_plot = function(){
   
   return(figure)
 }
-
 make_control_failure_plot()
-
-
-  
 
 make_diff_peak_survival_plot = function(){
   #Creates a dataset for putting in labels for putting in the 
@@ -268,9 +300,11 @@ make_diff_peak_survival_plot = function(){
   
   return(figure)
 }
-
 make_diff_peak_survival_plot()
 
+
+
+#Do partial rank correlation:
 df_from_pcor_test = function(number.insecticides,
                              irm.strategy,
                              deploy.interval,
@@ -647,98 +681,254 @@ plot(sequences.set.1.df_short_space)
 
 
 example.parameters = sequences.set.1.df_short[1406 , ]
-
 print(example.parameters)
 
-seq.return.5 = get_simulation_dataframe(simulation.array = run_simulation_intervention(number.of.insecticides = 3,
-                                                                                       exposure.scaling.factor = 10,
-                                                                                       nsim = 1,
-                                                                                       minimum.insecticide.resistance.heritability = 0.2770767,
-                                                                                       maximum.insecticide.resistance.heritability = 0.2770767,
-                                                                                       minimum.male.insecticide.exposure = 0.9763283,
-                                                                                       maximum.male.insecticide.exposure = 0.9763283,
-                                                                                       minimum.female.insecticide.exposure = 0.7782427,
-                                                                                       maximum.female.insecticide.exposure = 0.7782427,
-                                                                                       resistance.cost = 0.1992432,
-                                                                                       starting.treatment.site.intensity = 0,
-                                                                                       starting.refugia.intensity = 0,
-                                                                                       min.intervention.coverage = 0.7715593,
-                                                                                       max.intervention.coverage = 0.7715593,
-                                                                                       min.dispersal.rate = 0.1446413,
-                                                                                       max.dispersal.rate = 0.1446413,
-                                                                                       maximum.generations = 500, #appoximately 50 years
-                                                                                       irm.strategy = "sequence", 
-                                                                                       half.population.bioassay.survival.resistance = 900, 
-                                                                                       withdrawal.threshold.value = 0.10, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
-                                                                                       return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
-                                                                                       deployment.frequency = 20, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
-                                                                                       maximum.resistance.value = 25000 #have arbitrarily high just in case
-) , maximum.generations = 500, number.of.insecticides = 3)
+return_thresholds_plot = function(){
+
+Seq5 = get_simulation_dataframe(simulation.array = run_simulation_intervention(number.of.insecticides = 3,
+                                                                               exposure.scaling.factor = 10,
+                                                                               nsim = 1,
+                                                                               minimum.insecticide.resistance.heritability = 0.2741695,
+                                                                               maximum.insecticide.resistance.heritability = 0.2741695,
+                                                                               minimum.male.insecticide.exposure = 0.7326781,
+                                                                               maximum.male.insecticide.exposure = 0.7326781,
+                                                                               minimum.female.insecticide.exposure = 0.7946055,
+                                                                               maximum.female.insecticide.exposure = 0.7946055,
+                                                                               resistance.cost = 0.1836585,
+                                                                               starting.treatment.site.intensity = 0,
+                                                                               starting.refugia.intensity = 0,
+                                                                               min.intervention.coverage = 0.8778145,
+                                                                               max.intervention.coverage = 0.8778145,
+                                                                               min.dispersal.rate = 0.3401694 ,
+                                                                               max.dispersal.rate = 0.3401694 ,
+                                                                               maximum.generations = 500,
+                                                                               irm.strategy = "sequence", 
+                                                                               half.population.bioassay.survival.resistance = 900,
+                                                                               withdrawal.threshold.value = 0.1, 
+                                                                               return.threshold.value = 0.05,
+                                                                               deployment.frequency = 5, 
+                                                                               maximum.resistance.value = 25000),
+                                number.of.insecticides = 3,
+                                maximum.generations = 500)
+
+Seq9 = get_simulation_dataframe(simulation.array = run_simulation_intervention(number.of.insecticides = 3,
+                                                                               exposure.scaling.factor = 10,
+                                                                               nsim = 1,
+                                                                               minimum.insecticide.resistance.heritability = 0.2741695,
+                                                                               maximum.insecticide.resistance.heritability = 0.2741695,
+                                                                               minimum.male.insecticide.exposure = 0.7326781,
+                                                                               maximum.male.insecticide.exposure = 0.7326781,
+                                                                               minimum.female.insecticide.exposure = 0.7946055,
+                                                                               maximum.female.insecticide.exposure = 0.7946055,
+                                                                               resistance.cost = 0.1836585,
+                                                                               starting.treatment.site.intensity = 0,
+                                                                               starting.refugia.intensity = 0,
+                                                                               min.intervention.coverage = 0.8778145,
+                                                                               max.intervention.coverage = 0.8778145,
+                                                                               min.dispersal.rate = 0.3401694 ,
+                                                                               max.dispersal.rate = 0.3401694 ,
+                                                                               maximum.generations = 500,
+                                                                               irm.strategy = "sequence", 
+                                                                               half.population.bioassay.survival.resistance = 900,
+                                                                               withdrawal.threshold.value = 0.1, 
+                                                                               return.threshold.value = 0.09,
+                                                                               deployment.frequency = 5, 
+                                                                               maximum.resistance.value = 25000),
+                                number.of.insecticides = 3,
+                                maximum.generations = 500)
+
+Rot5 = get_simulation_dataframe(simulation.array = run_simulation_intervention(number.of.insecticides = 3,
+                                                                               exposure.scaling.factor = 10,
+                                                                               nsim = 1,
+                                                                               minimum.insecticide.resistance.heritability = 0.2741695,
+                                                                               maximum.insecticide.resistance.heritability = 0.2741695,
+                                                                               minimum.male.insecticide.exposure = 0.7326781,
+                                                                               maximum.male.insecticide.exposure = 0.7326781,
+                                                                               minimum.female.insecticide.exposure = 0.7946055,
+                                                                               maximum.female.insecticide.exposure = 0.7946055,
+                                                                               resistance.cost = 0.1836585,
+                                                                               starting.treatment.site.intensity = 0,
+                                                                               starting.refugia.intensity = 0,
+                                                                               min.intervention.coverage = 0.8778145,
+                                                                               max.intervention.coverage = 0.8778145,
+                                                                               min.dispersal.rate = 0.3401694 ,
+                                                                               max.dispersal.rate = 0.3401694 ,
+                                                                               maximum.generations = 500,
+                                                                               irm.strategy = "rotation", 
+                                                                               half.population.bioassay.survival.resistance = 900,
+                                                                               withdrawal.threshold.value = 0.1, 
+                                                                               return.threshold.value = 0.05,
+                                                                               deployment.frequency = 5, 
+                                                                               maximum.resistance.value = 25000),
+                                number.of.insecticides = 3,
+                                maximum.generations = 500)
+
+Rot9 = get_simulation_dataframe(simulation.array = run_simulation_intervention(number.of.insecticides = 3,
+                                                                               exposure.scaling.factor = 10,
+                                                                               nsim = 1,
+                                                                               minimum.insecticide.resistance.heritability = 0.2741695,
+                                                                               maximum.insecticide.resistance.heritability = 0.2741695,
+                                                                               minimum.male.insecticide.exposure = 0.7326781,
+                                                                               maximum.male.insecticide.exposure = 0.7326781,
+                                                                               minimum.female.insecticide.exposure = 0.7946055,
+                                                                               maximum.female.insecticide.exposure = 0.7946055,
+                                                                               resistance.cost = 0.1836585,
+                                                                               starting.treatment.site.intensity = 0,
+                                                                               starting.refugia.intensity = 0,
+                                                                               min.intervention.coverage = 0.8778145,
+                                                                               max.intervention.coverage = 0.8778145,
+                                                                               min.dispersal.rate = 0.3401694 ,
+                                                                               max.dispersal.rate = 0.3401694 ,
+                                                                               maximum.generations = 500,
+                                                                               irm.strategy = "rotation", 
+                                                                               half.population.bioassay.survival.resistance = 900,
+                                                                               withdrawal.threshold.value = 0.1, 
+                                                                               return.threshold.value = 0.09,
+                                                                               deployment.frequency = 5, 
+                                                                               maximum.resistance.value = 25000),
+                                number.of.insecticides = 3,
+                                maximum.generations = 500)
 
 
-seq.return.10 = get_simulation_dataframe(simulation.array = run_simulation_intervention(number.of.insecticides = 3,
-                                                                                        exposure.scaling.factor = 10,
-                                                                                        nsim = 1,
-                                                                                        minimum.insecticide.resistance.heritability = 0.2770767,
-                                                                                        maximum.insecticide.resistance.heritability = 0.2770767,
-                                                                                        minimum.male.insecticide.exposure = 0.9763283,
-                                                                                        maximum.male.insecticide.exposure = 0.9763283,
-                                                                                        minimum.female.insecticide.exposure = 0.7782427,
-                                                                                        maximum.female.insecticide.exposure = 0.7782427,
-                                                                                        resistance.cost = 0.1992432,
-                                                                                        starting.treatment.site.intensity = 0,
-                                                                                        starting.refugia.intensity = 0,
-                                                                                        min.intervention.coverage = 0.7715593,
-                                                                                        max.intervention.coverage = 0.7715593,
-                                                                                        min.dispersal.rate = 0.1446413,
-                                                                                        max.dispersal.rate = 0.1446413,
-                                                                                        maximum.generations = 500, #appoximately 50 years
-                                                                                        irm.strategy = "sequence", 
-                                                                                        half.population.bioassay.survival.resistance = 900, 
-                                                                                        withdrawal.threshold.value = 0.10, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
-                                                                                        return.threshold.value = 0.10, #this is the survival proportion in a bioassay that would return insecticide to arsenal
-                                                                                        deployment.frequency = 20, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
-                                                                                        maximum.resistance.value = 25000 #have arbitrarily high just in case
-) , maximum.generations = 500, number.of.insecticides = 3)
+
+plot_simulation_temp = function(simulation.dataframe, #created from the get_simulation_dataframe() function
+                                half.population.bioassay.survival.resistance, #must be same as used in the simulation
+                                withdrawal.threshold, #must be the same as used in the simulation
+                                return.threshold,
+                                plot.title){ #must be the same as used in the simulation
+  
+  
+  #Convert the insecticide resistance intensity into bioassay survival(%).
+  #This is more intuitive and operationally relevant to visualise.
+  simulation.dataframe = simulation.dataframe%>%
+    dplyr::rowwise()%>%
+    dplyr::mutate(bioassay.survival = resistance_to_bioassay_survival(maximum.bioassay.survival.proportion = 1,
+                                                                      mean.population.resistance = resistance.intensity,
+                                                                      michaelis.menten.slope = 1, 
+                                                                      half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
+                                                                      sd.population.resistance = 0, 
+                                                                      nsim = 1) * 100)#As a percentage)
+  #Make as separate dataframes: 1 for treatment, 1 for refugia
+  temp.df.treatment = simulation.dataframe%>%
+    dplyr::filter(site == "treatment")
+  
+  
+  #Create a plot for the treatment site: this will have the deployment sequence and the threshold lines.
+  treatment.plot = ggplot(data = temp.df.treatment, aes(x=time.in.generations, 
+                                                        y = bioassay.survival, 
+                                                        colour = insecticide.tracked,))+
+    geom_point(aes(x=time.in.generations, y=(withdrawal.threshold*100), #Make a line of the deployed insecticide at %
+                   colour=insecticide.deployed, #colours should match the plots
+                   alpha = 0.3)) +
+    geom_point(aes(x=time.in.generations, #Line indicating the return threshold.
+                   y=(return.threshold * 100)), 
+               colour="grey", 
+               alpha = 0.3) +  #keep it fairly faint.
+    geom_line(data =temp.df.treatment, aes(x=time.in.generations, 
+                                           y=bioassay.survival, #aleady in %
+                                           colour=insecticide.tracked))+ #matches deployed colour
+    scale_y_continuous(limits = c(0, ifelse(max(simulation.dataframe$bioassay.survival) < (withdrawal.threshold*100),
+                                            yes = (withdrawal.threshold*100), no = max(simulation.dataframe$bioassay.survival) + 1)),
+                       breaks = c(0, (return.threshold*100), (withdrawal.threshold*100)))+ #make sure there are labels at the important bits
+    xlim(0, 500)+
+    ylab("Survival in Bioassay (%)") +
+    xlab("Time in Generations") +
+    ggtitle(plot.title)+
+    theme_classic()+
+    theme(legend.position = "none") #Colour label is irrelevant; insecticide number can be inferred from the order of deployment
+  
+  
+  
+  return(treatment.plot)
+}
+
+seq5.plot = plot_simulation_temp(simulation.dataframe = Seq5,
+                                 half.population.bioassay.survival.resistance = 900,
+                                 withdrawal.threshold = 0.1,
+                                 return.threshold = 0.05,
+                                 plot.title = "A")
+
+seq9.plot = plot_simulation_temp(simulation.dataframe = Seq9,
+                                 half.population.bioassay.survival.resistance = 900,
+                                 withdrawal.threshold = 0.1,
+                                 return.threshold = 0.09,
+                                 plot.title = "B")
+
+rot5.plot = plot_simulation_temp(simulation.dataframe = Rot5,
+                                 half.population.bioassay.survival.resistance = 900,
+                                 withdrawal.threshold = 0.1,
+                                 return.threshold = 0.05,
+                                 plot.title = "C")
+
+rot9.plot = plot_simulation_temp(simulation.dataframe = Rot9,
+                                 half.population.bioassay.survival.resistance = 900,
+                                 withdrawal.threshold = 0.1,
+                                 return.threshold = 0.09,
+                                 plot.title = "D")
 
 
-rot.return.5 = get_simulation_dataframe(simulation.array = run_simulation_intervention(number.of.insecticides = 3,
-                                                                                       exposure.scaling.factor = 10,
-                                                                                       nsim = 1,
-                                                                                       minimum.insecticide.resistance.heritability = 0.2770767,
-                                                                                       maximum.insecticide.resistance.heritability = 0.2770767,
-                                                                                       minimum.male.insecticide.exposure = 0.9763283,
-                                                                                       maximum.male.insecticide.exposure = 0.9763283,
-                                                                                       minimum.female.insecticide.exposure = 0.7782427,
-                                                                                       maximum.female.insecticide.exposure = 0.7782427,
-                                                                                       resistance.cost = 0.1992432,
-                                                                                       starting.treatment.site.intensity = 0,
-                                                                                       starting.refugia.intensity = 0,
-                                                                                       min.intervention.coverage = 0.7715593,
-                                                                                       max.intervention.coverage = 0.7715593,
-                                                                                       min.dispersal.rate = 0.1446413,
-                                                                                       max.dispersal.rate = 0.1446413,
-                                                                                       maximum.generations = 500, #appoximately 50 years
-                                                                                       irm.strategy = "rotation", 
-                                                                                       half.population.bioassay.survival.resistance = 900, 
-                                                                                       withdrawal.threshold.value = 0.10, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
-                                                                                       return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
-                                                                                       deployment.frequency = 20, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
-                                                                                       maximum.resistance.value = 25000 #have arbitrarily high just in case
-) , maximum.generations = 500, number.of.insecticides = 3)
+final.plot = gridExtra::grid.arrange(seq5.plot, seq9.plot,
+                        rot5.plot, rot9.plot)
+return(final.plot)
+}
+return_thresholds_plot()
+
+#set 1::: Regression Tree::
+library(rpart)
+library(rpart.plot)
+
+set.seed(1705)#today date
+sample.size = floor(0.75 * nrow(sequences.set.1.df))
+train.ind = sample(seq_len(nrow(sequences.set.1.df)), size = sample.size)
+
+data.train = sequences.set.1.df[train.ind, ] #33750 rows
+data.test = sequences.set.1.df[-train.ind, ]
+
+set.1.classification.tree = rpart(outcome ~
+                                    Number.of.Insecticides +
+                                    Deployment.Interval +
+                                    Intervention.Coverage+
+                                   # Fitness.Cost+
+                                   # Dispersal+
+                                    Female.Insecticide.Exposure,
+                                   # Male.Insecticide.Exposure,
+                                  data = data.train,
+                                  method = "class",
+                                  control = rpart.control(minsplit = 338, #each split is 1% of samples
+                                                          maxdepth = 5,
+                                                          cp = 0)
+                                  )
+
+predict.unseen = predict(set.1.classification.tree, data.test, type = 'class')
+actual.outcome = data.test$outcome
+
+correct.outcome = ifelse(predict.unseen == actual.outcome,
+                         yes = 1,
+                         no = 0)  
 
 
-plot_simulation(simulation.dataframe = seq.return.5,
-                half.population.bioassay.survival.resistance = 900,
-                withdrawal.threshold = 0.1,
-                return.threshold = 0.05)
+sum(correct.outcome)/length(correct.outcome)
 
-plot_simulation(simulation.dataframe = seq.return.10,
-                half.population.bioassay.survival.resistance = 900,
-                withdrawal.threshold = 0.1,
-                return.threshold = 0.10)
-plot_simulation(simulation.dataframe = rot.return.5,
-                half.population.bioassay.survival.resistance = 900,
-                withdrawal.threshold = 0.1,
-                return.threshold = 0.05)
+rpart.plot(set.1.classification.tree, 
+           type = 0,
+           extra = 100)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,4 +1,4 @@
-#Set 4 Analysis: Mixtures, Seqences and Rotations in the Presence of Cross Resistance.
+#Set 4 Analysis: Mixtures, Seqences and Rotations in the Presence of Cross Resistance (PRS starts at 0)
 library(devtools)
 load_all()
 library(epiR)
@@ -112,7 +112,17 @@ for(i in 1:length(rot.duration)){
     
 }
 table(outcome)
-24568+7954+92+2386#35000
+
+24568/35000
+7954/35000
+92/35000
+2386/35000
+
+table(outcome, cross.resistance)
+1144/5000 #mixture wins at 0 cross resistance
+2249/5000 #mixture wins at 0.3 cross resistance
+
+
 
 prop.diff.seq.mix = 1 - (seq.duration/mix.duration)
 prop.diff.seq.rot = 1 - (seq.duration/rot.duration)
@@ -122,18 +132,23 @@ operational.outcome = c()
 for(i in 1:length(seq.duration)){
   
   if(prop.diff.seq.mix[i] >= 0.1 &
-     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "sequence only"}
+     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "mixtures win vs sequence only"}
   if(prop.diff.rot.mix[i] >= 0.1 &
-     prop.diff.seq.mix[i] < 0.1 ){operational.outcome[i] = "rotation only"}
+     prop.diff.seq.mix[i] < 0.1 ){operational.outcome[i] = "mixtures win vs rotation only"}
   if(prop.diff.seq.mix[i] >= 0.1 &
-     prop.diff.rot.mix[i] >= 0.1 ){operational.outcome[i] = "rotation and sequence"}
+     prop.diff.rot.mix[i] >= 0.1 ){operational.outcome[i] = "mixtures win vs rotation & sequence"}
   if(prop.diff.seq.mix[i] < 0.1 &
-     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = NA}
+     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "no operational win"}
 }
 
 table(operational.outcome)
-6979+2136
+6979+2136+123
 
+6979/35000
+
+6979/9238
+2136/9238
+123/9238
 
 outcome.cross.df = data.frame(rot.duration,
                               seq.duration,
@@ -142,6 +157,11 @@ outcome.cross.df = data.frame(rot.duration,
                               outcome,
                               operational.outcome)
 
+
+A = table(outcome.cross.df$operational.outcome,
+      outcome.cross.df$outcome)
+
+kable(A)
 
 outcome.df = data.frame(table(outcome.cross.df$outcome, outcome.cross.df$cross.resistance))
 outcome.df$proportion = outcome.df$Freq/5000
@@ -158,7 +178,7 @@ outcome.df$cross.resistance = c(rep(-0.3, 4),
                                 rep(0.3, 4))
                                 
 
-
+outcome.df.set.4 = outcome.df
 
 ggplot(outcome.df, aes(x=cross.resistance, 
                      y=proportion, 
@@ -167,12 +187,73 @@ ggplot(outcome.df, aes(x=cross.resistance,
   scale_x_continuous(breaks = c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3))+
   scale_fill_manual(values = c("#3690c0", "#b2df8a", "#ffff33", "#f03b20"))+
   ylab("Proportion of Simulations")+
-  xlab("Degree of Cross Resistance")+
+  xlab("Degree of Cross Selection")+
   labs(fill = "Outcome")+
   theme_classic()
 
+# #Used for poster presentation
+# outcome.df$outcome = factor(outcome.df$Var1, levels = c("draw", "rotation.loss", "mixture.win",
+#                                                         "sequence.loss"))
+# 
+# ggplot(outcome.df, aes(x=cross.resistance, 
+#                        y=proportion, 
+#                        fill=outcome)) + 
+#   geom_area(alpha = 0.8)+
+#   scale_x_continuous(breaks = c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3))+
+#   scale_fill_manual(values = c("#b2df8a","#f03b20", "#3690c0", "#ffff33"))+
+#   ylab("Proportion of Simulations")+
+#   xlab("Degree of Cross Selection")+
+#   labs(fill = "Outcome:")+
+#   theme_classic()+
+#   theme(legend.position = "bottom",
+#         legend.text = element_text(size = 15),
+#         legend.title = element_text(size = 15),
+#         axis.text.y = element_text(size = 12),
+#         axis.text.x = element_text(size = 12,
+#                                    angle = 45),
+#         axis.title.x = element_text(size = 15),
+#         axis.title.y = element_text(size = 15))
+
+
+
 
 outcome.df.set.4 = data.frame(seq.cross.df, outcome, operational.outcome)
+
+outcome.df.set.4.noNA = outcome.df.set.4%>%
+  dplyr::filter(!is.na(operational.outcome))%>%
+  dplyr::mutate(cross.resistance = as.factor(cross.resistance))
+
+outcome.df.set.4.noNA = data.frame(table(outcome.df.set.4.noNA$operational.outcome, outcome.df.set.4.noNA$cross.resistance))
+  
+
+ggplot(outcome.df.set.4.noNA, aes(x=Var1, y = Freq/5000))+
+  geom_col(position="dodge",
+           aes(fill = Var2))+
+  scale_fill_manual(values = c("#8e0152", "#c51b7d", "#de77ae",
+                                         "#999999", "#7fbc41", "#4d9221", "#276419"))+
+  ylab("Proportion of Simulations")+
+  xlab("Operationally Relevant Outcome")+
+  theme_classic()+
+  guides(fill=guide_legend(title="Cross Selection"))
+
+##Used for poster
+# ggplot(outcome.df.set.4.noNA, aes(x=Var1, y = Freq/5000))+
+#   geom_col(position="dodge",
+#            aes(fill = Var2))+
+#   scale_fill_manual(values = c("#8e0152", "#c51b7d", "#de77ae",
+#                                "#999999", "#7fbc41", "#4d9221", "#276419"))+
+#   ylab("Proportion of Simulations")+
+#   xlab("Operationally Relevant Outcome")+
+#   scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 20))+
+#   theme_classic()+
+#   guides(fill=guide_legend(title="Cross Selection:"))+
+#   theme(legend.position = "bottom",
+#         legend.text = element_text(size = 15),
+#         legend.title = element_text(size = 15),
+#         axis.text.y = element_text(size = 12),
+#         axis.text.x = element_text(size = 12),
+#         axis.title.x = element_text(size = 15),
+#         axis.title.y = element_text(size = 15))
 
 
 
@@ -219,6 +300,83 @@ rpart.plot(set.4.tree.fit.operational,
            box.palette = list("#c51b8a", "#ffff33"))
 
 par(mfrow = c(1,1))
+
+
+#Plots for poster
+set.4.tree.fit.operational.poster = rpart(operational.outcome ~
+                                     Heritability +
+                                     Fitness.Cost +
+                                     Male.Insecticide.Exposure+
+                                     Female.Insecticide.Exposure+
+                                     Dispersal +
+                                     Intervention.Coverage+
+                                     cross.resistance,
+                                   method = "class",
+                              control = rpart.control(maxdepth = 10,
+                                                      minbucket = 525),
+                                   data = outcome.df.set.4
+)
+
+rpart.plot(set.4.tree.fit.operational.poster,
+           type = 0,
+           tweak = 1.2,
+           extra = 100,
+           box.palette = list("#3690c0", "#ffff33", "#b2df8a", "#f03b20"))
+
+
+
+temp.df = outcome.df.set.4%>%
+  dplyr::select("Heritability",
+                "Male.Insecticide.Exposure",
+                "Female.Insecticide.Exposure",
+                "Fitness.Cost",
+                "Intervention.Coverage",
+                "Dispersal",
+                "cross.resistance",
+                "operational.outcome")
+## set the seed to make your partition reproducible; using todays date
+## 75% of the sample size
+sample.size = floor(0.75 * nrow(temp.df))
+
+set.seed(1205)#today date
+train.ind = sample(seq_len(nrow(temp.df)), size = sample.size)
+
+data.train = temp.df[train.ind, ]
+data.test = temp.df[-train.ind, ]
+
+
+fit = rpart(operational.outcome~
+            Heritability+ #measurable
+            #Male.Insecticide.Exposure+
+            Female.Insecticide.Exposure+ #measurable(?)
+            Fitness.Cost+ #measurable
+            #Intervention.Coverage+ 
+            Dispersal+
+            cross.resistance, #measurable
+            data = data.train, 
+            method = 'class',
+           control = rpart.control(minsplit = 175, #each split is 0.5% of samples
+                                   maxdepth = 5,
+                                   cp = 0))
+
+predict_unseen = predict(fit, data.test, type = 'class')
+
+table.mat = table(data_test$operational.outcome, predict_unseen)
+table.mat
+
+accuracy.test = sum(diag(table.mat)) / sum(table.mat)
+accuracy.test
+
+rpart.plot(fit,
+           type = 0,
+           tweak = 1.2,
+           extra = 100,
+           box.palette = list("#3690c0", "#ffff33", "#b2df8a", "#f03b20"))
+
+
+
+
+
 
 seq.rot.mix.cross.df$max.duration = 500
 

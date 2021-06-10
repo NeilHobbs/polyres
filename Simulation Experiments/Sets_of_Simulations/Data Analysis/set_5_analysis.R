@@ -1,4 +1,13 @@
 #Set 5 Analysis
+#Comparing Mixtures, Sequences and Rotations where insecticides had previously been deployed (PRS starts at 50).
+library(devtools)
+load_all()
+library(epiR)
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(rpart)
+library(rpart.plot)
 
 #read in datasets from set 5 simulations
 set.5.seqeunces = read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/sequence.set.5.csv")
@@ -27,32 +36,53 @@ for(i in 1:35000){
      seq.duration[i] == mix.duration[i]){outcome[i] = "rotation.loss"}
 }
 
+table(outcome)
+17590/35000 #draws
+15055/35000 #mixture win versus sequence and rotation
+50/35000 #rotation loss versus mixture and sequence
+17/35000 #rotation win versus sequence and mixture
+2286/35000 #sequence loss versus mixture and rotation
+
+
 table(outcome, cross.resistance)
+
+outcome.cross.df = data.frame(seq.duration, rot.duration, mix.duration, cross.resistance, outcome)
+
 
 outcome.df = data.frame(table(outcome.cross.df$outcome, outcome.cross.df$cross.resistance))
 outcome.df$proportion = outcome.df$Freq/5000
-outcome.df$outcome = factor(outcome.df$Var1, levels = c("mixture.win", "draw",
-                                                        "sequence.loss", "rotation.loss"))
-outcome.df$cross.resistance = c(rep(-0.3, 4),
-                                rep(-0.2, 4),
-                                rep(-0.1, 4),
-                                rep(0, 4),
-                                rep(0.1, 4),
-                                rep(0.2, 4),
-                                rep(0.3, 4))
+outcome.df$outcome = factor(outcome.df$Var1, levels = c("draw","rotation.win", "rotation.loss", "mixture.win", 
+                                                        "sequence.loss"))
+outcome.df$cross.resistance = c(rep(-0.3, 5),
+                                rep(-0.2, 5),
+                                rep(-0.1, 5),
+                                rep(0, 5),
+                                rep(0.1, 5),
+                                rep(0.2, 5),
+                                rep(0.3, 5))
 
+outcome.df.set.5 = outcome.df
 
 ggplot(outcome.df, aes(x=cross.resistance, 
                        y=proportion, 
                        fill=outcome)) + 
-  geom_area(alpha = 0.8)+
+  geom_area()+
   scale_x_continuous(breaks = c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3))+
   
-  scale_fill_manual(values = c("#3690c0", "#b2df8a", "#ffff33", "#f03b20"))+
+  scale_fill_manual(values = c("#b2df8a", "#984ea3", "#f03b20", "#3690c0", "#ffff33"))+
   ylab("Proportion of Simulations")+
-  xlab("Degree of Cross Resistance")+
-  labs(fill = "Outcome")+
-  theme_classic()
+  xlab("Degree of Cross Selection")+
+  labs(fill = "Outcome:")+
+  guides(fill=guide_legend(nrow = 2, byrow=TRUE))+
+  theme_classic()+
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12,
+                                   angle = 45),
+        axis.title.x = element_text(size = 15),
+        axis.title.y = element_text(size = 15))
 
   
 prop.diff.seq.mix = 1 - (seq.duration/mix.duration)
@@ -81,7 +111,9 @@ for(i in 1:length(seq.duration)){
 }
 
 
-table(operational.outcome, cross.resistance)
+table(operational.outcome, outcome)
 
+#operational wins versus both rotations and sequences:
+7148/15055
 
 

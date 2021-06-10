@@ -146,7 +146,7 @@ make_diff_mean_intensity_plot = function(){
                                                                      nsim = 1)*100))
   
   #This is currently Figure 2
-  #Scatterplot of difference in duration (n=16815).
+  #Scatterplot of difference in duration.
   figure = ggplot(draws, aes(x = sim.replicate, y=diff.bioassay.survival)) +
     geom_point(aes(colour = as.factor(insecticides)),
                alpha = 0.3)+ #unclear if a barchart is the best option. As it hides the zeroes. Figure out lollipop?
@@ -190,7 +190,7 @@ make_control_failure_plot = function(){
     dplyr::filter(duration.difference == 0)
   
   #This is currently Figure 2
-  #Scatterplot of difference in duration (n=16815).
+  #Scatterplot of difference in duration ().
   figure = ggplot(draws, aes(x = sim.replicate, y=difference.control.failure.generations)) +
     geom_point(aes(colour = as.factor(insecticides)),
                alpha = 0.3)+ #unclear if a barchart is the best option. As it hides the zeroes. Figure out lollipop?
@@ -241,8 +241,8 @@ make_diff_peak_survival_plot = function(){
                                                                      sd.population.resistance = 0, 
                                                                      nsim = 1)*100))
   
-  #This is currently Figure 2
-  #Scatterplot of difference in duration (n=16815).
+  
+  #Scatterplot of difference in duration ().
   figure = ggplot(draws, aes(x = sim.replicate, y=diff.bioassay.survival)) +
     geom_point(aes(colour = as.factor(insecticides)),
                alpha = 0.3)+ #unclear if a barchart is the best option. As it hides the zeroes. Figure out lollipop?
