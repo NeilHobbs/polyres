@@ -93,5 +93,5 @@ irm_strategy_mixture_decide_on_part = function(number.of.insecticides,
 #                       deployment.frequency = 10,
 #                       deployment.vector = deployed.insecticide,
 #                       mixture.df,
-#                       current.mixture,)
+#                       current.mixture)
 
