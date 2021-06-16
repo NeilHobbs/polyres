@@ -19,24 +19,30 @@
 
 
 refugia_migration_effect_not_deployed_special_cases = function(exposure.scaling.factor = 10,
-                                                                  nsim = 1000, 
-                                                                  minimum.insecticide.resistance.heritability = 0.05, 
-                                                                  maximum.insecticide.resistance.heritability = 0.30,
-                                                                  minimum.male.insecticide.exposure = 0,
-                                                                  maximum.male.insecticide.exposure = 1, 
-                                                                  minimum.female.insecticide.exposure = 0.4, 
-                                                                  maximum.female.insecticide.exposure = 0.9,
-                                                                  min.intervention.coverage = 0.1, 
-                                                                  max.intervention.coverage = 0.9, 
-                                                                  min.dispersal.rate = 0.1,
-                                                                  max.dispersal.rate = 0.9,
-                                                                  resistance.cost = 0.1,
-                                                                  initial.resistance.intensity = 0,
-                                                                  cross.selection.matrix,
-                                                                  currently.deployed.insecticide,
-                                                                  currently.tracked.insecticide,
-                                                                  initial.refugia.resistance,
-                                                                  current.insecticide.efficacy){
+                                                               nsim = 1000, 
+                                                               minimum.insecticide.resistance.heritability = 0.05, 
+                                                               maximum.insecticide.resistance.heritability = 0.30,
+                                                               minimum.male.insecticide.exposure = 0,
+                                                               maximum.male.insecticide.exposure = 1, 
+                                                               minimum.female.insecticide.exposure = 0.4, 
+                                                               maximum.female.insecticide.exposure = 0.9,
+                                                               min.intervention.coverage = 0.1, 
+                                                               max.intervention.coverage = 0.9, 
+                                                               min.dispersal.rate = 0.1,
+                                                               max.dispersal.rate = 0.9,
+                                                               resistance.cost = 0.1,
+                                                               initial.resistance.intensity = 0,
+                                                               cross.selection.matrix,
+                                                               currently.deployed.insecticide,
+                                                               currently.tracked.insecticide,
+                                                               initial.refugia.resistance,
+                                                               current.insecticide.efficacy,
+                                                               conversion.factor,
+                                                               intercept,
+                                                               sim.array,
+                                                               current.generation,
+                                                               half.population.bioassay.survival.resistance,
+                                                               insecticide.suppression){
   
   refugia.selection = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost = resistance.cost,
@@ -72,20 +78,30 @@ refugia_migration_effect_not_deployed_special_cases = function(exposure.scaling.
                                              nsim = nsim)
   
   
-  population.suppression = calculate_insecticide_population_suppression(minimum.female.insecticide.exposure,
-                                                                        maximum.female.insecticide.exposure,
-                                                                        nsim,
-                                                                        intercept,
-                                                                        conversion.factor,
-                                                                        current.insecticide.efficacy,
-                                                                        currently.deployed.insecticide,
-                                                                        sim.array,
-                                                                        current.generation,
-                                                                        half.population.bioassay.survival.resistance)
+  population.suppression = ifelse(insecticide.suppression == TRUE,
+                                  yes = calculate_insecticide_population_suppression(minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
+                                                                        maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
+                                                                        nsim = nsim,
+                                                                        intercept = intercept,
+                                                                        conversion.factor = conversion.factor,
+                                                                        current.insecticide.efficacy = current.insecticide.efficacy,
+                                                                        currently.deployed.insecticide = currently.deployed.insecticide,
+                                                                        sim.array = sim.array,
+                                                                        current.generation = current.generation,
+                                                                        half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
+                                  no = 1)
   
   
-  track.refugia.resistance = (refugia.selection * (1 - migration)) + (treatment.site.selection * migration*population.suppression)/((((1 -migration)*population.suppression) + migration.values))
+  numerator = (refugia.selection * (1 - migration)) + (treatment.site.selection * migration*population.suppression)
   
+  denominator = ((((1 -migration)*population.suppression) + migration))
+  
+  #If migration = 0, and population supppression = 0 then denominator = 0.
+  
+  
+  track.refugia.resistance = ifelse(denominator == 0,
+                                    yes = numerator,
+                                    no = numerator/denominator)
   
   #Prevent resistance intensity going below 0
   track.refugia.resistance = ifelse(track.refugia.resistance < 0, yes=  0, no = track.refugia.resistance)

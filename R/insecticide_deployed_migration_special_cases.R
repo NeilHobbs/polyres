@@ -51,7 +51,8 @@ insecticide_deployed_migration_special_cases = function(resistance.cost = 0,
                                                         current.generation,
                                                         half.population.bioassay.survival.resistance,
                                                         intercept,
-                                                        conversion.factor){
+                                                        conversion.factor,
+                                                        insecticide.suppression){
   
   
   refugia.selection = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
@@ -78,9 +79,7 @@ insecticide_deployed_migration_special_cases = function(resistance.cost = 0,
                                                                             currently.deployed.insecticide = currently.deployed.insecticide,
                                                                             number.of.insecticides = number.of.insecticides,
                                                                             cross.selection.matrix = cross.selection.matrix,
-                                                                            currently.tracked.insecticide = currently.tracked.insecticide,
-                                                                            current.insecticide.efficacy = current.insecticide.efficacy,
-                                                                 current.insecticide.efficacy = current.insecticide.efficacy)
+                                                                            current.insecticide.efficacy = current.insecticide.efficacy)
   
   
   
@@ -91,19 +90,25 @@ insecticide_deployed_migration_special_cases = function(resistance.cost = 0,
                                              max.dispersal.rate = max.dispersal.rate)
   
   
-  population.suppression = calculate_insecticide_population_suppression(minimum.female.insecticide.exposure,
-                                                                        maximum.female.insecticide.exposure,
-                                                                        nsim,
-                                                                        intercept,
-                                                                        conversion.factor,
-                                                                        current.insecticide.efficacy,
-                                                                        currently.deployed.insecticide,
-                                                                        sim.array,
-                                                                        current.generation,
-                                                                        half.population.bioassay.survival.resistance)
+  population.suppression = ifelse(insecticide.suppression == TRUE,
+                                  yes = calculate_insecticide_population_suppression(minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
+                                                                                     maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
+                                                                                     nsim = nsim,
+                                                                                     intercept = intercept,
+                                                                                     conversion.factor = conversion.factor,
+                                                                                     current.insecticide.efficacy = current.insecticide.efficacy,
+                                                                                     currently.deployed.insecticide = currently.deployed.insecticide,
+                                                                                     sim.array = sim.array,
+                                                                                     current.generation = current.generation,
+                                                                                     half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
+                                  no = 1)
   
-  
-  resistance.intensity.migration = ((cross.selection.treatment * (1 -migration))*population.suppression) + (selection.cost.refugia * migration)/(((1 -migration)*population.suppression) + migration.values)
+  numerator = ((cross.selection.treatment * (1 -migration))*population.suppression) + (refugia.selection * migration)
+  denominator = (((1 -migration)*population.suppression) + migration)
+
+  resistance.intensity.migration = ifelse(denominator == 0,
+                                          yes = numerator,
+                                          no = numerator/denominator)
 
   ##To prevent resistance intensity being less than 0. Sets any values less than zero at zero.
   resistance.intensity.migration = ifelse(resistance.intensity.migration < 0, yes = 0, no = resistance.intensity.migration)

@@ -36,14 +36,14 @@ insecticide_deployed_special_cases = function(currently.deployed.insecticide,
   
   #This is the response of insecticide i on trait I
   direct.selection.response = mean(response_to_insecticide_selection_decay(exposure.scaling.factor = exposure.scaling.factor,
-                                                                      nsim = nsim, 
-                                                                      minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                                                      maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                                                                      minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                                                                      maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                                                                      minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                                                      maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-                                                                      current.insecticide.efficacy = current.insecticide.efficacy)) 
+                                                                           nsim = nsim, 
+                                                                           minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
+                                                                           maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                                           minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                                           maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                                           minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                                           maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
+                                                                           current.insecticide.efficacy = current.insecticide.efficacy)) 
   
   direct.selection.fitness.cost =  mean(effect_of_fitness_cost(resistance.cost = resistance.cost,
                                                           exposure.scaling.factor = exposure.scaling.factor,
@@ -57,18 +57,18 @@ insecticide_deployed_special_cases = function(currently.deployed.insecticide,
   
   #This is the total of the effect of insecticide i on Traits J
   indirect.selection = mean(insecticide_deployed_cross_selection_decay(currently.deployed.insecticide = currently.deployed.insecticide,
-                                                                  number.of.insecticides = number.of.insecticides,
-                                                                  cross.selection.matrix = cross.selection.matrix,
-                                                                  exposure.scaling.factor = exposure.scaling.factor,
-                                                                  nsim = nsim, 
-                                                                  minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                                                  maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                                                                  minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                                                                  maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                                                                  minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                                                  maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-                                                                  resistance.cost = resistance.cost,
-                                                                  current.insecticide.efficacy = current.insecticide.efficacy))
+                                                                       number.of.insecticides = number.of.insecticides,
+                                                                       cross.selection.matrix = cross.selection.matrix,
+                                                                       exposure.scaling.factor = exposure.scaling.factor,
+                                                                       nsim = nsim, 
+                                                                       minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
+                                                                       maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                                       minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                                       maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                                       minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                                       maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
+                                                                       resistance.cost = resistance.cost,
+                                                                       current.insecticide.efficacy = current.insecticide.efficacy))
   
   
   track.resistance.intensity = initial.resistance.intensity + (direct.selection.response + direct.selection.fitness.cost) + indirect.selection

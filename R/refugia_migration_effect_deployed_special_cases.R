@@ -49,7 +49,8 @@ refugia_migration_effect_deployed_special_cases = function(exposure.scaling.fact
                                                            current.insecticide.efficacy,
                                                            sim.array,
                                                            current.generation,
-                                                           half.population.bioassay.survival.resistance){
+                                                           half.population.bioassay.survival.resistance,
+                                                           insecticide.suppression){
   
   
   refugia.selection = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
@@ -85,20 +86,32 @@ refugia_migration_effect_deployed_special_cases = function(exposure.scaling.fact
                                              max.intervention.coverage = max.intervention.coverage,
                                              nsim = nsim)
   
-  population.suppression = calculate_insecticide_population_suppression(minimum.female.insecticide.exposure,
-                                                                        maximum.female.insecticide.exposure,
-                                                                        nsim,
-                                                                        intercept,
-                                                                        conversion.factor,
-                                                                        current.insecticide.efficacy,
-                                                                        currently.deployed.insecticide,
-                                                                        sim.array,
-                                                                        current.generation,
-                                                                        half.population.bioassay.survival.resistance)
+  population.suppression = ifelse(insecticide.suppression == TRUE,
+                                  yes = calculate_insecticide_population_suppression(minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
+                                                                        maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
+                                                                        nsim = nsim,
+                                                                        intercept = intercept,
+                                                                        conversion.factor = conversion.factor,
+                                                                        current.insecticide.efficacy = current.insecticide.efficacy,
+                                                                        currently.deployed.insecticide = currently.deployed.insecticide,
+                                                                        sim.array = sim.array,
+                                                                        current.generation = current.generation,
+                                                                        half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
+                                  no = 1)
   
   
-  track.refugia.resistance = (refugia.selection * (1 - migration)) + (treatment.site.selection * migration*population.suppression)/((((1 -migration)*population.suppression) + migration.values))
- 
+  numerator = (refugia.selection * (1 - migration)) + (treatment.site.selection * migration*population.suppression)
+  
+  denominator = ((((1 -migration)*population.suppression) + migration))
+
+  #If migration = 0, and population supppression = 0 then denominator = 0.
+
+
+  track.refugia.resistance = ifelse(denominator == 0,
+                                    yes = numerator,
+                                    no = numerator/denominator)
+
+
    #Prevent resistance intensity going below 0
   track.refugia.resistance = ifelse(track.refugia.resistance < 0, 0, track.refugia.resistance)
   

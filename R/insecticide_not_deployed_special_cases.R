@@ -62,12 +62,12 @@ insecticide_not_deployed_special_cases = function(exposure.scaling.factor = 10,
   #The effect of indirect selection.
   indirect.selection = (response.to.selection + fitness.costs) * genetic.correlation
   
-  track.resistance.intensity = initial.resistance.intensity + (response.to.selection + fitness.costs) + indirect.selection
+  track.resistance.intensity = initial.resistance.intensity + fitness.costs + indirect.selection
   
   #resistance intensity values cannot be below zero.
   track.resistance.intensity = ifelse(track.resistance.intensity < 0, yes = 0, no = track.resistance.intensity)  
   
-  return(response.to.selection)
+  return(track.resistance.intensity)
 }
 
 
