@@ -1,3 +1,4 @@
+
 #This is equation 8B (parsed equation 8aiii)
 
 
@@ -62,3 +63,4 @@ insecticide_not_deployed_migration_mixture_cross_selection = function(nsim,
   
   return(update.intervention.intensity)
 }
+

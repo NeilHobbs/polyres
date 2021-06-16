@@ -27,6 +27,3 @@ resistance_intensity_to_other_part_of_mixture = function(deployed.mixture,
   
   return(resistance.intensity.to.other.insecticide) 
 }
-
-
-

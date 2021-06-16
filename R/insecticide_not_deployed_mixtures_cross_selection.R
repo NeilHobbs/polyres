@@ -8,21 +8,21 @@
 
 #This is equation 8a(i)
 insecticide_not_deployed_mixtures_cross_selection = function(exposure.scaling.factor = 10,
-                                                                      nsim = 1000, 
-                                                                      minimum.insecticide.resistance.heritability = 0.05, 
-                                                                      maximum.insecticide.resistance.heritability = 0.30,
-                                                                      minimum.male.insecticide.exposure = 0,
-                                                                      maximum.male.insecticide.exposure = 1, 
-                                                                      minimum.female.insecticide.exposure = 0.4, 
-                                                                      maximum.female.insecticide.exposure = 0.9,
-                                                                      resistance.cost = 0.1,
-                                                                      initial.resistance.intensity = 0,
-                                                                      cross.selection.matrix,
-                                                                      deployed.mixture.1,
-                                                                      deployed.mixture.2,
-                                                                      currently.tracked.insecticide,
-                                                                      conversion.factor = 0.48,
-                                                                      intercept = 0.15){
+                                                             nsim = 1000, 
+                                                             minimum.insecticide.resistance.heritability = 0.05, 
+                                                             maximum.insecticide.resistance.heritability = 0.30,
+                                                             minimum.male.insecticide.exposure = 0,
+                                                             maximum.male.insecticide.exposure = 1, 
+                                                             minimum.female.insecticide.exposure = 0.4, 
+                                                             maximum.female.insecticide.exposure = 0.9,
+                                                             resistance.cost = 0.1,
+                                                             initial.resistance.intensity = 0,
+                                                             cross.selection.matrix,
+                                                             deployed.mixture.1,
+                                                             deployed.mixture.2,
+                                                             currently.tracked.insecticide,
+                                                             conversion.factor = 0.48,
+                                                             intercept = 0.15){
   
   #The genetic correlation between the trait which gives resistance to the tracked insecticide the trait
   #which gives resistance to the the deployed insecticide.
@@ -52,10 +52,10 @@ insecticide_not_deployed_mixtures_cross_selection = function(exposure.scaling.fa
                                                             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                                             maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
   
-  intensity.mix.1 = resistance_intensity_to_other_part_of_mixture(deployed.mixture,
-                                                                  generation,
+  intensity.mix.1 = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
+                                                                  generation = generation,
                                                                   insecticide = deployed.mixture.1,
-                                                                  sim.array)
+                                                                  sim.array = sim.array)
   
   field.survival.mix.1 = convert_bioassay_survival_to_field(bioassay.survival = resistance_to_bioassay_survival(maximum.bioassay.survival.proportion = 1,
                                                                                                                 mean.population.resistance = intensity.mix.1,
@@ -65,13 +65,13 @@ insecticide_not_deployed_mixtures_cross_selection = function(exposure.scaling.fa
                                                                                                                 nsim = nsim),
                                                             conversion.factor = conversion.factor,
                                                             intercept = intercept)
- 
-  intensity.mix.2 = resistance_intensity_to_other_part_of_mixture(deployed.mixture,
-                                                                  generation,
-                                                                  insecticide = deployed.mixture.2,
-                                                                  sim.array)
   
-   
+  intensity.mix.2 = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
+                                                                  generation = generation,
+                                                                  insecticide = deployed.mixture.2,
+                                                                  sim.array = sim.array)
+  
+  
   field.survival.mix.2 = convert_bioassay_survival_to_field(bioassay.survival = resistance_to_bioassay_survival(maximum.bioassay.survival.proportion = 1,
                                                                                                                 mean.population.resistance = intensity.mix.2,
                                                                                                                 michaelis.menten.slope = 1, 

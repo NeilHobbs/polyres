@@ -51,13 +51,13 @@ insecticide_deployed_cross_selection = function(currently.deployed.insecticide, 
   
   #Is currently the same conditions for all insecticides so keep out of loop for speed of processing
   response.to.selection = mean(response_to_insecticide_selection(exposure.scaling.factor = exposure.scaling.factor,
-                                                                     nsim = nsim, 
-                                                                     minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                                                     maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                                                                     minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                                                                     maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                                                                     minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                                                     maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) + 
+                                                                    nsim = nsim,
+                                                                    minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
+                                                                    maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                                    minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                                    maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
+                                                                    minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
+                                                                    maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) +
       effect_of_fitness_cost(resistance.cost = resistance.cost,#plus sign used as  negative effect is put in effect_of_fitness_cost function 
                              exposure.scaling.factor = exposure.scaling.factor,
                              nsim = nsim, 
