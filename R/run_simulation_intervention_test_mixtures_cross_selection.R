@@ -69,29 +69,13 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
                                     maximum.generations = maximum.generations)
   
   
-  #Maybe create a separate function: set_starting_conditions() for the following chunk of code. In doing so;
-  #be able to set each insecticide having a unique starting intensity. And would set the insecticide.info
-  #and calculating the withdrawal and return thresholds. 
-  
   #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
-  if(length(starting.refugia.intensity) == 1){
-    sim.array['refugia', , 1] = starting.refugia.intensity
-    
-  }  else(
-    
-    #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
-    for(i in 1:number.of.insecticides){
-      sim.array['refugia', i , 1] = starting.refugia.intensity[i]
-    })
-  
-  if(length(starting.treatment.site.intensity) == 1){
-    sim.array['treatment', , 1] = starting.treatment.site.intensity
-  }else(
-    
-    #treatment site starting resistance intensity (where the insecticide can be deployed)
-    for(i in 1:number.of.insecticides){
-      sim.array['treatment', i , 1] = starting.treatment.site.intensity[i]
-    })
+  #refugia site starting resistace intensity
+  #Set the starting resistance scores for the insecticides:
+  sim.array = set_starting_resistance_scores(sim.array = sim.array,
+                                             starting.refugia.resistance.score = starting.refugia.intensity,
+                                             starting.intervention.resistance.score = starting.treatment.site.intensity,
+                                             number.of.insecticides = number.of.insecticides)
   
   available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.
   #At the beginning all insecticides are available for deployment. 
