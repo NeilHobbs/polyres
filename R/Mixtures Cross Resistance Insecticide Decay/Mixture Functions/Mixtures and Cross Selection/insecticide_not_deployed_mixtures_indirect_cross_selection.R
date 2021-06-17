@@ -50,20 +50,31 @@ insecticide_not_deployed_mixtures_indirect_cross_selection = function(exposure.s
                                                             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                                             maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
   
-  intensity.mix.1 = resistance_intensity_to_other_part_of_mixture(deployed.mixture,
-                                                                  generation,
+  intensity.mix.1 = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
+                                                                  generation = generation,
                                                                   insecticide = deployed.mixture.1,
-                                                                  sim.array)
+                                                                  sim.array = sim.array)
  
-  intensity.mix.2 = resistance_intensity_to_other_part_of_mixture(deployed.mixture,
-                                                                  generation,
+  intensity.mix.2 = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
+                                                                  generation = generation,
                                                                   insecticide = deployed.mixture.2,
-                                                                  sim.array)
+                                                                  sim.array = sim.array)
   
    
-  survival.mix.1 = resistance_to_bioassay_survival()
+  survival.mix.1 = resistance_to_bioassay_survival(mean.population.resistance = intensity.mix.1,
+                                                   sd.population.resistance = 0,
+                                                   nsim = 1,
+                                                   michaelis.menten.slope = 1,
+                                                   maximum.bioassay.survival.proportion = 1,
+                                                   half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance)
   
-  survival.mix.2 = resistance_to_bioassay_survival()
+  survival.mix.2 = resistance_to_bioassay_survival(mean.population.resistance = intensity.mix.2,
+                                                   sd.population.resistance = 0,
+                                                   nsim = 1,
+                                                   michaelis.menten.slope = 1,
+                                                   maximum.bioassay.survival.proportion = 1,
+                                                   half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance)
+  
   
   #The effect of indirect selection.
   indirect.selection.mix.1 = (response.to.selection + fitness.costs) * genetic.correlation.mix.1 * survival.mix.2
