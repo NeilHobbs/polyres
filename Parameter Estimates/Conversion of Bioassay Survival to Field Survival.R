@@ -4,6 +4,7 @@
   #does not mean that they entered hut and encountered bednets.
   #Only considers female mosquitoes.
 library(magrittr)
+library(ggplot2)
 
 churcher.data = readxl::read_excel("Data/elife-16090-fig2-data2-v2.xlsx")
 
@@ -11,6 +12,7 @@ churcher.data = readxl::read_excel("Data/elife-16090-fig2-data2-v2.xlsx")
 churcher.data = churcher.data%>%
   dplyr::mutate(hut.mortality = Total_Dead_In_Hut_Trial/Total_Collected_In_Hut_Trial)%>%
   dplyr::mutate(bioassay.mortality = Total_Dead_In_Bioassay/Total_Tested_In_Bioassay)%>%
+  dplyr::mutate(Total_Surviving_Hut = Total_Collected_In_Hut_Trial-Total_Dead_In_Hut_Trial)%>%
   dplyr::mutate(hut.survival = 1 - hut.mortality)%>%
   dplyr::mutate(bioassay.survival = 1 - bioassay.mortality)
 
@@ -49,8 +51,6 @@ churcher.lm.sl = lm(formula = hut.survival ~ bioassay.survival,
 summary(churcher.lm.sl)
 
 
-
-
 #Try with only Deltamethrin and Anopheles sl. 
   #Rationale: Reduces confounding of species and insecticide differences
 churcher.data.delta.sl = churcher.data%>%
@@ -69,6 +69,13 @@ summary(churcher.gam.updated)
 churcher.lm.updated = lm(hut.survival ~ bioassay.survival,
                  data = churcher.data.delta.sl)
 
+summary(churcher.lm.updated)
+  #intercept 0.15
+  #scaling factor 0.48
+
+confint(churcher.lm.updated, level = 0.95)
+
+
 par(mfrow = c(2, 2)) #make 4x4 grid
 plot(churcher.lm.updated)
 par(mfrow = c(1, 1)) #return plotting space back to normal
@@ -76,39 +83,67 @@ par(mfrow = c(1, 1)) #return plotting space back to normal
 #histogram of residuals
 hist(churcher.lm.updated$residuals)#not overly Normally distributed
 
-summary(churcher.lm.updated)
-  #intercept 0.15
-  #scaling factor 0.48
+
+
+ggplot(churcher.data.delta.sl, aes(x=bioassay.survival, 
+                                   y=hut.survival))+
+   geom_smooth(method="lm")+ 
+  geom_point(colour = "black", size = 2)+
+  ylab("Experimental Hut Survival Proportion")+
+  xlab("WHO Cylinder Bioassay Survival Proportion")+
+  theme_classic()
 
 
 
 #A 15% base survival rate to an insecticide in the field seems plausible,
   #variation in insecticide contact/duration of contact; and individual physiological status of mosquitoes.
   #E.g. 0 resistance intensity = 15% survival in the field
-convert_bioassay_survival_to_field = function(bioassay.survival,
-                                              conversion.factor = 0.48,
-                                              intercept = 0.15){
-  
-  field.survival = (conversion.factor * bioassay.survival) + intercept #values obtained from linear model.
-  
-  #stop field.survival being outside of 0-1 range
-  field.survival = ifelse(field.survival > 1, yes = 1, no = field.survival)
-  field.survival = ifelse(field.survival < 0, yes = 0, no = field.survival)
-  
-  return(field.survival)
-}
+# convert_bioassay_survival_to_field = function(bioassay.survival,
+#                                               conversion.factor = 0.48,
+#                                               intercept = 0.15){
+#   
+#   field.survival = (conversion.factor * bioassay.survival) + intercept #values obtained from linear model.
+#   
+#   #stop field.survival being outside of 0-1 range
+#   field.survival = ifelse(field.survival > 1, yes = 1, no = field.survival)
+#   field.survival = ifelse(field.survival < 0, yes = 0, no = field.survival)
+#   
+#   return(field.survival)
+# }
 
 
-bio_surv = seq(0,1, 0.01)
+
+
+
+
+
+
+bio_surv = seq(0,1, 0.001)
 field_surv = c()
+prs_values = c()
 
-for(i in 1:101){
+for(i in 1:length(bio_surv)){
   
-  field_surv[i] = convert_bioassay_survival_to_field(bio_surv[i])
-  
+  field_surv[i] = convert_bioassay_survival_to_field(bio_surv[i],
+                                                     conversion.factor = 0.48,
+                                                     intercept = 0.15)
+                                                     
+  prs_values[i] = bioassay_survival_to_resistance(half.population.bioassay.survival.resistance = 900,
+                                                  bioassay.survival = bio_surv[i[]],
+                                                  michaelis.menten.slope = 1,
+                                                  sd.population.resistance = 0,
+                                                  estimate.precision = 0.001,
+                                                  maximum.bioassay.survival.proportion = 1,
+                                                  maximum.resistance.value = 90000)
 }
 
 plot(bio_surv, field_surv) #when resistance.intensity is 0; field survival still above 0 (useful for mixtures)
+plot(log(prs_values), field_surv)
+
+
+
+
+
 
 
 
