@@ -339,6 +339,7 @@ run_simulation_intervention_special_cases = function(number.of.insecticides = 2,
       if(generation %% deployment.frequency == 0){withdrawn.vector = update.insecticide.info[[2]]}
       if(generation %% deployment.frequency == 0){deployed.insecticide = update.insecticide.info[[3]]
       to.be.deployed.insecticide = deployed.insecticide[generation+1]
+      if(is.na(to.be.deployed.insecticide)){break}
       insecticide.efficacy.vector = c(insecticide.efficacy.vector,
                                       create_insecticide_efficacy_vector(applied.insecticide.dose = insecticide.parameters.df[to.be.deployed.insecticide, 2],
                                                                          recommended.insecticide.dose = insecticide.parameters.df[to.be.deployed.insecticide, 3],
