@@ -13,6 +13,7 @@
 #' @param mixture.df = A dataframe containing the information on all the insecticidal mixtures that are in the simulation.
 #' @param current.mixture = The mixture.id of the last mixture deployed.
 #' @param deployment.frequency = The frequency at which insecticide deployment decisions are made.
+#' @param deployment.df = The dataframe holding the insecticide deployment information
 
 irm_strategy_sequence_mixture = function(number.of.insecticides,
                                          current.generation,
@@ -45,10 +46,8 @@ irm_strategy_sequence_mixture = function(number.of.insecticides,
                                                   withdrawn.insecticides = unavailable.to.deploy)
   
   #break if no mixtures are available for deployment
-  if(nrow(available.mixtures.df)==0){deployment.df.updated = deploy_mixture(candidate.mixture.id = NA,
-                                                                            mixture.df = mixture.df,
-                                                                            deployment.df = deployment.df,
-                                                                            deployment.frequency = 1)}
+  if(nrow(available.mixtures.df)==0){deployment.df.updated = deploy_mixture_na(deployment.df = deployment.df,
+                                                                               deployment.frequency = 1)}
   else{
     
     #if the previous insecticide is still available deploy
