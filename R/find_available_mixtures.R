@@ -22,7 +22,7 @@ mixture.df$mixture.part.2 = ifelse(mixture.df$mixture.part.2 %in% withdrawn.inse
   
 #Remove all rows that have any NAs in them
 available.mixtures = na.omit(mixture.df)
-  
+
 return(available.mixtures)
 }
 
