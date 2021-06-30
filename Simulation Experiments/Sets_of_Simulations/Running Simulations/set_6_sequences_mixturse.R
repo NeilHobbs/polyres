@@ -29,9 +29,9 @@ for(v in 1: nrow(parameter.space.df)){
                                                                half.population.bioassay.survival.resistance = 900, 
                                                                withdrawal.threshold.value = 1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
                                                                return.threshold.value = 1, #this is the survival proportion in a bioassay that would return insecticide to arsenal
-                                                               deployment.frequency = 200, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+                                                               deployment.frequency = 500, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
                                                                maximum.resistance.value = 25000),
-                                   maximum.generations = 500, number.of.insecticides = 1)                                              
+                                   maximum.generations = 200, number.of.insecticides = 1)                                              
   
   
   temp_treatment = temp%>% #only need to know for the treatment site as this is where the decisions are made from.
@@ -68,7 +68,7 @@ for(v in 1: nrow(parameter.space.df)){
 }
 
 sequence.df.6= do.call(rbind, temp.list.sequence.set.6)
-sequence.df.set.6 = cbind(temp.list.sequence.set.6, parameter.space.df)
+sequence.df.set.6 = cbind(sequence.df.6, parameter.space.df)
 
 write.csv(sequence.df.set.6, ".//sequence.set.6.csv")
 
@@ -139,7 +139,10 @@ for(v in 1:nrow(parameter.space.df)){
                                            dplyr::filter(deployed.mixture.part.1 == insecticide.tracked)%>%
                                            dplyr::filter(resistance.intensity > 100))
   
-  peak.resistance = max(temp_treatment$resistance.intensity)
+  temp_treatment_2 = temp_treatment%>%
+    dplyr::filter(insecticide.tracked == 2)
+  
+  peak.resistance = max(temp_treatment_2$resistance.intensity)
   
   insecticides.in.sim = c(2)
   
@@ -166,6 +169,7 @@ for(v in 1:nrow(parameter.space.df)){
 }
 
 mixture.df.set.6 = do.call(rbind, temp.list.mixtures.set.6)
+
 mixture.df.set.6$part.1.start = start.resistance.1
 
 mixture.df.set.6.1 = cbind(mixture.df.set.6, parameter.space.df)
