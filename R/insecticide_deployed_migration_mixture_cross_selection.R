@@ -23,7 +23,8 @@ insecticide_deployed_migration_mixture_cross_selection = function(exposure.scali
                                                                   max.dispersal.rate = 0.9,
                                                                   number.of.insecticides,
                                                                   conversion.factor = 0.48,
-                                                                  intercept = 0.15){
+                                                                  intercept = 0.15,
+                                                                  other.mixture.part){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost = resistance.cost,
@@ -53,7 +54,8 @@ insecticide_deployed_migration_mixture_cross_selection = function(exposure.scali
                                                                                        cross.selection.matrix = cross.selection.matrix,
                                                                                        number.of.insecticides = number.of.insecticides,
                                                                                        conversion.factor = conversion.factor,
-                                                                                       intercept = intercept)
+                                                                                       intercept = intercept,
+                                                                                       other.mixture.part = other.mixture.part)
   
   
   migration = migration_treatment_to_refugia(nsim = nsim, 
