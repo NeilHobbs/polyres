@@ -168,7 +168,11 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
             cross.selection.matrix = genetic.correlation.matrix,
             number.of.insecticides = number.of.insecticides,
             conversion.factor = conversion.factor,
-            intercept = intercept))} #end of insecticide deployed
+            intercept = intercept,
+            other.mixture.part = get_other_part_of_mixture(deployed.mixture = deployed.mixture,
+                                                           generation = generation,
+                                                           insecticide = insecticide,
+                                                           sim.array = sim.array)))} #end of insecticide deployed
         else( #insecticide is not deployed
           #calculate population mean when insecticide not deployed from previous population mean
           mean(insecticide_not_deployed_migration_mixture_cross_selection(#this function calls insecticide_not_deployed_selection_costs
