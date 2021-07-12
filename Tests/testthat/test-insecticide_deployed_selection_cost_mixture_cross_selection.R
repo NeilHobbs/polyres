@@ -16,7 +16,7 @@ test_that("when all survive other mixture same as if only one insecticide", {
                                                                                                                                 min.cross.selection = 0,
                                                                                                                                 max.cross.selection = 0),
                                                                            number.of.insecticides = 2,
-                                                                           conversion.factor = 0,
+                                                                           conversion.factor = 1,
                                                                            intercept = 1), insecticide_deployed_selection_cost(exposure.scaling.factor = 10,
                                                                                                                                nsim = 1, 
                                                                                                                                minimum.insecticide.resistance.heritability = 1, 
