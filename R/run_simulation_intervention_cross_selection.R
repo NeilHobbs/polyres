@@ -153,7 +153,7 @@ run_simulation_intervention_cross_selection= function(number.of.insecticides = 2
         ##                                                   #ask whether insecticide is the same as deployed insecticide
         sim.array['treatment', insecticide, generation] = if(insecticide == deployed.insecticide[generation]){#Insecticide is deployed in treatment site
           #calculate population mean from previous population mean when insecticide present
-          mean(insecticide_deployed_migration_cross_resistance(resistance.cost = resistance.cost,
+          mean(insecticide_deployed_migration(resistance.cost = resistance.cost,
                                                                exposure.scaling.factor = exposure.scaling.factor,
                                                                nsim = nsim, 
                                                                minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
@@ -166,11 +166,8 @@ run_simulation_intervention_cross_selection= function(number.of.insecticides = 2
                                                                max.dispersal.rate = max.dispersal.rate,
                                                                min.intervention.coverage = min.intervention.coverage, 
                                                                max.intervention.coverage = max.intervention.coverage,
-                                                               number.of.insecticides = number.of.insecticides,
-                                                               cross.selection.matrix = genetic.correlation.matrix,
                                                                initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],
-                                                               initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1],
-                                                               currently.deployed.insecticide = deployed.insecticide[generation]))} #end of insecticide deployed
+                                                               initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1]))} #end of insecticide deployed
         else( #insecticide is not deployed
           #calculate population mean when insecticide not deployed from previous population mean
           mean(insecticide_not_deployed_migration_cross_resistance(resistance.cost = resistance.cost,
