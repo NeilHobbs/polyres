@@ -4,7 +4,7 @@
   #3. Cross Selection.
 
 
-#' @title Run the insecticide resistance management simulation for sequences and rotations.
+#' @title Run the insecticide resistance management simulation for sequences and rotations with the special cases.
 #' 
 #' @description This is the main wrapper function that implements the running of the insecticide resistance management
 #' simulations. Currently the simulations allows for the comparison of sequence and rotation strategies. At the moment,
