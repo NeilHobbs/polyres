@@ -1,6 +1,6 @@
 library(ggplot2)
 library(patchwork)
-
+library(dplyr)
 create_normal_distribution = function(vector.length,
                                       trait.mean,
                                       standard.deviation){
