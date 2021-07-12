@@ -16,7 +16,7 @@ make_cross_selection_matrix = function(number.of.insecticides = 3,
                                   max.cross.selection = 1){
 
   #Make the matrix based on the size of the number of insecticides
-cs_matrix = matrix(nrow = number.of.insecticides,
+cs.matrix = matrix(nrow = number.of.insecticides,
                   ncol = number.of.insecticides,
                   data = runif((x=number.of.insecticides*number.of.insecticides),
                                min = min.cross.selection,
@@ -26,9 +26,9 @@ cs_matrix = matrix(nrow = number.of.insecticides,
                                                             #Will have to think how biologically realistic this is.
 
 for(i in 1:number.of.insecticides){ #set cross resistance for 1=0, 2=0 etc as 0. This would prevent any doubling events.
-  cs_matrix[[i, i]] = 0
+  cs.matrix[[i, i]] = 0
 }
 
-return(cs_matrix)
+return(cs.matrix)
 }
 
