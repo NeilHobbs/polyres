@@ -8,9 +8,9 @@ example_insecticide_decay_plot = function(deployment.frequency,
   
   generations.vector = seq(1, deployment.frequency, by = 1)
 
-  efficacy.vector = c()
+  efficacy.vector = c(applied.insecticide.dose/recommended.insecticide.dose)
   
-  for(i in 1:length(generations.vector)){
+  for(i in 2:length(generations.vector)){
     efficacy.vector[i] = calculate_current_insecticide_efficacy(generations.since.deployment = generations.vector[i],
                                                                 threshold.generations = threshold.generation,
                                                                 initial.insecticide.efficacy = applied.insecticide.dose/recommended.insecticide.dose,
