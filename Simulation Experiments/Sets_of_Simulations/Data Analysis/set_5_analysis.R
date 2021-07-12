@@ -116,4 +116,27 @@ table(operational.outcome, outcome)
 #operational wins versus both rotations and sequences:
 7148/15055
 
+outcome.cross.df$operational.outcome = operational.outcome
+
+
+ggplot(outcome.cross.df, aes(x=cross.resistance, 
+                       y=proportion, 
+                       fill=operational.outcome)) + 
+  geom_area()+
+  scale_x_continuous(breaks = c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3))+
+  
+  scale_fill_manual(values = c("#b2df8a", "#984ea3", "#f03b20", "#3690c0", "#ffff33"))+
+  ylab("Proportion of Simulations")+
+  xlab("Degree of Cross Selection")+
+  labs(fill = "Outcome:")+
+  guides(fill=guide_legend(nrow = 2, byrow=TRUE))+
+  theme_classic()+
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12,
+                                   angle = 45),
+        axis.title.x = element_text(size = 15),
+        axis.title.y = element_text(size = 15))
 
