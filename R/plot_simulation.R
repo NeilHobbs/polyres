@@ -19,7 +19,8 @@
 plot_simulation = function(simulation.dataframe, #created from the get_simulation_dataframe() function
                            half.population.bioassay.survival.resistance, #must be same as used in the simulation
                            withdrawal.threshold, #must be the same as used in the simulation
-                           return.threshold){ #must be the same as used in the simulation
+                           return.threshold,
+                           sites = "both"){ #must be the same as used in the simulation
 
   
   #Convert the insecticide resistance intensity into bioassay survival(%).
@@ -75,8 +76,18 @@ refugia.plot = ggplot(data = temp.df.refugia, aes(x=time.in.generations,
   theme_classic()+
   theme(legend.position = "none")
 
-
+if(sites=="both"){
 return(gridExtra::grid.arrange(treatment.plot, refugia.plot, ncol=2))
+}
+
+if(sites=="treatment"){
+  return(treatment.plot)
+}
+
+if(sites=="refugia"){
+  return(refugia.plot)
+}
+
 }
 
 
