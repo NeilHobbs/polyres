@@ -29,6 +29,14 @@ for(i in 1:number.of.insecticides){ #set cross resistance for 1=0, 2=0 etc as 0.
   cs.matrix[[i, i]] = 0
 }
 
+#Makes the pairs equal so cross selection in either direction will be equal. This seems more plausible as a scenario.
+
+for(x in 1:ncol(cs.matrix)){
+  for(y in 1:ncol(cs.matrix)){
+    cs.matrix[y,x] = cs.matrix[x,y]
+  }}
+
+
 return(cs.matrix)
 }
 
