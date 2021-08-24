@@ -196,7 +196,7 @@ simulation.output = run_simulation_intervention(
                     maximum.resistance.value = 25000 
 ```
 
-Changing the minimum and maximum parameter to be different values from one another while keeping a small number of replicates ```nsim``` allows the model to run in a more stochastic fashion. If the minimum and maximum values values are the same, the model will run in a deterministic fashion. If the minimum and maximum parameter values are equal (for each set of parameter values), it is recommended to set ```nsim = 1``` to speed up the time of the simulations. 
+Changing the minimum and maximum parameter to be different values from one another while keeping a small number of replicates ```nsim``` allows the model to run in a more stochastic fashion. If the minimum and maximum values values are the same, the model will run in a deterministic fashion. If the minimum and maximum parameter values are equal (for each set of parameter values), it is recommended to set ```nsim = 1``` to speed up the time of the simulations. It should be noted that the model is currently unable to run in a fully stochastic fashion, this is because while the values would change for each generation, they would also change for each insecticide (which is unexpected - and having dispersal different for each insecticide is not realistic). 
 
 ## Getting the data from the simulations
 
