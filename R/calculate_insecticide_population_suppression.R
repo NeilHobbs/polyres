@@ -45,8 +45,8 @@ calculate_insecticide_population_suppression = function(minimum.female.insectici
                                                                                           current.insecticide.efficacy = current.insecticide.efficacy)
   
   #Then do equation 10(i)::
-  insecticide.population.suppression = (1 - female.insecticide.exposure) + (female.insecticide.exposure*intervention.site.field.survival)
+  population.remaining = (1-female.insecticide.exposure) + (female.insecticide.exposure*intervention.site.field.survival)
   
   #return the proportion of the population that remains.
-  return(insecticide.population.suppression)
+  return(population.remaining)
 }

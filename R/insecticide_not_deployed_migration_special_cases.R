@@ -82,15 +82,7 @@ insecticide_not_deployed_migration_special_cases = function(resistance.cost = 0,
                                                                      currently.tracked.insecticide = currently.tracked.insecticide,
                                                                      current.insecticide.efficacy = current.insecticide.efficacy)
   
-  
-  
-  migration = migration_treatment_to_refugia(nsim = nsim,
-                                             min.intervention.coverage = min.intervention.coverage,
-                                             max.intervention.coverage = max.intervention.coverage,
-                                             min.dispersal.rate = min.dispersal.rate,
-                                             max.dispersal.rate = max.dispersal.rate)
-  
-  population.suppression = ifelse(insecticide.suppression == TRUE,
+   proportion.remaining = ifelse(insecticide.suppression == TRUE,
                                   yes = calculate_insecticide_population_suppression(minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
                                                                                      maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
                                                                                      nsim = nsim,
@@ -103,20 +95,41 @@ insecticide_not_deployed_migration_special_cases = function(resistance.cost = 0,
                                                                                      half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
                                   no = 1)
   
-  numerator = (((cross.selection.treatment * (1 -migration)*population.suppression)) + (selection.cost.refugia * migration))
+
+  staying.in.treatment = 1 - migration_treatment_to_refugia(nsim = nsim,
+                                                            min.intervention.coverage = min.intervention.coverage,
+                                                            max.intervention.coverage = max.intervention.coverage,
+                                                            min.dispersal.rate = min.dispersal.rate,
+                                                            max.dispersal.rate = max.dispersal.rate)*proportion.remaining
   
   
+  migrating.from.refugia = migration_refugia_to_treatment(nsim = nsim,
+                                                          min.intervention.coverage = min.intervention.coverage,
+                                                          max.intervention.coverage = max.intervention.coverage,
+                                                          min.dispersal.rate = min.dispersal.rate,
+                                                          max.dispersal.rate = max.dispersal.rate)
+  
+ 
+  
+  numerator = (cross.selection.treatment * staying.in.treatment) + (selection.cost.refugia * migrating.from.refugia)
   #denominator = 0 when: migraton = 0 (e.g. no dispersal)AND population.suppression = 0. Can only happen when no dispersal.
-  denominator = (((1 -migration)*population.suppression) + migration)
+  
+  denominator = staying.in.treatment + migrating.from.refugia
 
   resistance.intensity.migration = ifelse(denominator == 0,
                                           yes = numerator,
-                                          no = numerator/denominator)
+                                          no = numerator/denominator
+                                          )
+
 
   #To prevent resistance intensity being less than 0. Sets any values less than zero at zero.
   resistance.intensity.migration = ifelse(resistance.intensity.migration < 0, 
                                           yes = 0, no = resistance.intensity.migration)
 
+  
+  resistance.intensity.migration = ifelse(is.na(resistance.intensity.migration),
+                                          yes = 0,
+                                          no = resistance.intensity.migration)
   
   #return(resistance.intensity.migration) # The resistance intensity after migration and selection costs
   return(resistance.intensity.migration)

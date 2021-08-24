@@ -79,14 +79,7 @@ refugia_migration_effect_deployed_special_cases = function(exposure.scaling.fact
                                                                 initial.resistance.intensity = initial.resistance.intensity,
                                                                 current.insecticide.efficacy)
   
-  
-  migration = migration_refugia_to_treatment(min.dispersal.rate = min.dispersal.rate,
-                                             max.dispersal.rate = max.dispersal.rate,
-                                             min.intervention.coverage = min.intervention.coverage, 
-                                             max.intervention.coverage = max.intervention.coverage,
-                                             nsim = nsim)
-  
-  population.suppression = ifelse(insecticide.suppression == TRUE,
+  proportion.remaining = ifelse(insecticide.suppression == TRUE,
                                   yes = calculate_insecticide_population_suppression(minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
                                                                         maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
                                                                         nsim = nsim,
@@ -99,21 +92,42 @@ refugia_migration_effect_deployed_special_cases = function(exposure.scaling.fact
                                                                         half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
                                   no = 1)
   
+  migrating.from.treatment = migration_treatment_to_refugia(nsim = nsim,
+                                                            min.intervention.coverage = min.intervention.coverage,
+                                                            max.intervention.coverage = max.intervention.coverage,
+                                                            min.dispersal.rate = min.dispersal.rate,
+                                                            max.dispersal.rate = max.dispersal.rate)*proportion.remaining
   
-  numerator = (refugia.selection * (1 - migration)) + (treatment.site.selection * migration*population.suppression)
   
-  denominator = ((((1 -migration)*population.suppression) + migration))
+  
+  staying.in.refugia = migration_refugia_to_treatment(nsim = nsim,
+                                                          min.intervention.coverage = min.intervention.coverage,
+                                                          max.intervention.coverage = max.intervention.coverage,
+                                                          min.dispersal.rate = min.dispersal.rate,
+                                                          max.dispersal.rate = max.dispersal.rate)
+  
+  
+  
+  
+  
+  numerator = (refugia.selection * staying.in.refugia) + (treatment.site.selection * migrating.from.treatment)
+  denominator = staying.in.refugia + migrating.from.treatment
 
   #If migration = 0, and population supppression = 0 then denominator = 0.
 
 
   track.refugia.resistance = ifelse(denominator == 0,
                                     yes = numerator,
-                                    no = numerator/denominator)
+                                    no = numerator/denominator
+                                    )
 
 
    #Prevent resistance intensity going below 0
   track.refugia.resistance = ifelse(track.refugia.resistance < 0, 0, track.refugia.resistance)
+  
+  track.refugia.resistance = ifelse(is.na(track.refugia.resistance),
+                                    yes = 0,
+                                    no = track.refugia.resistance)
   
   return(track.refugia.resistance)
 }
