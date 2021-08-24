@@ -1,4 +1,4 @@
-#Set 4: Mixtures, Cross Resistance
+#Set 5: Mixtures, Cross Resistance
 
 #read in previously used random parameters
 parameter.space = read.csv("Simulation Experiments/Sets_of_Simulations/Setting up Simulations/parameter.space.csv")

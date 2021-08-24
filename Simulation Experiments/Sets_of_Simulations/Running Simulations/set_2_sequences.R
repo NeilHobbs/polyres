@@ -83,4 +83,4 @@ sequence.df.cross = do.call(rbind, temp.list.sequence.cross)
 sequence.df.cross.1 = cbind(sequence.df.cross, parameter.space.df)
 
 write.csv(sequence.df.cross.1, ".//sequence.set.2.csv")
-
+ 
