@@ -1278,9 +1278,9 @@ gam.dispersal= mgcv::bam(simulation.duration ~
                          data = df.for.glm.2,
                          family = "poisson")
 
-
 plot(gam.dispersal)#hugely wiggly
 #Look to put splines in at: ~0.3, ~0.8
+summary(gam.dispersal)
 
 gam.coverage= mgcv::bam(simulation.duration ~ 
                           as.factor(strategy)+
@@ -1295,6 +1295,7 @@ gam.coverage= mgcv::bam(simulation.duration ~
 
 
 plot(gam.coverage) #broadly linear
+
 
 #find the location of the splines which maximise the likelihood
 find.max.logLik = function(dspline1, dspline2,  data){
@@ -1733,3 +1734,39 @@ ggplot(df, aes(x=calibrated))+
 
 
 
+
+table_resistance_from_survival_and_sd(half.population.bioassay.survival.resistance = 900, 
+                                      maximum.bioassay.survival.proportion = 1, 
+                                      michaelis.menten.slope = 1, 
+                                      bioassay.survival.values = c(0.01, 0.05, 0.1, 0.2, 0.5), 
+                                      sd.population.values = c(0, 1, 5, 10, 25), 
+                                      estimate.precision = 0.01, 
+                                      nsim = 1000, 
+                                      minimum.resistance.value = 0, 
+                                      maximum.resistance.value = 25000)
+
+
+df = table_resistance_from_survival_and_sd(half.population.bioassay.survival.resistance = 900, 
+                                           maximum.bioassay.survival.proportion = 1, 
+                                           michaelis.menten.slope = 1, 
+                                           bioassay.survival.values = c(0, 0.05, 0.1, 0.2, 0.5), 
+                                           sd.population.values = c(0, 1, 5, 10, 25), 
+                                           estimate.precision = 0.001, 
+                                           nsim = 1000, 
+                                           minimum.resistance.value = 0, 
+                                           maximum.resistance.value = 25000)
+
+df = df%>%
+  dplyr::mutate(resistance.values = round(resistance.values, digits = 3))
+
+df
+
+table_resistance_from_survival_and_sd(half.population.bioassay.survival.resistance = 900, 
+                                      maximum.bioassay.survival.proportion = 1, 
+                                      michaelis.menten.slope = 1, 
+                                      bioassay.survival.values = 0.01, 
+                                      sd.population.values = 25, 
+                                      estimate.precision = 0.0000000001, 
+                                      nsim = 10000000, 
+                                      minimum.resistance.value = 0, 
+                                      maximum.resistance.value = 25000)
