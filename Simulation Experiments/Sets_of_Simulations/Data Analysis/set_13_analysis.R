@@ -11,11 +11,48 @@ hist(duration.diff)
 
 table(duration.diff)
 4957/5000
+sequences.set.13$duration.diff= duration.diff
+
+ggplot(sequences.set.13, aes(x=duration.diff))+
+  geom_histogram(binwidth = 10,
+                 colour = "black",
+                 fill = "purple")+
+  xlab("Difference in Simulation Duration")+
+  ylab("Frequency")+
+  theme_classic()
 
 
-resistance.difference = sequences.set.13$mean.resistance.intensity. - rotations.set.13$mean.resistance.intensity.
+sequences.set.13$resistance.difference = sequences.set.13$mean.resistance.intensity. - rotations.set.13$mean.resistance.intensity.
 
 hist(resistance.difference)
+
+panel_a = ggplot(sequences.set.13, aes(x=resistance.difference))+
+  geom_histogram(binwidth = 1,
+                 colour = "black",
+                 fill = "purple")+
+  xlab("Difference in Mean Polygenic Resistance Score to the Deployed Insecticide")+
+  ylab("Frequency")+
+  ggtitle("A")+
+  theme_classic()
+
+
+df.not.500 = sequences.set.13%>%
+  dplyr::filter(simulation.duration < 500)
+
+panel_b = ggplot(df.not.500, aes(x=resistance.difference))+
+  geom_histogram(binwidth = 1,
+                 colour = "black",
+                 fill = "purple")+
+  xlab("Difference in Mean Polygenic Resistance Score to the Deployed Insecticide")+
+  ylab("Frequency")+
+  ggtitle("B")+
+  theme_classic()
+
+
+gridExtra::grid.arrange(panel_a, panel_b)
+
+
+
 
 peak.difference = sequences.set.13$peak.resistance - rotations.set.13$peak.resistance
 

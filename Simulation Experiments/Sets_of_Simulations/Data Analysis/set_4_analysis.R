@@ -113,15 +113,12 @@ for(i in 1:length(rot.duration)){
 }
 table(outcome)
 
-24568/35000
-7954/35000
-92/35000
-2386/35000
+round(24022/35000*100, 2)
+round(7999/35000*100, 2)
+round(108/35000*100, 2)
+round(2871/35000*100, 2)
 
 table(outcome, cross.resistance)
-1144/5000 #mixture wins at 0 cross resistance
-2249/5000 #mixture wins at 0.3 cross resistance
-
 
 
 prop.diff.seq.mix = 1 - (seq.duration/mix.duration)
@@ -142,13 +139,6 @@ for(i in 1:length(seq.duration)){
 }
 
 table(operational.outcome)
-6979+2136+123
-
-6979/35000
-
-6979/9238
-2136/9238
-123/9238
 
 outcome.cross.df = data.frame(rot.duration,
                               seq.duration,
@@ -179,6 +169,7 @@ outcome.df$cross.resistance = c(rep(-0.3, 4),
                                 
 
 outcome.df.set.4 = outcome.df
+
 
 ggplot(outcome.df, aes(x=cross.resistance, 
                      y=proportion, 
@@ -289,15 +280,15 @@ rpart.plot(set.4.tree.fit,
            tweak = 1,
            main="A",
            extra = 100,
-           box.palette = list( "#b2df8a", "#3690c0"))
+           box.palette = list("#b2df8a", "#3690c0"))
 
 
 rpart.plot(set.4.tree.fit.operational,
            type = 0,
            main = "B",
-           tweak = 1,
+           tweak = 1.1,
            extra = 100,
-           box.palette = list("#c51b8a", "#ffff33"))
+           box.palette = list("#3690c0", "#ffff33", "#b2df8a", "#f03b20"))
 
 par(mfrow = c(1,1))
 
@@ -359,9 +350,9 @@ fit = rpart(operational.outcome~
                                    maxdepth = 5,
                                    cp = 0))
 
-predict_unseen = predict(fit, data.test, type = 'class')
+predict.unseen = predict(fit, data.test, type = 'class')
 
-table.mat = table(data_test$operational.outcome, predict_unseen)
+table.mat = table(data.test$operational.outcome, predict.unseen)
 table.mat
 
 accuracy.test = sum(diag(table.mat)) / sum(table.mat)

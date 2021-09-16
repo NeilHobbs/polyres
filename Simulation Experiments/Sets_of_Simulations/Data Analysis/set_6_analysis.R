@@ -1,9 +1,9 @@
 ##set_6_analysis:::
+library(devtools)
+load_all()
+
+
 #Read in the datasets
-library(dplyr)
-library(ggplot2)
-
-
 mixtures.set.6 = read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/mixtures.set.6.csv")
 sequences.set.6 = read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/sequence.set.6.csv")
 
@@ -66,8 +66,8 @@ ggplot(mixtures.set.6, aes(x=start.survival*100,
                      y=diff.vals*100))+
   geom_point()+
   geom_smooth(method="lm")+
-  xlab("Start Bioassay Survival, Mixture Part 1")+
-  ylab("Difference in End Bioassay Survival")+
+  xlab("Start Bioassay Survival to Pyrethroids (%)")+
+  ylab("Difference in End Bioassay Survival (%) of Novel Insecticide ")+
   theme_classic()
 
 

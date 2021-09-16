@@ -5,12 +5,13 @@
  #also have a parameter space around them (e.g. from the 95% CI); and due to the importance of these parameters
  #in the model for mixtures, it is important to validate how variation in the regression coefficient and intercept
  #impact the outcome of mixtures. 
+library(devtools)
+load_all()
 
-library(ggplot2)
 library(mgcv)
-library(magrittr)
 
-sim.output.df =read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/mixtures.field.bioassay.relationship.csv")
+
+sim.output.df =read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/set_17_mixtures.csv")
 
 ###Get equivalent for rotations and sequences:: (duration should be same as no fitness cost)
 
@@ -84,6 +85,8 @@ range(sim.output.df.less0$peak.resistance)
 range(sim.output.df.500$regresssion.intercept)
 range(sim.output.df.500$regression.coefficient)
 
+sim.output.df.greater0 = sim.output.df%>%
+  dplyr::filter(regresssion.intercept > 0)
 
 ggplot(sim.output.df, aes(x=regresssion.intercept,
                               y = simulation.duration))+
@@ -101,9 +104,10 @@ ggplot(sim.output.df, aes(x=regresssion.intercept,
   theme_classic()
 
 
-ggplot(sim.output.df, aes(x=regression.coefficient,
+ggplot(sim.output.df.greater0, aes(x=regression.coefficient,
                           y = simulation.duration))+
   geom_point()+
+  geom_smooth()+
   geom_vline(xintercept =0.48,
              linetype = "dotted",
              size = 2,

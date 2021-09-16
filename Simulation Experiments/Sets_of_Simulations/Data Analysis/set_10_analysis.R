@@ -21,6 +21,18 @@ plot(sequences.set.10.df$mean.resistance.intensity.,
      rotations.set.10.df$mean.resistance.intensity.)
 
 
+panel_a = ggplot(sequences.set.10.df, aes(x = mean.resistance.intensity.,
+                                y=rotations.set.10.df$mean.resistance.intensity.))+
+  geom_abline(intercept = 0, slope = 1, size = 3, colour = "purple",
+              alpha = 0.3)+
+  geom_point(alpha = 0.3)+
+  xlim(0, 75)+
+  ylim(0, 75)+
+  ggtitle("A")+
+  xlab("Mean Polygenic Resistance Score to the Deployed Insecticide - Sequences")+
+  ylab("Mean Polygenic Resistance Score to the Deployed Insecticide - Rotations")+
+  theme_classic()
+
 difference.resistance = sequences.set.10.df$mean.resistance.intensity. - rotations.set.10.df$mean.resistance.intensity.
 hist(difference.resistance)
 
@@ -32,6 +44,21 @@ df.not.500 = df%>%
 
 table(df.not.500$sequence.resistance - df.not.500$rotation.resistance)
 
+plot(df.not.500$sequence.resistance, df.not.500$rotation.resistance)
+
+
+panel_b = ggplot(df.not.500, aes(x=sequence.resistance, y=rotation.resistance))+
+  geom_point(alpha = 0.3)+
+  geom_abline(intercept=0, slope=1, colour ="purple")+
+  xlim(0, 75)+
+  ylim(0, 75)+
+  ggtitle("B")+
+  xlab("Mean Polygenic Resistance Score to the Deployed Insecticide - Sequences")+
+  ylab("Mean Polygenic Resistance Score to the Deployed Insecticide - Rotations")+
+  theme_classic()
+
+gridExtra::grid.arrange(panel_a, panel_b,
+                        nrow = 1)
 
 #When sequences were terminated at the 500 limit (ran to completion)
 df.500 = df%>%

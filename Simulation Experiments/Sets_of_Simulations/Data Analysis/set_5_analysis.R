@@ -37,11 +37,10 @@ for(i in 1:35000){
 }
 
 table(outcome)
-17590/35000 #draws
-15055/35000 #mixture win versus sequence and rotation
-50/35000 #rotation loss versus mixture and sequence
-17/35000 #rotation win versus sequence and mixture
-2286/35000 #sequence loss versus mixture and rotation
+16569 /35000*100 #draws
+16057/35000*100 #mixture win versus sequence and rotation
+57/35000*100#rotation loss versus mixture and sequence
+2317/35000*100 #sequence loss versus mixture and rotation
 
 
 table(outcome, cross.resistance)
@@ -51,15 +50,15 @@ outcome.cross.df = data.frame(seq.duration, rot.duration, mix.duration, cross.re
 
 outcome.df = data.frame(table(outcome.cross.df$outcome, outcome.cross.df$cross.resistance))
 outcome.df$proportion = outcome.df$Freq/5000
-outcome.df$outcome = factor(outcome.df$Var1, levels = c("draw","rotation.win", "rotation.loss", "mixture.win", 
+outcome.df$outcome = factor(outcome.df$Var1, levels = c("draw", "mixture.win", "rotation.loss",  
                                                         "sequence.loss"))
-outcome.df$cross.resistance = c(rep(-0.3, 5),
-                                rep(-0.2, 5),
-                                rep(-0.1, 5),
-                                rep(0, 5),
-                                rep(0.1, 5),
-                                rep(0.2, 5),
-                                rep(0.3, 5))
+outcome.df$cross.resistance = c(rep(-0.3, 4),
+                                rep(-0.2, 4),
+                                rep(-0.1, 4),
+                                rep(0, 4),
+                                rep(0.1, 4),
+                                rep(0.2, 4),
+                                rep(0.3, 4))
 
 outcome.df.set.5 = outcome.df
 
@@ -69,11 +68,11 @@ ggplot(outcome.df, aes(x=cross.resistance,
   geom_area()+
   scale_x_continuous(breaks = c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3))+
   
-  scale_fill_manual(values = c("#b2df8a", "#984ea3", "#f03b20", "#3690c0", "#ffff33"))+
+  scale_fill_manual(values = c("#b2df8a","#3690c0", "#f03b20",  "#ffff33"))+
   ylab("Proportion of Simulations")+
   xlab("Degree of Cross Selection")+
   labs(fill = "Outcome:")+
-  guides(fill=guide_legend(nrow = 2, byrow=TRUE))+
+  guides(fill=guide_legend(nrow = 1, byrow=TRUE))+
   theme_classic()+
   theme(legend.position = "bottom",
         legend.text = element_text(size = 15),
@@ -95,41 +94,44 @@ range(prop.diff.rot.mix)
 
 operational.outcome = c()
 for(i in 1:length(seq.duration)){
-  
-  if(prop.diff.seq.mix[i] >= 0.1 &
-     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "mixture vs sequence only"}
+  if(prop.diff.seq.mix[i] < 0.1 &
+     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "no operational win"}
+    if(prop.diff.seq.mix[i] >= 0.1 &
+     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "sequence operational loss"}
   if(prop.diff.rot.mix[i] >= 0.1 &
-     prop.diff.seq.mix[i] < 0.1 ){operational.outcome[i] = "mixture vs rotation only"}
+     prop.diff.seq.mix[i] < 0.1 ){operational.outcome[i] = "rotation operational loss"}
   if(prop.diff.seq.mix[i] >= 0.1 &
-     prop.diff.rot.mix[i] >= 0.1 ){operational.outcome[i] = "mixture vs rotation and sequence"}
+     prop.diff.rot.mix[i] >= 0.1 ){operational.outcome[i] = "mixture operational win"}
   
-  if(prop.diff.rot.mix[i] < -0.1 &
-     prop.diff.seq.rot[i] > 0.1 ){operational.outcome[i] = "rotation vs mixture and sequence"}
-  
-  if(prop.diff.rot.mix[i] < -0.1 &
-     prop.diff.seq.rot[i] < -0.1 ){operational.outcome[i] = "sequence vs mixture and rotation"}
 }
-
+table(operational.outcome)
 
 table(operational.outcome, outcome)
 
-#operational wins versus both rotations and sequences:
-7148/15055
+operational.outcome.df = data.frame(table(operational.outcome, outcome.cross.df$cross.resistance))
 
-outcome.cross.df$operational.outcome = operational.outcome
+operational.outcome.df$proportion = operational.outcome.df$Freq/5000
+
+operational.outcome.df$cross.resistance = c(rep(-0.3, 4),
+                                            rep(-0.2, 4),
+                                            rep(-0.1, 4),
+                                            rep(0, 4),
+                                            rep(0.1, 4),
+                                            rep(0.2, 4),
+                                            rep(0.3, 4))
 
 
-ggplot(outcome.cross.df, aes(x=cross.resistance, 
+ggplot(operational.outcome.df, aes(x=cross.resistance, 
                        y=proportion, 
                        fill=operational.outcome)) + 
   geom_area()+
   scale_x_continuous(breaks = c(-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3))+
   
-  scale_fill_manual(values = c("#b2df8a", "#984ea3", "#f03b20", "#3690c0", "#ffff33"))+
+  scale_fill_manual(values = c("#b2df8a","#3690c0", "#f03b20",  "#ffff33"))+
   ylab("Proportion of Simulations")+
   xlab("Degree of Cross Selection")+
   labs(fill = "Outcome:")+
-  guides(fill=guide_legend(nrow = 2, byrow=TRUE))+
+  guides(fill=guide_legend(nrow = 1, byrow=TRUE))+
   theme_classic()+
   theme(legend.position = "bottom",
         legend.text = element_text(size = 15),

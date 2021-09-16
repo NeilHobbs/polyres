@@ -20,12 +20,11 @@ set14.df = data.frame(difference.duration, start.resistance, simulation, percent
 
 ggplot(set14.df, aes(x = simulation,
                      y = difference.duration,
-                     colour = as.character(start.resistance)))+
+                     colour = start.resistance))+
   geom_point(alpha = 0.4)+
   xlab("simulation")+
   ylab("Difference in Duration (%)")+
-  theme_classic()+
-  theme(legend.position = "none")
+  theme_classic()
 
 
 

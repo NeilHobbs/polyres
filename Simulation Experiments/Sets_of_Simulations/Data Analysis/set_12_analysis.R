@@ -29,9 +29,11 @@ pal = c("#66c2a5",
 
 ggplot(set12.df, aes(x = difference.duration,
                      fill = as.character(return.threshold)))+
-  geom_histogram(bins = 50)+
+  geom_histogram(binwidth = 10)+
   facet_wrap(~return.threshold)+
-  theme_classic()
+  theme_classic()+
+  guides(fill=guide_legend(title="Return Threshold (%)"))
+  
 
 
 ggplot(set12.df, aes(x = simulation,
