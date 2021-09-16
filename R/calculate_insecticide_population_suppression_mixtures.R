@@ -42,8 +42,8 @@ calculate_insecticide_population_suppression_mixtures = function(minimum.female.
                                                                         nsim = 1)
   
   #Convert to field survival
-  intervention.site.field.survival.1 = convert_bioassay_survival_to_field_insecticide_decay(conversion.factor,
-                                                                                          bioassay.survival = intervention.site.bioassay.survival,
+  intervention.site.field.survival.1 = convert_bioassay_survival_to_field_insecticide_decay(conversion.factor = conversion.factor,
+                                                                                          bioassay.survival = intervention.site.bioassay.survival.1,
                                                                                           intercept = intercept,
                                                                                           current.insecticide.efficacy = current.insecticide.efficacy.part.1)
   
@@ -58,7 +58,7 @@ calculate_insecticide_population_suppression_mixtures = function(minimum.female.
   
   #Convert to field survival
   intervention.site.field.survival.2 = convert_bioassay_survival_to_field_insecticide_decay(conversion.factor,
-                                                                                          bioassay.survival = intervention.site.bioassay.survival,
+                                                                                          bioassay.survival = intervention.site.bioassay.survival.2,
                                                                                           intercept = intercept,
                                                                                           current.insecticide.efficacy = current.insecticide.efficacy.part.2)
   
@@ -67,8 +67,8 @@ calculate_insecticide_population_suppression_mixtures = function(minimum.female.
   overall.survival = intervention.site.field.survival.1 * intervention.site.field.survival.2
   
   #Then do equation 10(i)::
-  insecticide.population.suppression = (1 - female.insecticide.exposure) + (female.insecticide.exposure*overall.survival)
+  proportion.remaining = (1 - female.insecticide.exposure) + (female.insecticide.exposure*overall.survival)
   
   #return the proportion of the population that remains.
-  return(insecticide.population.suppression)
+  return(proportion.remaining)
 }

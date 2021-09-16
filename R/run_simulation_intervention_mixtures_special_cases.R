@@ -210,7 +210,9 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                      efficacy.of.other.insecticide = get_other_mixture_part_decay_information(tracked.insecticide = insecticide,
                                                                                                                                               deployed.mixture = deployed.mixture,
                                                                                                                                               generation = generation),
-                                                                     insecticide.suppression = insecticide.suppression))} #end of insecticide deployed
+                                                                     insecticide.suppression = insecticide.suppression,
+                                                                     current.generation = generation,
+                                                                     sim.array = sim.array))} #end of insecticide deployed
         else( #insecticide is not deployed
           #calculate population mean when insecticide not deployed from previous population mean
           mean(insecticide_not_deployed_migration_mixture_special_cases(nsim = nsim,
@@ -235,7 +237,11 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                         mixture.part.1 = deployed.mixture$mixture.part.1[generation],
                                                                         efficacy.mixture.part.1 = insecticide.efficacy.vector.part.1[generation],
                                                                         mixture.part.2 = deployed.mixture$mixture.part.2[generation],
-                                                                        efficacy.mixture.part.2 = insecticide.efficacy.vector.part.1[generation])
+                                                                        efficacy.mixture.part.2 = insecticide.efficacy.vector.part.1[generation],
+                                                                        current.generation = generation,
+                                                                        sim.array = sim.array,
+                                                                        insecticide.suppression = insecticide.suppression,
+                                                                        deployed.mixure = deployed.mixure[generation])
           ))#end insecticide not deployed
         
         #Do refugia second, updating each generation for each insecticide
@@ -277,7 +283,9 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                                    efficacy.of.other.insecticide = get_other_mixture_part_decay_information(tracked.insecticide = insecticide,
                                                                                                                                                             deployed.mixture = deployed.mixture,
                                                                                                                                                             generation = generation),
-                                                                                   insecticide.suppression = insecticide.suppression))}
+                                                                                   insecticide.suppression = insecticide.suppression,
+                                                                                   current.generation = generation,
+                                                                                   sim.array = sim.array))}
         #calculate population mean when insecticide not deployed from previous population mean
         else(mean(refugia_migration_effect_insecticide_not_deployed_mixture_special_cases(exposure.scaling.factor = exposure.scaling.factor,
                                                                                           nsim = nsim, 
@@ -307,7 +315,9 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                                           intercept = intercept,
                                                                                           efficacy.part.1 = insecticide.efficacy.vector.part.1[generation],
                                                                                           efficacy.part.2 = insecticide.efficacy.vector.part.2[generation],
-                                                                                          insecticide.suppression = insecticide.suppression)))#end insecticide not deployed
+                                                                                          insecticide.suppression = insecticide.suppression,
+                                                                                          current.generation = generation,
+                                                                                          sim.array = sim.array)))#end insecticide not deployed
 
 #end of refugia
 

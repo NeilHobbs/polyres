@@ -23,7 +23,12 @@ insecticide_not_deployed_migration_mixture_special_cases = function(nsim,
                                                                     mixture.part.1,
                                                                     efficacy.mixture.part.1,
                                                                     mixture.part.2,
-                                                                    efficacy.mixture.part.2){
+                                                                    efficacy.mixture.part.2,
+                                                                    current.generation,
+                                                                    sim.array,
+                                                                    insecticide.suppression,
+                                                                    deployed.mixture,
+                                                                    half.population.bioassay.survival.resistance){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost,
@@ -53,15 +58,12 @@ insecticide_not_deployed_migration_mixture_special_cases = function(nsim,
                                                                            conversion.factor = conversion.factor,
                                                                            intercept = intercept,
                                                                            efficacy.part.1 = efficacy.mixture.part.1,
-                                                                           efficacy.part.2 = efficacy.mixture.part.2)
+                                                                           efficacy.part.2 = efficacy.mixture.part.2,
+                                                                           deployed.mixture = deployed.mixture,
+                                                                           current.generation = current.generation,
+                                                                           half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance)
   
-  migration = migration_treatment_to_refugia(nsim = nsim, 
-                                             min.intervention.coverage = min.intervention.coverage, 
-                                             max.intervention.coverage = max.intervention.coverage, 
-                                             min.dispersal.rate = min.dispersal.rate,
-                                             max.dispersal.rate = max.dispersal.rate)
-  
-  population.suppression = ifelse(insecticide.suppression == TRUE,
+  proportion.surviving = ifelse(insecticide.suppression == TRUE,
                                   yes = calculate_insecticide_population_suppression_mixtures(minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
                                                                                               maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
                                                                                               nsim = nsim,
@@ -74,18 +76,37 @@ insecticide_not_deployed_migration_mixture_special_cases = function(nsim,
                                                                                               sim.array = sim.array,
                                                                                               current.generation = current.generation,
                                                                                               half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
-                                  no = 1)
+                                  no = 1) 
+  
+  staying.in.treatment = (1- migration_treatment_to_refugia(nsim = nsim, 
+                                             min.intervention.coverage = min.intervention.coverage, 
+                                             max.intervention.coverage = max.intervention.coverage, 
+                                             min.dispersal.rate = min.dispersal.rate,
+                                             max.dispersal.rate = max.dispersal.rate))*proportion.surviving
+  
+  joining.from.refugia = migration_refugia_to_treatment(nsim = nsim, 
+                                             min.intervention.coverage = min.intervention.coverage, 
+                                             max.intervention.coverage = max.intervention.coverage, 
+                                             min.dispersal.rate = min.dispersal.rate,
+                                             max.dispersal.rate = max.dispersal.rate)
   
   
   
-  numerator = ((intervention.intensity * (1 -migration))*population.suppression) + (refugia.intensity * migration)
-  denominator = (((1 -migration)*population.suppression) + migration)
+  
+  numerator = (intervention.intensity * staying.in.treatment) + (refugia.intensity * joining.from.refugia)
+  denominator = (staying.in.treatment + joining.from.refugia)
   
   update.intervention.intensity = ifelse(denominator == 0,
                                          yes = numerator,
                                          no = numerator/denominator)
   
-  update.intervention.intensity = ifelse(update.intervention.intensity < 0, yes = 0, no = update.intervention.intensity)
+  update.intervention.intensity = ifelse(update.intervention.intensity < 0, 
+                                         yes = 0,
+                                         no = update.intervention.intensity)
   
+  update.intervention.intensity = ifelse(is.na(update.intervention.intensity),
+                                         yes = 0,
+                                         no = update.intervention.intensity)
+
   return(update.intervention.intensity)
 }

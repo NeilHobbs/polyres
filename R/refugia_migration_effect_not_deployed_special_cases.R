@@ -93,7 +93,7 @@ refugia_migration_effect_not_deployed_special_cases = function(exposure.scaling.
   
   
   
-  staying.in.refugia = migration_refugia_to_treatment(nsim = nsim,
+  staying.in.refugia = 1 - migration_refugia_to_treatment(nsim = nsim,
                                                           min.intervention.coverage = min.intervention.coverage,
                                                           max.intervention.coverage = max.intervention.coverage,
                                                           min.dispersal.rate = min.dispersal.rate,

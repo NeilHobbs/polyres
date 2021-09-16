@@ -25,7 +25,9 @@ refugia_migration_effect_insecticide_deployed_mixture_special_cases = function(e
                                                                                  tracked.insecticide.efficacy,
                                                                                  other.insecticide.in.mixture,
                                                                                  efficacy.of.other.insecticide,
-                                                                               insecticide.suppression){
+                                                                               insecticide.suppression,
+                                                                               current.generation,
+                                                                               sim.array){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost = resistance.cost,
@@ -59,15 +61,7 @@ refugia_migration_effect_insecticide_deployed_mixture_special_cases = function(e
                                                                        other.insecticide.in.mixture = other.insecticide.in.mixture,
                                                                        efficacy.of.other.insecticide = efficacy.of.other.insecticide)
   
-  
-  migration = migration_refugia_to_treatment(nsim = nsim, 
-                                             min.intervention.coverage = min.intervention.coverage, 
-                                             max.intervention.coverage = max.intervention.coverage, 
-                                             min.dispersal.rate = min.dispersal.rate,
-                                             max.dispersal.rate = max.dispersal.rate)
-  
-  
-  population.suppression = ifelse(insecticide.suppression == TRUE,
+  proportion.surviving = ifelse(insecticide.suppression == TRUE,
                                   yes = calculate_insecticide_population_suppression_mixtures(minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
                                                                                               maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
                                                                                               nsim = nsim,
@@ -82,16 +76,36 @@ refugia_migration_effect_insecticide_deployed_mixture_special_cases = function(e
                                                                                               half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
                                   no = 1)
   
+  staying.in.refugia = 1 - migration_refugia_to_treatment(nsim = nsim, 
+                                             min.intervention.coverage = min.intervention.coverage, 
+                                             max.intervention.coverage = max.intervention.coverage, 
+                                             min.dispersal.rate = min.dispersal.rate,
+                                             max.dispersal.rate = max.dispersal.rate)
+  
+  joining.from.intervention = migration_treatment_to_refugia(nsim = nsim, 
+                                                             min.intervention.coverage = min.intervention.coverage, 
+                                                             max.intervention.coverage = max.intervention.coverage, 
+                                                             min.dispersal.rate = min.dispersal.rate,
+                                                             max.dispersal.rate = max.dispersal.rate)*proportion.surviving
   
   
-  numerator = ((intervention.intensity * (migration))*population.suppression) + (refugia.intensity * (1- migration))
-  denominator = (((1 -migration)*population.suppression) + migration)
+  
+  
+  numerator = (intervention.intensity * joining.from.intervention) + (refugia.intensity * staying.in.refugia)
+  denominator = (joining.from.intervention + staying.in.refugia)
   
   update.refugia.intensity = ifelse(denominator == 0,
                                     yes = numerator,
                                     no = numerator/denominator)
   
-  update.refugia.intensity = ifelse(update.refugia.intensity < 0, yes = 0, no = update.refugia.intensity)
+  update.refugia.intensity = ifelse(update.refugia.intensity < 0, 
+                                    yes = 0, 
+                                    no = update.refugia.intensity)
+  
+  update.refugia.intensity = ifelse(is.na(update.refugia.intensity),
+                                    yes = 0,
+                                    no = update.refugia.intensity)
+  
   
   return(update.refugia.intensity)
 }

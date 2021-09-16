@@ -24,21 +24,26 @@ table_resistance_from_survival_and_sd = function(half.population.bioassay.surviv
                                                  minimum.resistance.value = 0, 
                                                  maximum.resistance.value = 25000){
   
-  df = data.frame(bioassay.survival.values, sd.population.values)%>%
-    dplyr::rowwise()%>%
-    dplyr::mutate(resistance.values = bioassay_survival_to_resistance(
-      maximum.bioassay.survival.proportion=maximum.bioassay.survival.proportion, 
-      michaelis.menten.slope=michaelis.menten.slope, 
-      half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance, 
-      bioassay.survival = bioassay.survival.values, 
-      estimate.precision = estimate.precision, 
-      sd.population.resistance = sd.population.values, 
-      nsim = nsim,
-      minimum.resistance.value = minimum.resistance.value, 
-      maximum.resistance.value = maximum.resistance.value))%>%
-    tidyr::spread(key = bioassay.survival.values, value = resistance.values)
+  sd.values = rep(sd.population.values, times = length(bioassay.survival.values))
+  bioassay.values = rep(bioassay.survival.values, times = length(sd.population.values))
+  resistance.values = c()
   
-  return(knitr::kable(df))
+  for(i in 1:length(bioassay.values)){
+    resistance.values[i] =  bioassay_survival_to_resistance(maximum.bioassay.survival.proportion=maximum.bioassay.survival.proportion, 
+                                                            michaelis.menten.slope=michaelis.menten.slope, 
+                                                            half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance, 
+                                                            bioassay.survival = bioassay.values[i], 
+                                                            estimate.precision = estimate.precision, 
+                                                            sd.population.resistance = sd.values[i], 
+                                                            nsim = nsim,
+                                                            minimum.resistance.value = minimum.resistance.value, 
+                                                            maximum.resistance.value = maximum.resistance.value)
+  }
+  
+  the.df = data.frame(sd.values, bioassay.values, resistance.values)   
+  
+  
+  return(the.df)
   
 }
 

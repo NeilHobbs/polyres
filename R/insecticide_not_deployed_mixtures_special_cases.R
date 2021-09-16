@@ -22,8 +22,10 @@ insecticide_not_deployed_mixtures_special_cases = function(exposure.scaling.fact
                                                              conversion.factor = 0.48,
                                                              intercept = 0.15,
                                                            efficacy.part.1,
-                                                           efficacy.part.2
-                                                           ){
+                                                           efficacy.part.2,
+                                                           deployed.mixture,
+                                                           current.generation,
+                                                           half.population.bioassay.survival.resistance){
 
   #The genetic correlation between the trait which gives resistance to the tracked insecticide the trait
   #which gives resistance to the the deployed insecticide.
@@ -53,8 +55,8 @@ insecticide_not_deployed_mixtures_special_cases = function(exposure.scaling.fact
                                                             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
                                                             maximum.female.insecticide.exposure = maximum.female.insecticide.exposure)
 
-  intensity.mix.1 = resistance_intensity_to_other_part_of_mixture(deployed.mixture,
-                                                                  generation = generation,
+  intensity.mix.1 = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
+                                                                  generation = current.generation,
                                                                   insecticide = deployed.mixture.1,
                                                                   sim.array = sim.array)
 
@@ -68,8 +70,8 @@ insecticide_not_deployed_mixtures_special_cases = function(exposure.scaling.fact
                                                             intercept = intercept,
                                                             current.insecticide.efficacy = efficacy.part.1)
 
-  intensity.mix.2 = resistance_intensity_to_other_part_of_mixture(deployed.mixture,
-                                                                  generation = generation,
+  intensity.mix.2 = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
+                                                                  generation = current.generation,
                                                                   insecticide = deployed.mixture.2,
                                                                   sim.array = sim.array)
 

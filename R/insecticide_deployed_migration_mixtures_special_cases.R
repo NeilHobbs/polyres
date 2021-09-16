@@ -27,7 +27,9 @@ insecticide_deployed_migration_mixtures_special_cases = function(exposure.scalin
                                                                   tracked.insecticide.efficacy,
                                                                   other.insecticide.in.mixture,
                                                                   efficacy.of.other.insecticide,
-                                                                 insecticide.suppression){
+                                                                 insecticide.suppression,
+                                                                 current.generation,
+                                                                 sim.array){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
                                               resistance.cost = resistance.cost,
@@ -62,15 +64,7 @@ insecticide_deployed_migration_mixtures_special_cases = function(exposure.scalin
                                                                                   other.insecticide.in.mixture = other.insecticide.in.mixture,
                                                                                   efficacy.of.other.insecticide = efficacy.of.other.insecticide)
   
-  
-  migration = migration_treatment_to_refugia(nsim = nsim, 
-                                             min.intervention.coverage = min.intervention.coverage, 
-                                             max.intervention.coverage = max.intervention.coverage, 
-                                             min.dispersal.rate = min.dispersal.rate,
-                                             max.dispersal.rate = max.dispersal.rate)
-  
-  
- population.suppression = ifelse(insecticide.suppression == TRUE,
+   proportion.surviving = ifelse(insecticide.suppression == TRUE,
                                  yes = calculate_insecticide_population_suppression_mixtures(minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
                                                                                              maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
                                                                                              nsim = nsim,
@@ -85,10 +79,24 @@ insecticide_deployed_migration_mixtures_special_cases = function(exposure.scalin
                                                                                              half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
                                  no = 1)
    
+  staying.in.treatment = (1 - migration_treatment_to_refugia(nsim = nsim, 
+                                             min.intervention.coverage = min.intervention.coverage, 
+                                             max.intervention.coverage = max.intervention.coverage, 
+                                             min.dispersal.rate = min.dispersal.rate,
+                                             max.dispersal.rate = max.dispersal.rate))*proportion.surviving
+  
+  joining.from.refugia = migration_refugia_to_treatment(nsim = nsim, 
+                                                        min.intervention.coverage = min.intervention.coverage, 
+                                                        max.intervention.coverage = max.intervention.coverage, 
+                                                        min.dispersal.rate = min.dispersal.rate,
+                                                        max.dispersal.rate = max.dispersal.rate)
+  
+
    
    
- numerator = ((intervention.intensity * (1 -migration))*population.suppression) + (refugia.intensity * migration)
- denominator = (((1 -migration)*population.suppression) + migration)
+   
+ numerator = (intervention.intensity * staying.in.treatment) + (refugia.intensity * joining.from.refugia)
+ denominator = (staying.in.treatment + joining.from.refugia)
  
  update.intervention.intensity = ifelse(denominator == 0,
                                          yes = numerator,
@@ -96,5 +104,9 @@ insecticide_deployed_migration_mixtures_special_cases = function(exposure.scalin
  
  update.intervention.intensity = ifelse(update.intervention.intensity < 0, yes = 0, no = update.intervention.intensity)
   
+ update.intervention.intensity = ifelse(is.na(update.intervention.intensity),
+                                        yes = 0,
+                                        no = update.intervention.intensity)
+ 
   return(update.intervention.intensity)
 }

@@ -95,11 +95,11 @@ insecticide_deployed_migration_special_cases = function(resistance.cost = 0,
                                                                                      half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
                                   no = 1)
   
-  staying.in.treatment = migration_treatment_to_refugia(nsim = nsim,
+  staying.in.treatment = (1 - migration_treatment_to_refugia(nsim = nsim,
                                                             min.intervention.coverage = min.intervention.coverage,
                                                             max.intervention.coverage = max.intervention.coverage,
                                                             min.dispersal.rate = min.dispersal.rate,
-                                                            max.dispersal.rate = max.dispersal.rate)*proportion.remaining
+                                                            max.dispersal.rate = max.dispersal.rate))*proportion.remaining
   
 
   migrating.from.refugia = migration_refugia_to_treatment(nsim = nsim,
