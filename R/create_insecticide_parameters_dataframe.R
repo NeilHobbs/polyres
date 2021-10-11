@@ -9,13 +9,15 @@
 #'@param threshold.generation = The threshold generation at which the insecticide begins to rapidly decay.
 #'@param base.efficacy.decay.rate = The base efficacy decay rate when the insecticide is deployed.
 #'@param rapid.decay.rate = The decay rate of an insecticide after it has exceeded its threshold.generation.
+#'@param insecticide.resistance.heritability = The heritability of the insecticide resistance trait.
 
 create_insecticide_parameters_dataframe = function(number.of.insecticides,
                                                    applied.insecticide.dose,
                                                    recommended.insecticide.dose,
                                                    threshold.generation,
                                                    base.efficacy.decay.rate,
-                                                   rapid.decay.rate){
+                                                   rapid.decay.rate,
+                                                   insecticide.resistance.heritability){
 
 
   if(length(applied.insecticide.dose) == number.of.insecticides){
@@ -50,6 +52,14 @@ create_insecticide_parameters_dataframe = function(number.of.insecticides,
       rapid.decay.rates = rep(rapid.decay.rate, times=number.of.insecticides)}else{
         stop("rapid.decay.rate must either be a vector with length equal to the number.of.insecticides or a single value")
       }}
+  
+  
+  if(length(insecticide.resistance.heritability) == number.of.insecticides){
+    insecticide.resistance.heritability = insecticide.resistance.heritability}else{if(length(insecticide.resistance.heritability) == 1){
+      insecticide.resistance.heritability = rep(insecticide.resistance.heritability, times=number.of.insecticides)}else{
+        stop("rapid.decay.rate must either be a vector with length equal to the number.of.insecticides or a single value")
+      }}
+  
 
   insecticides = seq(from = 1, to = number.of.insecticides, by = 1)
 
@@ -59,7 +69,8 @@ create_insecticide_parameters_dataframe = function(number.of.insecticides,
                                                  recommended.insecticide.doses,
                                                  threshold.generations,
                                                  base.efficacy.decay.rates,
-                                                 rapid.decay.rates)
+                                                 rapid.decay.rates,
+                                                 insecticide.resistance.heritability)
 
   return(insecticidal.parameters.dataframe)
 }
