@@ -2,7 +2,7 @@
 ## Incorporating polygenic resistance into Insecticide Resistance Management
 
 ## Description
-**polyres** enables the user to incorporate poygenic insecticide resistance (and the associated resistance intensity) into insecticide resistance models. This is achieved through a quantitative genetics framework. Resistance intensity is converted to bioassay survival  using the Hill variant of the Michaelis-Menten equation. This package is developed primarily around the *Anopheles gambiae* mosquito, but is applicable to most bloodfeeding insects. 
+**polyres** enables the user to incorporate poygenic insecticide resistance (and the associated resistance intensity) into insecticide resistance models. This is achieved through a quantitative genetics framework. Resistance intensity is converted to bioassay survival  using the Hill variant of the Michaelis-Menten equation. This package is developed primarily around the *Anopheles gambiae* mosquito, but can be broadly applicable to most bloodfeeding insects. 
 
 ## Getting Started
 
@@ -25,7 +25,7 @@ calculate_half_population_survival(desired.resistance = 100,
                                   minimum.resistance.value = 0, 
                                   maximum.resistance.value = 5000)
 ```
-Running the above code would return a value of 900 (Your value will depend on your ```desired.resistance``` and ```desired.survival.proportion``` combination . Which will be the *half.population.bioassay.survival.resistance* parameter that is used throughout the rest of the model and code.
+Running the above code would return a value of 900 (Your value will depend on your ```desired.resistance``` and ```desired.survival.proportion``` combination . Which will be the *half.population.bioassay.survival.resistance* parameter that is used throughout the rest of the model and code. Our preference was to have it such that a 10% bioassay survival gave a Polygenic Resistance Score of 100; as a result our corresponding 50% bioassay survival was 900.
 
 ##### Step 2: The ```bioassay_survival_to_resistance``` and ```resistance_to_bioassay_survival``` functions
 
@@ -68,7 +68,9 @@ Insecticide resistance management simulations are run currently using the ```run
 
 Sequences: The ```irm.strategy = "sequence"``` runs the simulations using the sequence strategy for choosing and deploying insecticides. An insecticide is continually deployed until the ```withdrawal.threshold``` is reached, then the next insecticide is deployed. 
 
-Rotations: The ```irm.strategy = "rotation"``` runs the simulations using the rotation stragegy for choosing and deploying insecticides. The insecticide deployed must change at each deployment interval. It should be noted that if the input parameter ```number.of.insecticides = 1```, the simulation will only run for the duration of the ```deployment.frequency```. Therefore, comparing rotations and sequences when ```number.of.insecticides = 1``` is not recommended.  
+Rotations: The ```irm.strategy = "rotation"``` runs the simulations using the rotation stragegy for choosing and deploying insecticides. The insecticide deployed must change at each deployment interval. It should be noted that if the input parameter ```number.of.insecticides = 1```, the simulation will only run for the duration of the ```deployment.frequency```. Therefore, comparing rotations and sequences when ```number.of.insecticides = 1``` is not recommended. 
+
+For the ```run_simulation_intervention_special_cases()``` function, an adaptive rotation is possible to be used ```irm.strategy = "rotation.sequence"```. Where, when required the model runs using a sequence. This is because the special_cases functions allow for each insecticide to be given unique properties such as a heritabilities and fitness costs, but also insecticide effectiveness. 
 
 ```
 simulation.output = run_simulation_intervention(
@@ -98,7 +100,7 @@ simulation.output = run_simulation_intervention(
                     maximum.resistance.value = 25000 
 ```
 
-Changing the minimum and maximum parameter to be different values from one another while keeping a small number of replicates ```nsim``` allows the model to run in a more stochastic fashion. If the minimum and maximum values values are the same, the model will run in a deterministic fashion. If the minimum and maximum parameter values are equal (for each set of parameter values), it is recommended to set ```nsim = 1``` to speed up the time of the simulations. It should be noted that the model is currently unable to run in a fully stochastic fashion, this is because while the values would change for each generation, they would also change for each insecticide (which is unexpected - and having dispersal different for each insecticide is not realistic). 
+Changing the minimum and maximum parameter to be different values from one another while keeping a small number of replicates ```nsim``` allows the model to run in a more stochastic fashion. If the minimum and maximum values values are the same, the model will run in a deterministic fashion. If the minimum and maximum parameter values are equal (for each set of parameter values), it is recommended to set ```nsim = 1``` to speed up the time of the simulations. It should be noted that the model is currently not set to run in a fully stochastic fashion, this is because while the values would change for each generation, they would also change for each insecticide (having dispersal different for each insecticide is not realistic). 
 
 ## Getting the data from the simulations
 
@@ -111,9 +113,11 @@ simulation.dataframe = get_simulation_dataframe()
 ```
 note if using running simulations with mixtures the ```get_simulation_dataframe_mixtures``` function should be used. 
 
+## Plotting Simulations
 
+```plot_simulation``` is used to plot the simulations where single insecticides are deployed. 
 
-
+No such function yet exists for the convinient plotting of mixture simulations. 
 
 
 
