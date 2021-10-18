@@ -1,3 +1,12 @@
+#'@title Plot the impact of insecticide decay on the efficacy of an insecticide
+#'
+#'@param deployment.frequency = The deployment interval of the insecticide
+#'@param base.decay.rate = The standard rate the insecticide decays
+#'@param rapid.decay.rate = The rate the insecticide decays after the threshold.generation has been exceeded
+#'@param threshold.generation = The generation when insecticide efficacy begins to rapidly decay
+#'@param applied.insecticide.dose = The dose of the insecticide actually applied
+#'@param recommneded.insecticide.dose = The manufacturers recommended dose for a single insecticide formulation.
+
 example_insecticide_decay_plot = function(deployment.frequency,
                                          base.decay.rate,
                                          rapid.decay.rate,

@@ -1,4 +1,15 @@
-#Demonstrate the protective effect of mixtures.
+#'@title Demonstrate the protective effect of mixtures.
+#'
+#'@description Allows the simple visual demonstration of how insecticides in mixtures are protective of one another
+#'
+#'@param male.insecticide.exposure = The proportion of males exposed to the insecticides as a proportion of female exposures
+#'@param female.insecticide.exposure = The proportion of females exposed to the insecticides.
+#'@param intervention.coverage = The coverage of the insecticides as a proportion
+#'@param heritability = The heritability of the insecticide resistance traits
+#'@param fitness.cost = The fitness cost associated with insecticide resistance
+#'@param dispersal.rate = The proportion of individuals exchanging between the intervention site and refugia.
+#'@param half.population.bioassay.survival.resistance = The polygenic resistance score which gives 50% bioassay survival
+#'@param maximum.generations = The maximum number of generations of the simulations
 
 demonstrate_protective_effect_of_mixtures = function(male.insecticide.exposure,
                                                      female.insecticide.exposure,

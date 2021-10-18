@@ -1,3 +1,12 @@
+#'@title Demonstrate the relationship between the bioassay survival and field survival
+#'
+#'@description Plot a graph of the relationship between the bioassay survival and field survival. 
+#'
+#'@param intercept = The intercept obtained from a linear model 
+#'@param conversion.factor = The regression coeffient obtained from a linear model
+#'
+#'@import ggplot2
+
 
 demonstrate_relationship_bioassay_and_field_survival = function(intercept,
                                                                 conversion.factor){

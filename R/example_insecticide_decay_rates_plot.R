@@ -1,3 +1,6 @@
+#'@title Plot an example of how insecticide decay impacts insecticide efficacy
+
+
 example_insecticide_decay_rates_plot = function(){
   
   

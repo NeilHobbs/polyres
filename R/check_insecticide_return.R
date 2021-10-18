@@ -18,10 +18,12 @@ check_insecticide_return = function(insecticide,
                                     return.threshold, #this will be as an intensity value.
                                     simulation.array){
   
-  #Is the resistance intensity less than or equal to the return threshold intensity
+  #Is the resistance intensity less than or equal to the return threshold intensity?
   answer = ifelse(simulation.array["treatment", insecticide, current.generation] <= return.threshold, 
                   yes = TRUE, #The insecticide should be returned.
                   no = FALSE) #The insecticide should not be returned.
+  
+  return(answer)
   
 }
 #There will be a line of code which converts a user input of a survival threshold to the corresponding intensity.

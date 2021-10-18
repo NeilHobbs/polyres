@@ -9,7 +9,9 @@
 #'@param threshold.generation = The threshold generation at which the insecticide begins to rapidly decay.
 #'@param base.efficacy.decay.rate = The base efficacy decay rate when the insecticide is deployed.
 #'@param rapid.decay.rate = The decay rate of an insecticide after it has exceeded its threshold.generation.
-#'@param insecticide.resistance.heritability = The heritability of the insecticide resistance trait.
+#'@param minimum.insecticide.resistance.heritability = The heritability of the insecticide resistance trait.
+#'@param maximum.insecticide.resistance.heritability = The heritability of the insecticide resistance trait.
+#'@param resistance.cost = fitness cost of the the associated insecticide resistance trait.
 
 create_insecticide_parameters_dataframe = function(number.of.insecticides,
                                                    applied.insecticide.dose,
@@ -17,7 +19,9 @@ create_insecticide_parameters_dataframe = function(number.of.insecticides,
                                                    threshold.generation,
                                                    base.efficacy.decay.rate,
                                                    rapid.decay.rate,
-                                                   insecticide.resistance.heritability){
+                                                   minimum.insecticide.resistance.heritability,
+                                                   maximum.insecticide.resistance.heritability,
+                                                   resistance.cost){
 
 
   if(length(applied.insecticide.dose) == number.of.insecticides){
@@ -53,14 +57,21 @@ create_insecticide_parameters_dataframe = function(number.of.insecticides,
         stop("rapid.decay.rate must either be a vector with length equal to the number.of.insecticides or a single value")
       }}
   
-  
-  if(length(insecticide.resistance.heritability) == number.of.insecticides){
-    insecticide.resistance.heritability = insecticide.resistance.heritability}else{if(length(insecticide.resistance.heritability) == 1){
-      insecticide.resistance.heritability = rep(insecticide.resistance.heritability, times=number.of.insecticides)}else{
-        stop("rapid.decay.rate must either be a vector with length equal to the number.of.insecticides or a single value")
-      }}
-  
 
+  if(length(resistance.cost) == number.of.insecticides){
+    resistance.cost = resistance.cost}else{if(length(resistance.cost) == 1){
+      resistance.cost = rep(resistance.cost, times=number.of.insecticides)}else{
+        stop("resistance.cost must either be a vector with length equal to the number.of.insecticides or a single value")
+      }}
+
+  
+  heritabilities = allow_unique_heritabilities(minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
+                                               maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                               number.of.insecticides = number.of.insecticides)
+  
+  
+  
+  
   insecticides = seq(from = 1, to = number.of.insecticides, by = 1)
 
 
@@ -70,7 +81,8 @@ create_insecticide_parameters_dataframe = function(number.of.insecticides,
                                                  threshold.generations,
                                                  base.efficacy.decay.rates,
                                                  rapid.decay.rates,
-                                                 insecticide.resistance.heritability)
+                                                 heritabilities,
+                                                 resistance.cost)
 
   return(insecticidal.parameters.dataframe)
 }

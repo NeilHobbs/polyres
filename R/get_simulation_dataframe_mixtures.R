@@ -1,3 +1,11 @@
+#'@title Get a dataframe of a mixture simulation
+#'
+#'@description Helper function to aid in the conversion of the simulation to a dataframe for use in plotting/analysis
+#'
+#'@param simulation.array = The simulation 
+#'@param maximum.generation = The maximum number of generations the simulation was set to run for
+#'@param number.of.insecticides = The number of insecticides included in the simulation
+
 get_simulation_dataframe_mixtures = function(simulation.array, 
                                              maximum.generations, 
                                              number.of.insecticides){
