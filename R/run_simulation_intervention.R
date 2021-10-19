@@ -33,7 +33,7 @@
 #' 
 #' Currently this function runs.
 #' 
-run_simulation_intervention= function(number.of.insecticides = 2,
+run_simulation_intervention = function(number.of.insecticides = 2,
                                       exposure.scaling.factor = 10,
                                       nsim = 1000,
                                       minimum.insecticide.resistance.heritability = 0.05,
@@ -74,24 +74,24 @@ run_simulation_intervention= function(number.of.insecticides = 2,
   #be able to set each insecticide having a unique starting intensity. And would set the insecticide.info
   #and calculating the withdrawal and return thresholds. 
   
-if(length(starting.refugia.intensity) == 1){
-  sim.array['refugia', , 1] = starting.refugia.intensity
+  if(length(starting.refugia.intensity) == 1){
+    sim.array['refugia', , 1] = starting.refugia.intensity
+    
+  }  else(
+    
+    #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
+    for(i in 1:number.of.insecticides){
+      sim.array['refugia', i , 1] = starting.refugia.intensity[i]
+    })
   
-}  else(
-  
-  #Set starting resistance intensities (fills in only the first row/generation). The other generations are set to NAs.
-  for(i in 1:number.of.insecticides){
-    sim.array['refugia', i , 1] = starting.refugia.intensity[i]
-  })
-  
-if(length(starting.treatment.site.intensity) == 1){
-  sim.array['treatment', , 1] = starting.treatment.site.intensity
-}else(
-  
-  #treatment site starting resistance intensity (where the insecticide can be deployed)
-  for(i in 1:number.of.insecticides){
-    sim.array['treatment', i , 1] = starting.treatment.site.intensity[i]
-  })
+  if(length(starting.treatment.site.intensity) == 1){
+    sim.array['treatment', , 1] = starting.treatment.site.intensity
+  }else(
+    
+    #treatment site starting resistance intensity (where the insecticide can be deployed)
+    for(i in 1:number.of.insecticides){
+      sim.array['treatment', i , 1] = starting.treatment.site.intensity[i]
+    })
   
   available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.
   #At the beginning all insecticides are available for deployment. 
@@ -128,6 +128,15 @@ if(length(starting.treatment.site.intensity) == 1){
                                                           maximum.resistance.value = maximum.resistance.value)
   
   
+  
+  ##Allow unique insecticide resistance heritabilities::
+  
+  insecticide.resistance.heritabilities = allow_unique_heritabilities(minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
+                                                                      maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                                      number.of.insecticides = number.of.insecticides)
+  
+  
+  
   #Also worth considering turning the for generation and for insecticide loops into functions,
   #as the code is other wise very large and chunky and therefore complicated to edit and adapt.
   #start at generation 2, as generation 1 has intensities set at 0.
@@ -137,14 +146,14 @@ if(length(starting.treatment.site.intensity) == 1){
     if(is.na(deployed.insecticide[generation])){break}else{
       
       for(insecticide in 1:number.of.insecticides){ #track the resistance intensity for each insecticide
-                    ##                                                   #ask whether insecticide is the same as deployed insecticide
+        ##                                                   #ask whether insecticide is the same as deployed insecticide
         sim.array['treatment', insecticide, generation] = if(insecticide == deployed.insecticide[generation]){#Insecticide is deployed in treatment site
           #calculate population mean from previous population mean when insecticide present
           mean(insecticide_deployed_migration(#note: this function calls insecticide_deployed_selection_costs
             exposure.scaling.factor = exposure.scaling.factor,
             nsim = nsim,
-            minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
-            maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+            minimum.insecticide.resistance.heritability = insecticide.resistance.heritabilities[insecticide],
+            maximum.insecticide.resistance.heritability = insecticide.resistance.heritabilities[insecticide],
             minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
@@ -158,14 +167,14 @@ if(length(starting.treatment.site.intensity) == 1){
             max.dispersal.rate = max.dispersal.rate))} #end of insecticide deployed
         else( #insecticide is not deployed
           #calculate population mean when insecticide not deployed from previous population mean
-           mean(insecticide_not_deployed_migration(#this function calls insecticide_not_deployed_selection_costs
+          mean(insecticide_not_deployed_migration(#this function calls insecticide_not_deployed_selection_costs
             initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],#use previous generation info in treatment site
             resistance.cost = resistance.cost,
             initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1], # use previous generation info in refugia
             exposure.scaling.factor = exposure.scaling.factor,
             nsim = nsim,
-            minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
-            maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+            minimum.insecticide.resistance.heritability = insecticide.resistance.heritabilities[insecticide],
+            maximum.insecticide.resistance.heritability = insecticide.resistance.heritabilities[insecticide],
             minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
@@ -176,15 +185,15 @@ if(length(starting.treatment.site.intensity) == 1){
             max.dispersal.rate = max.dispersal.rate
           )))#end insecticide not deployed    
         
-      #Do refugia second, updating each generation for each insecticide
+        #Do refugia second, updating each generation for each insecticide
         #calculate the population mean from the previous population mean
         sim.array['refugia', insecticide, generation] = if(insecticide == deployed.insecticide[generation]){#Insecticide is deployed in treatment site
           #calculate population mean from previous population mean when insecticide present
           mean(refugia_migration_effect_insecticide_deployed(#note: this function calls insecticide_deployed_selection_costs
             exposure.scaling.factor = exposure.scaling.factor,
             nsim = nsim,
-            minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
-            maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+            minimum.insecticide.resistance.heritability = insecticide.resistance.heritabilities[insecticide],
+            maximum.insecticide.resistance.heritability = insecticide.resistance.heritabilities[insecticide],
             minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
@@ -204,8 +213,8 @@ if(length(starting.treatment.site.intensity) == 1){
             initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1], # use previous generation info in refugia
             exposure.scaling.factor = exposure.scaling.factor,
             nsim = nsim,
-            minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
-            maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+            minimum.insecticide.resistance.heritability = insecticide.resistance.heritabilities[insecticide],
+            maximum.insecticide.resistance.heritability = insecticide.resistance.heritabilities[insecticide],
             minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
@@ -216,10 +225,10 @@ if(length(starting.treatment.site.intensity) == 1){
             max.dispersal.rate = max.dispersal.rate
           )))#end insecticide not deployed
         
-       #end of refugia
+        #end of refugia
         
         #next do treatment site: requires checking if insecticide deployed or not (will be TRUE/FALSE)
-
+        
         
       }}#end of forinsecticide loop
     
@@ -247,6 +256,19 @@ if(length(starting.treatment.site.intensity) == 1){
             deployment.vector = deployed.insecticide)} else{
               if(irm.strategy == "sequence"){
                 irm_strategy_sequence(
+                  number.of.insecticides = number.of.insecticides,
+                  current.generation = generation,
+                  withdrawal.threshold = calc.withdrawal.threshold,
+                  return.threshold = calc.return.threshold,
+                  simulation.array = sim.array,
+                  available.vector = available.vector,
+                  withdrawn.vector = withdrawn.vector,
+                  current.insecticide = deployed.insecticide[generation],
+                  deployment.frequency = deployment.frequency,
+                  deployment.vector = deployed.insecticide) 
+              }
+              if(irm.strategy == "rotation.sequence"){
+                irm_strategy_rotation_with_temporary_sequences(
                   number.of.insecticides = number.of.insecticides,
                   current.generation = generation,
                   withdrawal.threshold = calc.withdrawal.threshold,
