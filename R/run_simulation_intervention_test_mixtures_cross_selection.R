@@ -130,6 +130,8 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
                                                            max.cross.selection = max.cross.selection)
   
   
+
+  
   #Also worth considering turning the for generation and for insecticide loops into functions,
   #as the code is other wise very large and chunky and therefore complicated to edit and adapt.
   #start at generation 2, as generation 1 has intensities set at 0.

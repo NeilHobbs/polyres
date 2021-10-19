@@ -85,22 +85,16 @@ refugia_migration_effect_not_deployed_special_cases = function(exposure.scaling.
                                                                         half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance),
                                   no = 1)
   
-  migrating.from.treatment = migration_treatment_to_refugia(nsim = nsim,
-                                                            min.intervention.coverage = min.intervention.coverage,
-                                                            max.intervention.coverage = max.intervention.coverage,
-                                                            min.dispersal.rate = min.dispersal.rate,
-                                                            max.dispersal.rate = max.dispersal.rate)*proportion.remaining
+  migration = migration_refugia_to_treatment(nsim = nsim, 
+                                             min.intervention.coverage = min.intervention.coverage, 
+                                             max.intervention.coverage = max.intervention.coverage, 
+                                             min.dispersal.rate = min.dispersal.rate,
+                                             max.dispersal.rate = max.dispersal.rate)
   
   
   
-  staying.in.refugia = 1 - migration_refugia_to_treatment(nsim = nsim,
-                                                          min.intervention.coverage = min.intervention.coverage,
-                                                          max.intervention.coverage = max.intervention.coverage,
-                                                          min.dispersal.rate = min.dispersal.rate,
-                                                          max.dispersal.rate = max.dispersal.rate)
-  
-  numerator = (refugia.selection * staying.in.refugia) + (treatment.site.selection * migrating.from.treatment)
-  denominator = (staying.in.refugia + migrating.from.treatment)
+  numerator = (refugia.selection *(1 - migration)) + (treatment.site.selection * migration * proportion.remaining)
+  denominator = (1-migration) + (migration*proportion.remaining)
   
   #If migration = 0, and population supppression = 0 then denominator = 0.
   

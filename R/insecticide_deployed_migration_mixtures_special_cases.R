@@ -1,5 +1,4 @@
 
-#This is equation 7b, passed 7a(iii)
 
 
 insecticide_deployed_migration_mixtures_special_cases = function(exposure.scaling.factor = 10,
@@ -103,7 +102,7 @@ insecticide_deployed_migration_mixtures_special_cases = function(exposure.scalin
                                          no = numerator/denominator)
  
  update.intervention.intensity = ifelse(update.intervention.intensity < 0, yes = 0, no = update.intervention.intensity)
-  
+
  update.intervention.intensity = ifelse(is.na(update.intervention.intensity),
                                         yes = 0,
                                         no = update.intervention.intensity)

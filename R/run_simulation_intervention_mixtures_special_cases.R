@@ -88,7 +88,8 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                       threshold.generation = threshold.generation,
                                                                       base.efficacy.decay.rate = base.efficacy.decay.rate,
                                                                       rapid.decay.rate = rapid.decay.rate,
-                                                                      insecticide.resistance.heritability = insecticide.resistance.heritability)
+                                                                      insecticide.resistance.heritability = insecticide.resistance.heritability,
+                                                                      resistance.cost = resistance.cost)
 
 
   available.vector = seq(1, number.of.insecticides, by = 1)#Creates a vector of the insecticides that are available for deployment.
@@ -184,7 +185,7 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                      maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                      minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                                                      maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-                                                                     resistance.cost = resistance.cost,
+                                                                     resistance.cost = insecticide.parameters.df$resistance.cost[insecticide],
                                                                      initial.resistance.intensity = sim.array["treatment", insecticide, generation-1],
                                                                      intensity.to.other.mixture.part = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
                                                                                                                                                      generation = generation,
@@ -221,7 +222,7 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                         min.dispersal.rate = min.dispersal.rate,
                                                                         max.dispersal.rate = max.dispersal.rate,
                                                                         initial.refugia.resistance = sim.array["refugia", insecticide, generation-1],
-                                                                        resistance.cost = resistance.cost,
+                                                                        resistance.cost = insecticide.parameters.df$resistance.cost[insecticide],
                                                                         exposure.scaling.factor = exposure.scaling.factor,
                                                                         minimum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide], 
                                                                         maximum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide],
@@ -257,7 +258,7 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                                    maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                                    minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                                                                    maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-                                                                                   resistance.cost = resistance.cost,
+                                                                                   resistance.cost = insecticide.parameters.df$resistance.cost[insecticide],
                                                                                    initial.resistance.intensity = sim.array["treatment", insecticide, generation-1],
                                                                                    intensity.to.other.mixture.part = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
                                                                                                                                                                    generation = generation,
@@ -295,7 +296,7 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                                           maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                                           minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
                                                                                           maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-                                                                                          resistance.cost = resistance.cost,
+                                                                                          resistance.cost = insecticide.parameters.df$resistance.cost[insecticide],
                                                                                           initial.resistance.intensity = sim.array["treatment", insecticide, generation-1],
                                                                                           intensity.to.other.mixture.part = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
                                                                                                                                                                           generation = generation,

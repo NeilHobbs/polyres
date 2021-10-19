@@ -25,7 +25,8 @@ insecticide_not_deployed_mixtures_special_cases = function(exposure.scaling.fact
                                                            efficacy.part.2,
                                                            deployed.mixture,
                                                            current.generation,
-                                                           half.population.bioassay.survival.resistance){
+                                                           half.population.bioassay.survival.resistance,
+                                                           sim.array){
 
   #The genetic correlation between the trait which gives resistance to the tracked insecticide the trait
   #which gives resistance to the the deployed insecticide.

@@ -18,11 +18,15 @@ insecticide_not_deployed_mixtures_cross_selection = function(exposure.scaling.fa
                                                              resistance.cost = 0.1,
                                                              initial.resistance.intensity = 0,
                                                              cross.selection.matrix,
+                                                             deployed.mixture,
                                                              deployed.mixture.1,
                                                              deployed.mixture.2,
                                                              currently.tracked.insecticide,
                                                              conversion.factor = 0.48,
-                                                             intercept = 0.15){
+                                                             intercept = 0.15,
+                                                             sim.array,
+                                                             generation,
+                                                             half.population.bioassay.survival.resistance){
   
   #The genetic correlation between the trait which gives resistance to the tracked insecticide the trait
   #which gives resistance to the the deployed insecticide.
