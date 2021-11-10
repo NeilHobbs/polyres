@@ -5,14 +5,15 @@
 #load required packages : packages can be installed: install.packages("packagename")
 library(magrittr)
 library(ggplot2)
+library(ggridges)
+library(dplyr)
+library(patchwork)
 library(dplyr)
 library(RColorBrewer)
 library(ggpubr)
 library(epiR)
 library(mgcv)
 library(mass)
-library(rpart)
-library(rpart.plot)
 library(devtools) #for polyres package [will need to figure out how to allow install from github]
 load_all()
 
@@ -56,7 +57,7 @@ load_all()
 # write.csv(parameter.space.df, "paramater.space.df.publication.csv")
 # 
 # #read in the dataset
-# #parameter.space.df = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/paramater.space.df.publication.csv")
+#parameter.space.df = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/paramater.space.df.publication.csv")
 # 
 # 
 # #When running simulations we extract the:
@@ -311,6 +312,582 @@ load_all()
       #it may be worth running each for loop in chunks of say 50000. 
       
 
+##RUN WITH A 30 GENERATION DEPLOYMENT INTERVAL - For LLINs
+
+# temp.list.sequence.30 = list()
+# 
+# for(v in 1:nrow(parameter.space.df)){
+# 
+#   temp =  get_simulation_dataframe(run_simulation_intervention_cross_selection(number.of.insecticides = 2,
+#                                                                                exposure.scaling.factor = 10,
+#                                                                                nsim = 1,
+#                                                                                minimum.insecticide.resistance.heritability = parameter.space.df$Heritability[v],
+#                                                                                maximum.insecticide.resistance.heritability = parameter.space.df$Heritability[v],
+#                                                                                minimum.male.insecticide.exposure = parameter.space.df$Male.Insecticide.Exposure[v],
+#                                                                                maximum.male.insecticide.exposure = parameter.space.df$Male.Insecticide.Exposure[v],
+#                                                                                minimum.female.insecticide.exposure = parameter.space.df$Female.Insecticide.Exposure[v],
+#                                                                                maximum.female.insecticide.exposure = parameter.space.df$Female.Insecticide.Exposure[v],
+#                                                                                resistance.cost = parameter.space.df$Fitness.Cost[v],
+#                                                                                starting.treatment.site.intensity = parameter.space.df$start.resistance.values[v],
+#                                                                                starting.refugia.intensity = parameter.space.df$start.resistance.values[v],
+#                                                                                min.intervention.coverage = parameter.space.df$Intervention.Coverage[v],
+#                                                                                max.intervention.coverage = parameter.space.df$Intervention.Coverage[v],
+#                                                                                min.dispersal.rate = parameter.space.df$Dispersal[v],
+#                                                                                max.dispersal.rate = parameter.space.df$Dispersal[v],
+#                                                                                maximum.generations = 500, #appoximately 50 years
+#                                                                                irm.strategy = "sequence",
+#                                                                                half.population.bioassay.survival.resistance = 900,
+#                                                                                withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+#                                                                                return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+#                                                                                deployment.frequency = 30, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+#                                                                                maximum.resistance.value = 25000, #have arbitrarily high just in case
+#                                                                                min.cross.selection = parameter.space.df$cross.selection.values[v],
+#                                                                                max.cross.selection = parameter.space.df$cross.selection.values[v]),
+#                                    maximum.generations = 500, number.of.insecticides = 2)
+# 
+# 
+#   temp_treatment = temp%>% #only need to know for the treatment site as this is where the decisions are made from.
+#     dplyr::filter(site == "treatment")
+# 
+#   simulation.duration = max(temp_treatment$time.in.generations) #Duration of simulation
+# 
+#   exceedance.generations = nrow(temp_treatment%>%
+#                                   dplyr::filter(resistance.intensity > 100))#The number of generations where resistance.intensity > withdrawal threshold regardless of whether the insecticide is in deployment
+# 
+#   exceedance.generations.deployed = nrow(temp_treatment%>% #The number of generations where resistance.intensity > withdrawal threshold when the insecticide is in deployment
+#                                            dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                            dplyr::filter(resistance.intensity > 100))
+# 
+#   peak.resistance = max(temp_treatment$resistance.intensity)
+# 
+#   insecticides.in.sim = c(2)
+# 
+#   strategy = "sequence"
+# 
+#   dep.freq = c(30)
+# 
+#   cross.selection = parameter.space.df$cross.selection.values[v]
+# 
+#   start.resistance = parameter.space.df$start.resistance.values[v]
+# 
+#   average.resistance.intensity = c(temp_treatment%>%
+#                                      dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                      summarise(mean(resistance.intensity)))
+# 
+#   strategy = "sequence"
+# 
+#   temp_2 = data.frame(simulation.duration, average.resistance.intensity, exceedance.generations,
+#                       exceedance.generations.deployed, peak.resistance, strategy, insecticides.in.sim, dep.freq,
+#                       cross.selection, start.resistance)
+# 
+#   temp.list.sequence.30[[v]] = temp_2
+# }
+# 
+# sequence.df.30 = do.call(rbind, temp.list.sequence.30)
+# sequence.df.30.publication = cbind(sequence.df.30, parameter.space.df)
+# 
+# write.csv(sequence.df.30.publication, ".//sequence.set.publication.30.csv")
+
+
+#Do the Rotation Runs
+# temp.list.rotation.30 = list()
+# for(v in 1: nrow(parameter.space.df)){
+# 
+#   temp =  get_simulation_dataframe(run_simulation_intervention_cross_selection(number.of.insecticides = 2,
+#                                                                                exposure.scaling.factor = 10,
+#                                                                                nsim = 1,
+#                                                                                minimum.insecticide.resistance.heritability = parameter.space.df$Heritability[v],
+#                                                                                maximum.insecticide.resistance.heritability = parameter.space.df$Heritability[v],
+#                                                                                minimum.male.insecticide.exposure = parameter.space.df$Male.Insecticide.Exposure[v],
+#                                                                                maximum.male.insecticide.exposure = parameter.space.df$Male.Insecticide.Exposure[v],
+#                                                                                minimum.female.insecticide.exposure = parameter.space.df$Female.Insecticide.Exposure[v],
+#                                                                                maximum.female.insecticide.exposure = parameter.space.df$Female.Insecticide.Exposure[v],
+#                                                                                resistance.cost = parameter.space.df$Fitness.Cost[v],
+#                                                                                starting.treatment.site.intensity = parameter.space.df$start.resistance.values[v],
+#                                                                                starting.refugia.intensity = parameter.space.df$start.resistance.values[v],
+#                                                                                min.intervention.coverage = parameter.space.df$Intervention.Coverage[v],
+#                                                                                max.intervention.coverage = parameter.space.df$Intervention.Coverage[v],
+#                                                                                min.dispersal.rate = parameter.space.df$Dispersal[v],
+#                                                                                max.dispersal.rate = parameter.space.df$Dispersal[v],
+#                                                                                maximum.generations = 500, #appoximately 50 years
+#                                                                                irm.strategy = "rotation",
+#                                                                                half.population.bioassay.survival.resistance = 900,
+#                                                                                withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+#                                                                                return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+#                                                                                deployment.frequency = 30, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+#                                                                                maximum.resistance.value = 25000, #have arbitrarily high just in case
+#                                                                                min.cross.selection = parameter.space.df$cross.selection.values[v],
+#                                                                                max.cross.selection = parameter.space.df$cross.selection.values[v]),
+#                                    maximum.generations = 500, number.of.insecticides = 2)
+# 
+# 
+#   temp_treatment = temp%>% #only need to know for the treatment site as this is where the decisions are made from.
+#     dplyr::filter(site == "treatment")
+# 
+#   simulation.duration = max(temp_treatment$time.in.generations) #Duration of simulation
+# 
+#   exceedance.generations = nrow(temp_treatment%>%
+#                                   dplyr::filter(resistance.intensity > 100))#The number of generations where resistance.intensity > withdrawal threshold regardless of whether the insecticide is in deployment
+# 
+#   exceedance.generations.deployed = nrow(temp_treatment%>% #The number of generations where resistance.intensity > withdrawal threshold when the insecticide is in deployment
+#                                            dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                            dplyr::filter(resistance.intensity > 100))
+# 
+#   peak.resistance = max(temp_treatment$resistance.intensity)
+# 
+#   insecticides.in.sim = c(2)
+# 
+#   dep.freq = c(30)
+# 
+#   cross.selection = parameter.space.df$cross.selection.values[v]
+# 
+#   start.resistance = parameter.space.df$start.resistance.values[v]
+# 
+#   average.resistance.intensity = c(temp_treatment%>%
+#                                      dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                      summarise(mean(resistance.intensity)))
+# 
+#   strategy = "rotation"
+# 
+#   temp_2 = data.frame(simulation.duration, average.resistance.intensity, exceedance.generations,
+#                       exceedance.generations.deployed, peak.resistance, strategy, insecticides.in.sim, dep.freq,
+#                       cross.selection, start.resistance)
+# 
+#   svMisc::progress(value = v, progress.bar = TRUE, console = TRUE,
+#                    max.value = nrow(parameter.space.df))
+# 
+#   temp.list.rotation.30[[v]] = temp_2
+# }
+# 
+# rotation.df.30 = do.call(rbind, temp.list.rotation.30)
+# rotation.df.publication.30 = cbind(rotation.df.30, parameter.space.df)
+# 
+# write.csv(rotation.df.publication.30, ".//rotation.set.publication.30.csv")
+# 
+
+#Then do mixtures::
+# temp.list.mixtures.30 = list()
+# for(v in 1:nrow(parameter.space.df)){
+# 
+#   temp =  get_simulation_dataframe_mixtures(run_simulation_intervention_test_mixtures_cross_selection(number.of.insecticides = 2,
+#                                                                                                       exposure.scaling.factor = 10,
+#                                                                                                       nsim = 1,
+#                                                                                                       minimum.insecticide.resistance.heritability = parameter.space.df$Heritability[v],
+#                                                                                                       maximum.insecticide.resistance.heritability = parameter.space.df$Heritability[v],
+#                                                                                                       minimum.male.insecticide.exposure = parameter.space.df$Male.Insecticide.Exposure[v],
+#                                                                                                       maximum.male.insecticide.exposure = parameter.space.df$Male.Insecticide.Exposure[v],
+#                                                                                                       minimum.female.insecticide.exposure = parameter.space.df$Female.Insecticide.Exposure[v],
+#                                                                                                       maximum.female.insecticide.exposure = parameter.space.df$Female.Insecticide.Exposure[v],
+#                                                                                                       resistance.cost = parameter.space.df$Fitness.Cost[v],
+#                                                                                                       starting.treatment.site.intensity = parameter.space.df$start.resistance.values[v],
+#                                                                                                       starting.refugia.intensity = parameter.space.df$start.resistance.values[v],
+#                                                                                                       min.intervention.coverage = parameter.space.df$Intervention.Coverage[v],
+#                                                                                                       max.intervention.coverage = parameter.space.df$Intervention.Coverage[v],
+#                                                                                                       min.dispersal.rate = parameter.space.df$Dispersal[v],
+#                                                                                                       max.dispersal.rate = parameter.space.df$Dispersal[v],
+#                                                                                                       maximum.generations = 500,
+#                                                                                                       irm.deployment.strategy = "mixtures", #single, mixtures
+#                                                                                                       mixture.strategy = "mix.sequential.discrete", #can be: random.mixtures; pyrethroid.plus; mix.sequential.continous; mix.sequential.discrete
+#                                                                                                       irm.switch.strategy = "sequence", #will be sequence or rotation;default should be sequence
+#                                                                                                       half.population.bioassay.survival.resistance = 900,
+#                                                                                                       withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+#                                                                                                       return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+#                                                                                                       deployment.frequency = 30, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+#                                                                                                       maximum.resistance.value = 25000,
+#                                                                                                       conversion.factor = 0.48, #point estimates from linear regression
+#                                                                                                       intercept = 0.15, #point estimates from linear regression
+#                                                                                                       min.cross.selection = parameter.space.df$cross.selection.values[v],
+#                                                                                                       max.cross.selection = parameter.space.df$cross.selection.values[v]),
+#                                             maximum.generations = 500, number.of.insecticides = 2)
+# 
+# 
+#   temp_treatment = temp%>% #only need to know for the treatment site as this is where the decisions are made from.
+#     dplyr::filter(site == "treatment")
+# 
+#   simulation.duration = max(temp_treatment$time.in.generations) #Duration of simulation
+# 
+#   exceedance.generations = nrow(temp_treatment%>%
+#                                   dplyr::filter(resistance.intensity > 100))#The number of generations where resistance.intensity > withdrawal threshold regardless of whether the insecticide is in deployment
+# 
+#   #note, as in mixture will be the same for mixture part 1 and mixture part 2 - only count based on part1.
+#   exceedance.generations.deployed = nrow(temp_treatment%>% #The number of generations where resistance.intensity > withdrawal threshold when the insecticide is in deployment
+#                                            dplyr::filter(deployed.mixture.part.1 == insecticide.tracked)%>%
+#                                            dplyr::filter(resistance.intensity > 100))
+# 
+#   peak.resistance = max(temp_treatment$resistance.intensity)
+# 
+#   insecticides.in.sim = c(2)
+# 
+#   dep.freq = c(30)
+# 
+#   cross.selection = parameter.space.df$cross.selection.values[v]
+# 
+#   start.resistance = parameter.space.df$start.resistance.values[v]
+# 
+#   average.resistance.intensity.1 = c(temp_treatment%>%
+#                                        dplyr::filter(deployed.mixture.part.1 == insecticide.tracked)%>%
+#                                        summarise(mean(resistance.intensity)))
+# 
+#   average.resistance.intensity.2 = c(temp_treatment%>%
+#                                        dplyr::filter(deployed.mixture.part.2 == insecticide.tracked)%>%
+#                                        summarise(mean(resistance.intensity)))
+# 
+#   strategy = "mixture"
+# 
+#   temp_2 = data.frame(simulation.duration, average.resistance.intensity.1, average.resistance.intensity.2, exceedance.generations,
+#                       exceedance.generations.deployed, peak.resistance, strategy, insecticides.in.sim, dep.freq, cross.selection, start.resistance)
+# 
+#   svMisc::progress(value = v, progress.bar = TRUE, console = TRUE,
+#                    max.value = nrow(parameter.space.df))
+# 
+#   temp.list.mixtures.30[[v]] = temp_2
+# }
+# 
+# mixture.df.30 = do.call(rbind, temp.list.mixtures.30)
+# mixture.df.30.publication = cbind(mixture.df.30, parameter.space.df)
+# 
+# write.csv(mixture.df.30.publication, ".//mixture.df.publication.30.csv")
+
+##Run with unique insecticide properties (heritability and fitness):
+#This increases the amount of noise in the system (more field realistic)
+
+parameter.space.df = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/paramater.space.df.publication.csv")
+
+
+# parameter.space.2.df = data.frame(lhs::randomLHS(50000, 11)) #50,000 random samples of the 6 input parameters.
+# 
+# 
+# #Rename and sample from the uniform distributions
+# parameter.space.2.df = parameter.space.2.df%>%
+#   dplyr::rename(Heritability.1 = X1)%>%
+#   dplyr::rename(Heritability.2 = X2)%>%
+#   dplyr::mutate(Heritability.1 = qunif(Heritability.1, 0.05, 0.3))%>%
+#   dplyr::mutate(Heritability.2 = qunif(Heritability.2, 0.05, 0.3))%>%
+#   dplyr::rename(Fitness.1 = X3)%>%
+#   dplyr::rename(Fitness.2 = X4)%>%
+#   dplyr::mutate(Fitness.1 = qunif(Fitness.1, 0.01, 0.2))%>%
+#   dplyr::mutate(Fitness.2 = qunif(Fitness.2, 0.01, 0.2))%>%
+#   dplyr::rename(Start.1 = X5)%>%
+#   dplyr::rename(Start.2 = X6)%>%
+#   dplyr::mutate(Start.1 = qunif(Start.1, 0, 80))%>%
+#   dplyr::mutate(Start.2 = qunif(Start.2, 0, 80))%>%
+#   dplyr::rename(Cross.Selection = X7)%>%
+#   dplyr::mutate(Cross.Selection = qunif(Cross.Selection, -0.5, 0.5))%>%
+#   dplyr::rename(Dispersal = X8)%>%
+#   dplyr::mutate(Dispersal = qunif(Dispersal, 0.1, 0.9))%>%
+#   dplyr::rename(Coverage = X9)%>%
+#   dplyr::mutate(Coverage = qunif(Coverage, 0.1, 0.9))%>%
+#   dplyr::rename(Female.Exposure = X10)%>%
+#   dplyr::mutate(Female.Exposure = qunif(Female.Exposure, 0.4, 0.9))%>%
+#   dplyr::rename(Male.Exposure = X11)%>%
+#   dplyr::mutate(Male.Exposure = qunif(Male.Exposure, 0, 1))
+# 
+# write.csv(parameter.space.2.df, ".//unique.insecticide.properties.parameter.space.publication.csv")
+
+parameter.space.2.df = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/unique.insecticide.properties.parameter.space.publication.csv")
+
+#group the values into lists of vectors
+heritability.list = list()
+fitness.list = list()
+start.resistance.list = list()
+
+for(i in 1:50000){
+  
+  heritability.list[[i]] = c(parameter.space.2.df$Heritability.1[i], parameter.space.2.df$Heritability.2[i])
+  start.resistance.list[[i]] = c(parameter.space.2.df$Start.1[i], parameter.space.2.df$Start.2[i])
+  fitness.list[[i]] = c(parameter.space.2.df$Fitness.1[i], parameter.space.2.df$Fitness.2[i])
+}
+
+
+# #Perfect Sequences
+# 
+# temp.list.sequence.unique = list()
+# 
+# for(v in 1:50000){
+# 
+#   temp =  get_simulation_dataframe(run_simulation_intervention_cross_selection(number.of.insecticides = 2,
+#                                                                                exposure.scaling.factor = 10,
+#                                                                                nsim = 1,
+#                                                                                minimum.insecticide.resistance.heritability = c(heritability.list[[v]]),
+#                                                                                maximum.insecticide.resistance.heritability = c(heritability.list[[v]]),
+#                                                                                minimum.male.insecticide.exposure = parameter.space.2.df$Male.Exposure[v],
+#                                                                                maximum.male.insecticide.exposure = parameter.space.2.df$Male.Exposure[v],
+#                                                                                minimum.female.insecticide.exposure = parameter.space.2.df$Female.Exposure[v],
+#                                                                                maximum.female.insecticide.exposure = parameter.space.2.df$Female.Exposure[v],
+#                                                                                resistance.cost = c(fitness.list[[v]]),
+#                                                                                starting.treatment.site.intensity = c(start.resistance.list[[v]]),
+#                                                                                starting.refugia.intensity = c(start.resistance.list[[v]]),
+#                                                                                min.intervention.coverage = parameter.space.2.df$Coverage[v],
+#                                                                                max.intervention.coverage = parameter.space.2.df$Coverage[v],
+#                                                                                min.dispersal.rate = parameter.space.2.df$Dispersal[v],
+#                                                                                max.dispersal.rate = parameter.space.2.df$Dispersal[v],
+#                                                                                maximum.generations = 500, #appoximately 50 years
+#                                                                                irm.strategy = "sequence",
+#                                                                                half.population.bioassay.survival.resistance = 900,
+#                                                                                withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+#                                                                                return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+#                                                                                deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+#                                                                                maximum.resistance.value = 25000, #have arbitrarily high just in case
+#                                                                                min.cross.selection = parameter.space.2.df$Cross.Selection[v],
+#                                                                                max.cross.selection = parameter.space.2.df$Cross.Selection[v]),
+#                                    maximum.generations = 500, number.of.insecticides = 2)
+# 
+# 
+#   temp_treatment = temp%>% #only need to know for the treatment site as this is where the decisions are made from.
+#     dplyr::filter(site == "treatment")
+# 
+#   simulation.duration = max(temp_treatment$time.in.generations) #Duration of simulation
+# 
+#   exceedance.generations = nrow(temp_treatment%>%
+#                                   dplyr::filter(resistance.intensity > 100))#The number of generations where resistance.intensity > withdrawal threshold regardless of whether the insecticide is in deployment
+# 
+#   exceedance.generations.deployed = nrow(temp_treatment%>% #The number of generations where resistance.intensity > withdrawal threshold when the insecticide is in deployment
+#                                            dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                            dplyr::filter(resistance.intensity > 100))
+# 
+#   peak.resistance = max(temp_treatment$resistance.intensity)
+# 
+#   strategy = "sequence"
+# 
+#   dep.freq = c(10)
+# 
+#   average.resistance.intensity = c(temp_treatment%>%
+#                                      dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                      summarise(mean(resistance.intensity)))
+# 
+#   strategy = "sequence"
+# 
+#   temp_2 = data.frame(simulation.duration, average.resistance.intensity, exceedance.generations,
+#                       exceedance.generations.deployed, peak.resistance, strategy, dep.freq)
+# 
+#   temp.list.sequence.unique[[v]] = temp_2
+# }
+# 
+# sequence.df.unique = do.call(rbind, temp.list.sequence.unique)
+# sequence.df.unique.ps = cbind(sequence.df.unique, parameter.space.2.df)
+# 
+# write.csv(sequence.df.unique.ps, ".//unique.insecticides.sequences.csv")
+# 
+# 
+# #Standard Rotations
+# temp.list.rotation.unique = list()
+# 
+# for(v in 1:50000){
+#   
+#   temp =  get_simulation_dataframe(run_simulation_intervention_cross_selection(number.of.insecticides = 2,
+#                                                                                exposure.scaling.factor = 10,
+#                                                                                nsim = 1,
+#                                                                                minimum.insecticide.resistance.heritability = c(heritability.list[[v]]),
+#                                                                                maximum.insecticide.resistance.heritability = c(heritability.list[[v]]),
+#                                                                                minimum.male.insecticide.exposure = parameter.space.2.df$Male.Exposure[v],
+#                                                                                maximum.male.insecticide.exposure = parameter.space.2.df$Male.Exposure[v],
+#                                                                                minimum.female.insecticide.exposure = parameter.space.2.df$Female.Exposure[v],
+#                                                                                maximum.female.insecticide.exposure = parameter.space.2.df$Female.Exposure[v],
+#                                                                                resistance.cost = c(fitness.list[[v]]),
+#                                                                                starting.treatment.site.intensity = c(start.resistance.list[[v]]),
+#                                                                                starting.refugia.intensity = c(start.resistance.list[[v]]),
+#                                                                                min.intervention.coverage = parameter.space.2.df$Coverage[v],
+#                                                                                max.intervention.coverage = parameter.space.2.df$Coverage[v],
+#                                                                                min.dispersal.rate = parameter.space.2.df$Dispersal[v],
+#                                                                                max.dispersal.rate = parameter.space.2.df$Dispersal[v],
+#                                                                                maximum.generations = 500, #appoximately 50 years
+#                                                                                irm.strategy = "rotation",
+#                                                                                half.population.bioassay.survival.resistance = 900,
+#                                                                                withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+#                                                                                return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+#                                                                                deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+#                                                                                maximum.resistance.value = 25000, #have arbitrarily high just in case
+#                                                                                min.cross.selection = parameter.space.2.df$Cross.Selection[v],
+#                                                                                max.cross.selection = parameter.space.2.df$Cross.Selection[v]),
+#                                    maximum.generations = 500, number.of.insecticides = 2)
+#   
+#   
+#   temp_treatment = temp%>% #only need to know for the treatment site as this is where the decisions are made from.
+#     dplyr::filter(site == "treatment")
+#   
+#   simulation.duration = max(temp_treatment$time.in.generations) #Duration of simulation
+#   
+#   exceedance.generations = nrow(temp_treatment%>%
+#                                   dplyr::filter(resistance.intensity > 100))#The number of generations where resistance.intensity > withdrawal threshold regardless of whether the insecticide is in deployment
+#   
+#   exceedance.generations.deployed = nrow(temp_treatment%>% #The number of generations where resistance.intensity > withdrawal threshold when the insecticide is in deployment
+#                                            dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                            dplyr::filter(resistance.intensity > 100))
+#   
+#   peak.resistance = max(temp_treatment$resistance.intensity)
+#   
+#   strategy = "rotation"
+#   
+#   dep.freq = c(10)
+#   
+#   average.resistance.intensity = c(temp_treatment%>%
+#                                      dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                      summarise(mean(resistance.intensity)))
+#   
+#    temp_2 = data.frame(simulation.duration, average.resistance.intensity, exceedance.generations,
+#                       exceedance.generations.deployed, peak.resistance, strategy, dep.freq)
+#   
+#    temp.list.rotation.unique[[v]] = temp_2
+# }
+# 
+# rotation.df.unique = do.call(rbind, temp.list.rotation.unique)
+# rotation.df.unique.ps = cbind(rotation.df.unique, parameter.space.2.df)
+# 
+# write.csv(rotation.df.unique.ps, ".//unique.insecticides.rotation.csv")
+# 
+# #Adapative Rotations (become sequences when necessary)
+# temp.list.adapative.rotation.unique = list()
+# 
+# for(v in 1:50000){
+#   
+#   temp =  get_simulation_dataframe(run_simulation_intervention_cross_selection(number.of.insecticides = 2,
+#                                                                                exposure.scaling.factor = 10,
+#                                                                                nsim = 1,
+#                                                                                minimum.insecticide.resistance.heritability = c(heritability.list[[v]]),
+#                                                                                maximum.insecticide.resistance.heritability = c(heritability.list[[v]]),
+#                                                                                minimum.male.insecticide.exposure = parameter.space.2.df$Male.Exposure[v],
+#                                                                                maximum.male.insecticide.exposure = parameter.space.2.df$Male.Exposure[v],
+#                                                                                minimum.female.insecticide.exposure = parameter.space.2.df$Female.Exposure[v],
+#                                                                                maximum.female.insecticide.exposure = parameter.space.2.df$Female.Exposure[v],
+#                                                                                resistance.cost = c(fitness.list[[v]]),
+#                                                                                starting.treatment.site.intensity = c(start.resistance.list[[v]]),
+#                                                                                starting.refugia.intensity = c(start.resistance.list[[v]]),
+#                                                                                min.intervention.coverage = parameter.space.2.df$Coverage[v],
+#                                                                                max.intervention.coverage = parameter.space.2.df$Coverage[v],
+#                                                                                min.dispersal.rate = parameter.space.2.df$Dispersal[v],
+#                                                                                max.dispersal.rate = parameter.space.2.df$Dispersal[v],
+#                                                                                maximum.generations = 500, #appoximately 50 years
+#                                                                                irm.strategy = "adaptive.rotation",
+#                                                                                half.population.bioassay.survival.resistance = 900,
+#                                                                                withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+#                                                                                return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+#                                                                                deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+#                                                                                maximum.resistance.value = 25000, #have arbitrarily high just in case
+#                                                                                min.cross.selection = parameter.space.2.df$Cross.Selection[v],
+#                                                                                max.cross.selection = parameter.space.2.df$Cross.Selection[v]),
+#                                    maximum.generations = 500, number.of.insecticides = 2)
+#   
+#   
+#   temp_treatment = temp%>% #only need to know for the treatment site as this is where the decisions are made from.
+#     dplyr::filter(site == "treatment")
+#   
+#   simulation.duration = max(temp_treatment$time.in.generations) #Duration of simulation
+#   
+#   exceedance.generations = nrow(temp_treatment%>%
+#                                   dplyr::filter(resistance.intensity > 100))#The number of generations where resistance.intensity > withdrawal threshold regardless of whether the insecticide is in deployment
+#   
+#   exceedance.generations.deployed = nrow(temp_treatment%>% #The number of generations where resistance.intensity > withdrawal threshold when the insecticide is in deployment
+#                                            dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                            dplyr::filter(resistance.intensity > 100))
+#   
+#   peak.resistance = max(temp_treatment$resistance.intensity)
+#   
+#   strategy = "adaptive.rotation"
+#   
+#   dep.freq = c(10)
+#   
+#   average.resistance.intensity = c(temp_treatment%>%
+#                                      dplyr::filter(insecticide.deployed == insecticide.tracked)%>%
+#                                      summarise(mean(resistance.intensity)))
+#   
+#   temp_2 = data.frame(simulation.duration, average.resistance.intensity, exceedance.generations,
+#                       exceedance.generations.deployed, peak.resistance, strategy, dep.freq)
+#   
+#   temp.list.adapative.rotation.unique[[v]] = temp_2
+# }
+# 
+# adaptive.rotation.df.unique = do.call(rbind, temp.list.adapative.rotation.unique)
+# adaptive.rotation.df.unique.ps = cbind(adaptive.rotation.df.unique, parameter.space.2.df)
+# 
+# write.csv(adaptive.rotation.df.unique.ps, ".//unique.insecticides.adaptive.rotation.csv")
+
+#Mixtures
+
+
+
+
+# do mixtures::
+# temp.list.mixtures.unique = list()
+# for(v in 1:50000){
+# 
+#   temp =  get_simulation_dataframe_mixtures(run_simulation_intervention_test_mixtures_cross_selection(number.of.insecticides = 2,
+#                                                                                                       exposure.scaling.factor = 10,
+#                                                                                                       nsim = 1,
+#                                                                                                       minimum.insecticide.resistance.heritability = heritability.list[[v]],
+#                                                                                                       maximum.insecticide.resistance.heritability = heritability.list[[v]],
+#                                                                                                       minimum.male.insecticide.exposure = parameter.space.2.df$Male.Exposure[v],
+#                                                                                                       maximum.male.insecticide.exposure = parameter.space.2.df$Male.Exposure[v],
+#                                                                                                       minimum.female.insecticide.exposure = parameter.space.2.df$Female.Exposure[v],
+#                                                                                                       maximum.female.insecticide.exposure = parameter.space.2.df$Female.Exposure[v],
+#                                                                                                       resistance.cost = fitness.list[[v]],
+#                                                                                                       starting.treatment.site.intensity = start.resistance.list[[v]],
+#                                                                                                       starting.refugia.intensity = start.resistance.list[[v]],
+#                                                                                                       min.intervention.coverage = parameter.space.2.df$Coverage[v],
+#                                                                                                       max.intervention.coverage = parameter.space.2.df$Coverage[v],
+#                                                                                                       min.dispersal.rate = parameter.space.2.df$Dispersal[v],
+#                                                                                                       max.dispersal.rate = parameter.space.2.df$Dispersal[v],
+#                                                                                                       maximum.generations = 500,
+#                                                                                                       irm.deployment.strategy = "mixtures", #single, mixtures
+#                                                                                                       mixture.strategy = "mix.sequential.discrete", #can be: random.mixtures; pyrethroid.plus; mix.sequential.continous; mix.sequential.discrete
+#                                                                                                       irm.switch.strategy = "sequence", #will be sequence or rotation;default should be sequence
+#                                                                                                       half.population.bioassay.survival.resistance = 900,
+#                                                                                                       withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+#                                                                                                       return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+#                                                                                                       deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+#                                                                                                       maximum.resistance.value = 25000,
+#                                                                                                       conversion.factor = 0.48, #point estimates from linear regression
+#                                                                                                       intercept = 0.15, #point estimates from linear regression
+#                                                                                                       min.cross.selection = parameter.space.2.df$Cross.Selection[v],
+#                                                                                                       max.cross.selection = parameter.space.2.df$Cross.Selection[v]),
+#                                             maximum.generations = 500, number.of.insecticides = 2)
+# 
+# 
+#   temp_treatment = temp%>% #only need to know for the treatment site as this is where the decisions are made from.
+#     dplyr::filter(site == "treatment")
+# 
+#   simulation.duration = max(temp_treatment$time.in.generations) #Duration of simulation
+# 
+#   exceedance.generations = nrow(temp_treatment%>%
+#                                   dplyr::filter(resistance.intensity > 100))#The number of generations where resistance.intensity > withdrawal threshold regardless of whether the insecticide is in deployment
+# 
+#   #note, as in mixture will be the same for mixture part 1 and mixture part 2 - only count based on part1.
+#   exceedance.generations.deployed = nrow(temp_treatment%>% #The number of generations where resistance.intensity > withdrawal threshold when the insecticide is in deployment
+#                                            dplyr::filter(deployed.mixture.part.1 == insecticide.tracked)%>%
+#                                            dplyr::filter(resistance.intensity > 100))
+# 
+#   peak.resistance = max(temp_treatment$resistance.intensity)
+# 
+#   insecticides.in.sim = c(2)
+# 
+#   average.resistance.intensity.1 = c(temp_treatment%>%
+#                                        dplyr::filter(deployed.mixture.part.1 == insecticide.tracked)%>%
+#                                        summarise(mean(resistance.intensity)))
+# 
+#   average.resistance.intensity.2 = c(temp_treatment%>%
+#                                        dplyr::filter(deployed.mixture.part.2 == insecticide.tracked)%>%
+#                                        summarise(mean(resistance.intensity)))
+# 
+#   strategy = "mixture"
+# 
+#   dep.freq = c(10)
+#   
+#   temp_2 = data.frame(simulation.duration, average.resistance.intensity.1, average.resistance.intensity.2, exceedance.generations,
+#                       exceedance.generations.deployed, peak.resistance, strategy, insecticides.in.sim, dep.freq)
+# 
+#   svMisc::progress(value = v, progress.bar = TRUE, console = TRUE,
+#                    max.value = 50000)
+# 
+#   temp.list.mixtures.unique[[v]] = temp_2
+# }
+# 
+# mixture.df.unique = do.call(rbind, temp.list.mixtures.unique)
+# mixture.df.unique.publication = cbind(mixture.df.unique, parameter.space.2.df)
+# 
+# write.csv(mixture.df.unique.publication, ".//mixture.df.unique.publication.csv")
+
+#Adaptive mixtures becomes single insecticide sequence when necessary
+
+
 
 ########################################
 ## 2. DATA VISUALISATION              ##
@@ -379,690 +956,863 @@ ggplot(example.df, aes(x=polygenic.resistance.values,
 
 
 ## Read in the data sets
-sequence.set = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/sequence.set.publication.csv")
-rotation.set = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/rotation.set.publication.csv")
-mixture.set = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/mixture.df.publication.csv")
-parameter.space.df = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/paramater.space.df.publication.csv")
+##Read in the datasets::
+#10 generation deployments
+sequence.df.10 = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/sequence.set.publication.csv")
+rotation.df.10 = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/rotation.set.publication.csv")
+mixture.df.10 = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/mixture.df.publication.csv")
+
+#30 generation deployments 
+sequence.df.30 = read.csv("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/sequence.set.publication.30.csv")
+rotation.df.30 = read.csv("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/rotation.set.publication.30.csv")
+mixture.df.30 = read.csv("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/mixture.df.publication.30.csv")
+
+#unique insecticides
+sequence.df.unique = read.csv("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/unique.insecticides.sequences.csv")
+rotation.df.unique = read.csv("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/unique.insecticides.rotation.csv")
+adaptive.rotation.df.unique = read.csv("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/unique.insecticides.adaptive.rotation.csv")
+mixture.df.unique = read.csv(("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/mixture.df.unique.publication.csv"))
+
+#parameter spaces
+parameter.space.10.30 = read.csv("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/paramater.space.df.publication.csv")
+parameter.space.unique =read.csv("C:/Users/neilp/OneDrive - LSTM/polyres/Simulation Experiments/Sets_of_Simulations/Publication Simulations/unique.insecticide.properties.parameter.space.publication.csv")
 
 
-prop.diff.seq.mix = 1 - (sequence.set$simulation.duration/mixture.set$simulation.duration)
-prop.diff.seq.rot = 1 - (sequence.set$simulation.duration/rotation.set$simulation.duration)
-prop.diff.rot.mix = 1 - (rotation.set$simulation.duration/mixture.set$simulation.duration)
-replicate = seq(1, 110000, 1)
-cross.selection = sequence.set$cross.selection.values
-start.resistance = sequence.set$start.resistance
-
-comparison.df = data.frame(prop.diff.rot.mix,
-                           prop.diff.seq.mix,
-                           prop.diff.seq.rot,
-                           replicate,
-                           cross.selection,
-                           start.resistance)
-
-compare_rot_mix_plot = function(label.text.size = 5,
-                                annotation.size = 2){
-  
-  pals = c("#a50026",
-           "#d73027",
-           "#f46d43",
-           "#fdae61",
-           "#fee090",
-           "#5aae61",
-           "#e0f3f8",
-           "#abd9e9",
-           "#74add1",
-           "#4575b4",
-           "#313695")
-  
-  label.df = data.frame(
-    text.label = c("Mixtures", "Rotations"),
-    label_x_coord = c(115000, 115000), #have the label fairly central.
-    label_y_coord = c(75, -55)) #Should be far enough away to not be overlapping any bars/points
-  
-  label.df.2 = data.frame(
-    text.label =c("Novel", "Pre-Used"),
-    label_x_coord = c(22500, 85000),
-    label_y_coord = c(95, 95)
-  )
-  
-  final.plot = ggplot(comparison.df, aes(x=replicate,
-                                         y=prop.diff.rot.mix*100))+
-    geom_point(aes(colour = as.factor(cross.selection)),
-               alpha = 0.2)+
-    scale_colour_manual(values = pals)+
-    geom_vline(xintercept = 55000, linetype = "dashed") +
-    geom_hline(yintercept = 0)+
-    xlab("Simulation Replicate")+
-    ylab("Percentage Difference Duration")+
-    ylim(-100, 100)+
-    xlim(0, 115000)+
-    geom_text(data = label.df, aes(label = text.label,
-                                   x=label_x_coord,
-                                   y=label_y_coord),
-              angle = 270, size = label.text.size)+
-    geom_label(data = label.df.2, aes(label = text.label,
-                                      x=label_x_coord,
-                                      y=label_y_coord),
-               fill = c("orchid1", "orchid3"),
-               size = annotation.size)+
-    ggtitle("C: Rotations vs Mixtures")+
-    theme_classic()+
-    theme(legend.position = "none")
-  
-  return(final.plot)
-}
-compare_rot_seq_plot = function(label.text.size = 5,
-                                annotation.size = 2){
-  
-  pals = c("#a50026",
-           "#d73027",
-           "#f46d43",
-           "#fdae61",
-           "#fee090",
-           "#5aae61",
-           "#e0f3f8",
-           "#abd9e9",
-           "#74add1",
-           "#4575b4",
-           "#313695")
-  
-  label.df = data.frame(
-    text.label = c("Rotations", "Sequences"),
-    label_x_coord = c(115000, 115000), #have the label fairly central.
-    label_y_coord = c(75, -55)) #Should be far enough away to not be overlapping any bars/points
-  
-  label.df.2 = data.frame(
-    text.label =c("Novel", "Pre-Used"),
-    label_x_coord = c(22500, 85000),
-    label_y_coord = c(95, 95)
-  )
-  
-  final.plot = ggplot(comparison.df, aes(x=replicate,
-                                         y=prop.diff.seq.rot*100))+
-    geom_point(aes(colour = as.factor(cross.selection)),
-               alpha = 0.2)+
-    scale_colour_manual(values = pals)+
-    geom_vline(xintercept = 55000, linetype = "dashed") +
-    geom_hline(yintercept = 0)+
-    xlab("Simulation Replicate")+
-    ylab("Percentage Difference Duration")+
-    ylim(-100, 100)+
-    xlim(0, 115000)+
-    geom_text(data = label.df, aes(label = text.label,
-                                   x=label_x_coord,
-                                   y=label_y_coord),
-              angle = 270, size = label.text.size)+
-    geom_label(data = label.df.2, aes(label = text.label,
-                                      x=label_x_coord,
-                                      y=label_y_coord),
-               fill = c("orchid1", "orchid3"),
-               size = annotation.size)+
-    ggtitle("A: Sequences vs Rotations")+
-    theme_classic()+
-    theme(legend.position = "none")
-  
-  return(final.plot)
-}
-compare_seq_mix_plot = function(label.text.size = 5,
-                                annotation.size = 2){
-  
-  pals = c("#a50026",
-           "#d73027",
-           "#f46d43",
-           "#fdae61",
-           "#fee090",
-           "#5aae61",
-           "#e0f3f8",
-           "#abd9e9",
-           "#74add1",
-           "#4575b4",
-           "#313695")
-  
-  label.df = data.frame(
-    text.label = c("Mixtures", "Sequences"),
-    label_x_coord = c(115000, 115000), #have the label fairly central.
-    label_y_coord = c(75, -55)) #Should be far enough away to not be overlapping any bars/points
-  
-  label.df.2 = data.frame(
-    text.label =c("Novel", "Pre-Used"),
-    label_x_coord = c(22500, 85000),
-    label_y_coord = c(95, 95)
-  )
-  
-  final.plot = ggplot(comparison.df, aes(x=replicate,
-                                         y=prop.diff.seq.mix*100))+
-    geom_point(aes(colour = as.factor(cross.selection)),
-               alpha = 0.2)+
-    scale_colour_manual(values = pals)+
-    geom_vline(xintercept = 55000, linetype = "dashed") +
-    geom_hline(yintercept = 0)+
-    xlab("Simulation Replicate")+
-    ylab("Percentage Difference Duration")+
-    ylim(-100, 100)+
-    xlim(0, 115000)+
-    geom_text(data = label.df, aes(label = text.label,
-                                   x=label_x_coord,
-                                   y=label_y_coord),
-              angle = 270, size = label.text.size)+
-    geom_label(data = label.df.2, aes(label = text.label,
-                                      x=label_x_coord,
-                                      y=label_y_coord),
-               fill = c("orchid1", "orchid3"),
-               size = annotation.size)+
-    ggtitle("B: Sequences vs Mixtures")+
-    theme_classic()+
-    theme(legend.position = "none")
-  
-  return(final.plot)
-}
-get_figure_2_legend = function(){
-  
-  pals = c("#a50026",
-           "#d73027",
-           "#f46d43",
-           "#fdae61",
-           "#fee090",
-           "#5aae61",
-           "#e0f3f8",
-           "#abd9e9",
-           "#74add1",
-           "#4575b4",
-           "#313695")
-  
-  #Scatterplot of difference in duration (n=7033).
-  figure = ggplot(comparison.df, aes(x = replicate, y=prop.diff.seq.mix)) +
-    geom_point(aes(colour = as.factor(cross.selection)),
-               alpha = 0.8,
-               size = 6)+
-    scale_colour_manual(values = pals)+
-    guides(colour=guide_legend(ncol=1, title="Cross Selection"))+
-    theme_classic()+
-    theme(legend.text=element_text(size=10),
-          legend.title=element_text(size=10))
-  
-  fig.legend = ggpubr::as_ggplot(ggpubr::get_legend(figure))
-  
-  return(fig.legend)
-}
-
-make_figure_2 = function(label.text.size,
-                         annotation.size){
-  
-  plot.A = compare_rot_seq_plot(label.text.size = label.text.size,
-                                annotation.size = annotation.size)
-  plot.B = compare_seq_mix_plot(label.text.size = label.text.size,
-                                annotation.size = annotation.size)
-  plot.C = compare_rot_mix_plot(label.text.size = label.text.size,
-                                annotation.size = annotation.size)
-  plot.D = get_figure_2_legend()
-  
-  layout = "
-  AAAAAAD
-  BBBBBBD
-  CCCCCCD"
-  
-  E = patchwork::wrap_plots(A = plot.A,
-                            B = plot.B,
-                            C = plot.C,
-                            D = plot.D,
-                            design = layout)
-  
-  
-  return(E)
-}
-
-make_figure_2(label.text.size = 3,
-              annotation.size = 3)
+#Analysis Part 1: Descriptive analysis
+mean(c(sequence.df.10$simulation.duration, sequence.df.30$simulation.duration))
+mean(c(rotation.df.10$simulation.duration, rotation.df.30$simulation.duration))
+mean(c(mixture.df.10$simulation.duration, mixture.df.30$simulation.duration))
 
 
-#summarise the datasets
-summary(sequence.set)
-summary(rotation.set)
-summary(mixture.set)
+min(sequence.df.10$simulation.duration, sequence.df.30$simulation.duration)
+min(rotation.df.10$simulation.duration, rotation.df.30$simulation.duration)
+min(mixture.df.10$simulation.duration, mixture.df.30$simulation.duration)
 
-#How many simulations ran to completion
-nrow(sequence.set%>%
-  dplyr::filter(simulation.duration == 500))
-69368/1100
+#Unique insecticides descriptive analysis:
 
-nrow(rotation.set%>%
-       dplyr::filter(simulation.duration == 500))
-72530/1100
+mean(sequence.df.unique$simulation.duration)
+mean(rotation.df.unique$simulation.duration)
+mean(mixture.df.unique$simulation.duration)
+mean(adaptive.rotation.df.unique$simulation.duration)
 
-nrow(mixture.set%>%
-       dplyr::filter(simulation.duration == 500))
-101536/1100
-##########################################
-## 3. Comparing Sequences and Rotations ##
-##########################################
-rot.duration = rotation.set$simulation.duration
-seq.duration = sequence.set$simulation.duration
-prop.diff.seq.rot = 1 - (sequence.set$simulation.duration/rotation.set$simulation.duration)
+min(sequence.df.unique$simulation.duration)
+min(rotation.df.unique$simulation.duration)
+min(mixture.df.unique$simulation.duration)
+min(adaptive.rotation.df.unique$simulation.duration)
 
-rot.seq.outcome = c()
-rot.seq.operational.outcome = c()
+
+
+###Analysis Part 1: Sequences vs Rotations:
+
+#When insecticides are only available as single insecticide formulations is it better to deploy in sequence or as rotations.
+
+seq.rot.10.difference.raw = sequence.df.10$simulation.duration - rotation.df.10$simulation.duration
+seq.rot.10.difference.proportion =  1 - (sequence.df.10$simulation.duration / rotation.df.10$simulation.duration)
+
+seq.rot.30.difference.raw = sequence.df.30$simulation.duration - rotation.df.10$simulation.duration
+seq.rot.30.difference.proportion = 1 - (sequence.df.30$simulation.duration / rotation.df.30$simulation.duration)
+
+rot.seq.10.outcome = c()
 for(i in 1:110000){
-  if(rot.duration[i] > seq.duration[i]){rot.seq.outcome[i] = "rotation.win"}
-  if(rot.duration[i] < seq.duration[i]){rot.seq.outcome[i] = "sequence.win"}
-  if(rot.duration[i] == seq.duration[i]){rot.seq.outcome[i] = "draw"}
-  
-  if(prop.diff.seq.rot[i] >= 0.1){rot.seq.operational.outcome[i] = "rotation win"}
-  if(prop.diff.seq.rot[i] <= -0.1){rot.seq.operational.outcome[i] = "sequence win"}
-  if(prop.diff.seq.rot[i] < 0.1 & 
-     prop.diff.seq.rot[i] > -0.1){rot.seq.operational.outcome[i] = "no operational win"}
-  
+  if(rotation.df.10$simulation.duration[i] > sequence.df.10$simulation.duration[i]){rot.seq.10.outcome[i] = "rotation.win"}
+  if(sequence.df.10$simulation.duration[i] > rotation.df.10$simulation.duration[i]){rot.seq.10.outcome[i] = "sequence.win"}
+  if(rotation.df.10$simulation.duration[i] == sequence.df.10$simulation.duration[i]){rot.seq.10.outcome[i] = "draw"}
 }
 
-table(rot.seq.outcome)
-table(rot.seq.outcome)/1100
+table(rot.seq.10.outcome)
 
-table(rot.seq.operational.outcome)
-table(rot.seq.operational.outcome)/1100
-
-#proportion rotation operational wins to rotation wins:
-8717/19473*100
-
-#proportion sequence operational wins to sequence wins:
-5480/16540 * 100
-
-
-###Compare the draws
-
-rot.peak = rotation.set$peak.resistance
-seq.peak = sequence.set$peak.resistance
-rot.average = rotation.set$mean.resistance.intensity.
-seq.average = sequence.set$mean.resistance.intensity.
-
-rot.peak.survival = c()
-rot.mean.survival = c()
-seq.peak.survival = c()
-seq.mean.survival = c()
-
+rot.seq.10.operational.outcome = c()
 for(i in 1:110000){
-  
-  rot.peak.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = rot.peak[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)  
-  
-  rot.mean.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = rot.average[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)
-  
-  seq.peak.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = seq.peak[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)
-  
-  
-  
-  seq.mean.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = seq.average[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)
+  if(seq.rot.10.difference.proportion[i] >= 0.1){rot.seq.10.operational.outcome[i]  = "rotation.operational.win"}
+  if(seq.rot.10.difference.proportion[i] <= -0.1){rot.seq.10.operational.outcome[i]  = "sequence.operational.win"}
+  if(seq.rot.10.difference.proportion[i] < 0.1 &
+     seq.rot.10.difference.proportion[i] > -0.1){rot.seq.10.operational.outcome[i] = "no.operational.win"}
 }
 
+table(rot.seq.10.operational.outcome)
 
-rot.seq.secondary.outcome.peak = c()
-rot.seq.secondary.outcome.mean = c()
+
+rot.seq.30.outcome = c()
 for(i in 1:110000){
-  if(seq.peak.survival[i] < rot.peak.survival[i]){rot.seq.secondary.outcome.peak[i] = "sequence.win"}
-  if(seq.peak.survival[i] > rot.peak.survival[i]){rot.seq.secondary.outcome.peak[i] = "rotation.win"} 
-  if(seq.peak.survival[i] == rot.peak.survival[i]){rot.seq.secondary.outcome.peak[i] = "draw"}
-  
-  if(seq.mean.survival[i] < rot.mean.survival[i]){rot.seq.secondary.outcome.mean[i] = "sequence.win"}
-  if(seq.mean.survival[i] > rot.mean.survival[i]){rot.seq.secondary.outcome.mean[i] = "rotation.win"} 
-  if(seq.mean.survival[i] == rot.mean.survival[i]){rot.seq.secondary.outcome.mean[i] = "draw"}
-  
+  if(rotation.df.30$simulation.duration[i] > sequence.df.30$simulation.duration[i]){rot.seq.30.outcome[i] = "rotation.win"}
+  if(sequence.df.30$simulation.duration[i] > rotation.df.30$simulation.duration[i]){rot.seq.30.outcome[i] = "sequence.win"}
+  if(rotation.df.30$simulation.duration[i] == sequence.df.30$simulation.duration[i]){rot.seq.30.outcome[i] = "draw"}
 }
 
-sum(is.na(rot.seq.secondary.outcome.mean))
+table(rot.seq.30.outcome)
 
-rot.seq.outcome.df = data.frame(rot.seq.secondary.outcome.peak,
-                                rot.seq.secondary.outcome.mean,
-                                rot.seq.outcome,
-                                rot.seq.operational.outcome,
-                                parameter.space.df)
+rot.seq.30.operational.outcome = c()
+for(i in 1:110000){
+  if(seq.rot.30.difference.proportion[i] >= 0.1){rot.seq.30.operational.outcome[i]  = "rotation.operational.win"}
+  if(seq.rot.30.difference.proportion[i] <= -0.1){rot.seq.30.operational.outcome[i]  = "sequence.operational.win"}
+  if(seq.rot.30.difference.proportion[i] < 0.1 &
+     seq.rot.30.difference.proportion[i] > -0.1){rot.seq.30.operational.outcome[i] = "no.operational.win"}
+}
 
-rot.seq.outcome.df$starting.status = ifelse(rot.seq.outcome.df$start.resistance.values == 0,
-                                    yes = "novel",
-                                    no = "pre-used")
+table(rot.seq.30.operational.outcome)
 
+table(rot.seq.10.outcome)+ table(rot.seq.30.outcome)
 
+(table(rot.seq.10.outcome)+ table(rot.seq.30.outcome))/220000*100
 
-rot.seq.outcome.df.draws = rot.seq.outcome.df%>%
-  dplyr::filter(rot.seq.outcome == "draw")
+table(rot.seq.10.operational.outcome)+ table(rot.seq.30.operational.outcome)
 
+(table(rot.seq.10.operational.outcome)+ table(rot.seq.30.operational.outcome))/220000*100
 
-table(rot.seq.outcome.df.draws$rot.seq.secondary.outcome.peak)
-round(((table(rot.seq.outcome.df.draws$rot.seq.secondary.outcome.peak)/73987)*100), 2)
+##Compare Sequences and Rotations
+proportion.difference = c(seq.rot.10.difference.proportion, seq.rot.30.difference.proportion)
+cross.selection = c(sequence.df.10$cross.selection, sequence.df.30$cross.selection)
+start.resistance = c(sequence.df.10$start.resistance, sequence.df.30$start.resistance)
+deployment.frequency = c(sequence.df.10$dep.freq, sequence.df.30$dep.freq)
 
-table(rot.seq.outcome.df.draws$rot.seq.secondary.outcome.mean)
-round(((table(rot.seq.outcome.df.draws$rot.seq.secondary.outcome.mean)/73987)*100), 2)
-
-
-
-
-
-
-
-##Fit model 1:
-
-sample.size = floor(0.75 * nrow(rot.seq.outcome.df))
-
-train.ind = sample(seq_len(nrow(rot.seq.outcome.df)), size = sample.size)
-
-data.train = rot.seq.outcome.df[train.ind, ]
-data.test = rot.seq.outcome.df[-train.ind, ]
-
-
-rot.seq.fit.model1 = rpart(rot.seq.operational.outcome~
-              Heritability +
-              Fitness.Cost +
-              Male.Insecticide.Exposure+
-              Female.Insecticide.Exposure+
-              Dispersal+
-              Intervention.Coverage +
-              starting.status+
-              cross.selection.values,
-            data = data.train, 
-            method = 'class',
-            control = rpart.control(minbucket = 200, #each split is ~0.25% of samples
-                                    maxdepth = 6,
-                                    cp = 0))
-
-predict.unseen = predict(rot.seq.fit.model1, data.test, type = 'class')
-actual.outcome = data.test$rot.seq.operational.outcome
-
-correct.outcome = ifelse(predict.unseen == actual.outcome,
-                         yes = 1,
-                         no = 0)  
-
-sum(correct.outcome)/length(correct.outcome)
-
-#Of those that were wrong, how wrong were they::
-prediction.df = data.frame(predict.unseen, actual.outcome)
-
-incorrect.prediction.df = prediction.df%>%
-  dplyr::filter(predict.unseen != actual.outcome)
-
-#could deploy a loss::
-wrongly.deploys.sequence = incorrect.prediction.df%>%
-  dplyr::filter(predict.unseen == "no operational win")%>%
-  dplyr::filter(actual.outcome == "sequence loss" |
-                  actual.outcome == "mixture win")
-
-wrongly.deploys.rotation = incorrect.prediction.df%>%
-  dplyr::filter(predict.unseen == "no operational win")%>%
-  dplyr::filter(actual.outcome == "rotation loss"|
-                  actual.outcome == "mixture win")
-
-wrongly.deploys.mixture = incorrect.prediction.df%>%
-  dplyr::filter(predict.unseen == "no operational win")%>%
-  dplyr::filter(actual.outcome == "mixture win")
-
-rpart.plot(rot.seq.fit.model1,
-           type = 5,
-           tweak = 1.05,
-           extra = 100,
-           legend.y = "NULL",
-           box.palette = list("#377eb8",
-                              "#b2df8a",
-                              "#ffff33"),
-           fallen.leaves = TRUE,
-           uniform = TRUE)
-title("A: Regression Classification Tree -  Sequences and Rotations", cex=1)
+rot.seq.df.all = data.frame(proportion.difference, deployment.frequency, cross.selection, start.resistance)
 
 
 
-rot.seq.fit.model2 = rpart(rot.seq.operational.outcome~
-                             Female.Insecticide.Exposure+
-                             Intervention.Coverage +
-                             starting.status+
-                             cross.selection.values,
-                           data = data.train, 
-                           method = 'class',
-                           control = rpart.control(minbucket = 200, #each split is ~0.5% of samples
-                                                   maxdepth = 6,
-                                                   cp = 0))
-
-predict.unseen = predict(rot.seq.fit.model2, data.test, type = 'class')
-actual.outcome = data.test$rot.seq.operational.outcome
-
-correct.outcome = ifelse(predict.unseen == actual.outcome,
-                         yes = 1,
-                         no = 0)  
-
-sum(correct.outcome)/length(correct.outcome)
-
-rpart.plot(rot.seq.fit.model2,
-           type = 0,
-           tweak = 1,
-           extra = 100,
-           legend.y = "NULL",
-           box.palette = list("#377eb8",
-                              "#b2df8a",
-                              "#ffff33"),
-           fallen.leaves = TRUE,
-           uniform = TRUE)
-title("B: Regression Classification Tree -  Sequences and Rotations", cex=1)
+rot.seq.df.all.no.draws = rot.seq.df.all%>%
+  dplyr::filter(proportion.difference != 0)
 
 
+plot_seq_rot_primary_outcome = function(){
+  label.rot.seq = data.frame(x.coord = c(-25, 25),
+                             y.coord = c(6000, 6000),
+                             label.text = c(paste("Favours \nSequences"), paste("Favours \nRotations")))
+  
+  seq.rot.plot.all = ggplot(rot.seq.df.all.no.draws, aes(x=proportion.difference*100))+
+    geom_histogram(bins = 50,
+                   fill = "#1b9e77",
+                   colour = "skyblue",
+                   alpha = 0.8)+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey",
+               size = 2)+
+    geom_label(data = label.rot.seq,
+               aes(x=x.coord,
+                   y=y.coord,
+                   label = label.text),
+               fill= "#e7298a")+
+    #xlim(-50, 50)+
+    xlab("Percentage Difference in Simulation Duration")+
+    ggtitle("Overall")+
+    theme_classic() #draws = 158337
+  
+  seq.rot.plot.all
+  
+  seq.rot.no.draws.10.0 = rot.seq.df.all.no.draws%>%
+    dplyr::filter(deployment.frequency == 10)%>%
+    dplyr::filter(start.resistance == 0)
+  
+  seq.rot.no.draws.30.0 = rot.seq.df.all.no.draws%>%
+    dplyr::filter(deployment.frequency == 30)%>%
+    dplyr::filter(start.resistance == 0)
+  
+  seq.rot.no.draws.10.50 = rot.seq.df.all.no.draws%>%
+    dplyr::filter(deployment.frequency == 10)%>%
+    dplyr::filter(start.resistance == 50)
+  
+  seq.rot.no.draws.30.50 = rot.seq.df.all.no.draws%>%
+    dplyr::filter(deployment.frequency == 30)%>%
+    dplyr::filter(start.resistance == 50)
+  
+  seq.rot.plot.10.0  = ggplot(seq.rot.no.draws.10.0, aes(x=proportion.difference*100,
+                                                         y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Novel - Deployment Interval: 10")+
+    theme_classic()
+  
+  seq.rot.plot.30.0  = ggplot(seq.rot.no.draws.30.0, aes(x=proportion.difference*100,
+                                                         y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Novel - Deployment Interval: 30")+
+    theme_classic()
+  
+  seq.rot.plot.10.50  = ggplot(seq.rot.no.draws.10.50, aes(x=proportion.difference*100,
+                                                           y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Pre-Used - Deployment Interval: 10")+
+    theme_classic()
+  
+  seq.rot.plot.30.50  = ggplot(seq.rot.no.draws.30.50, aes(x=proportion.difference*100,
+                                                           y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Pre-Used - Deployment Interval: 30")+
+    theme_classic()
+  
+  #Combine the plots into a single plot
+  top.rot.seq = seq.rot.plot.10.0 + seq.rot.plot.10.50
+  bottom.rot.set = seq.rot.plot.30.0 + seq.rot.plot.30.50
+  side.panel.rot.seq = top.rot.seq / bottom.rot.set
+  final.figure.rot.seq = seq.rot.plot.all + side.panel.rot.seq + plot_layout(widths = c(1, 2)) +
+    plot_annotation(title = "Sequences vs Rotations")
+  return(final.figure.rot.seq)
+  
+}
+plot_seq_rot_primary_outcome()
+#Sequences and Rotations: The Draws
+
+rot.seq.df.all$difference.peak.resistance = c(sequence.df.10$peak.resistance - rotation.df.10$peak.resistance, sequence.df.30$peak.resistance - rotation.df.30$peak.resistance)
+rot.seq.df.all$difference.mean.resistance = c(sequence.df.10$mean.resistance.intensity. - rotation.df.10$mean.resistance.intensity., sequence.df.30$mean.resistance.intensity. - rotation.df.30$mean.resistance.intensity.)
+rot.seq.df.all$difference.control.failure.gens = c(sequence.df.10$exceedance.generations.deployed - rotation.df.10$exceedance.generations.deployed, sequence.df.30$exceedance.generations.deployed - rotation.df.30$exceedance.generations.deployed)
+
+rot.seq.df.draws = rot.seq.df.all%>%
+  dplyr::filter(proportion.difference == 0)
 
 
+difference.peak.resistance.bioassay = c()
+difference.mean.resistance.bioassay = c()
 
 
+for(i in 1:nrow(rot.seq.df.draws)){
+  difference.peak.resistance.bioassay[i] = resistance_to_bioassay_survival(mean.population.resistance = rot.seq.df.draws$difference.peak.resistance[i],
+                                                                           sd.population.resistance = 0, #measured without error
+                                                                           michaelis.menten.slope = ,
+                                                                           nsim = 1, #is measured without error
+                                                                           maximum.bioassay.survival.proportion = 1,
+                                                                           half.population.bioassay.survival.resistance = 900
+  )
+  difference.mean.resistance.bioassay[i] = resistance_to_bioassay_survival(mean.population.resistance = rot.seq.df.draws$difference.mean.resistance[i],
+                                                                           sd.population.resistance = 0, #measured without error
+                                                                           michaelis.menten.slope = ,
+                                                                           nsim = 1, #is measured without error
+                                                                           maximum.bioassay.survival.proportion = 1,
+                                                                           half.population.bioassay.survival.resistance = 900
+  )
+}
+
+rot.seq.df.draws$difference.peak.resistance.bioassay = difference.peak.resistance.bioassay
+rot.seq.df.draws$difference.mean.resistance.bioassay = difference.mean.resistance.bioassay
+rot.seq.df.draws$start.resistance.status = ifelse(rot.seq.df.draws$start.resistance == 0,
+                                                  yes = "novel",
+                                                  no = "pre-used")
 
 
+plot_seq_rot_secondary_outcome = function(){
+  
+  rot.seq.draws.peak = ggplot(rot.seq.df.draws, aes(x=difference.peak.resistance.bioassay*100,
+                                                    y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "#f768a1",
+                        colour = "#7a0177"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="black")+
+    xlab("Difference in Peak Bioassay Survival")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Peak Bioassay Survival")+
+    theme_classic()+
+    facet_grid(deployment.frequency~start.resistance.status)
+  
+  
+  
+  rot.seq.draws.mean = ggplot(rot.seq.df.draws, aes(x=difference.mean.resistance.bioassay*100,
+                                                    y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "skyblue",
+                        colour = "blue"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="black")+
+    xlab("Difference in Mean Bioassay Survival")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Mean Bioassay Survival")+
+    theme_classic()+
+    facet_grid(deployment.frequency~start.resistance.status)
+  
+  
+  
+  rot.seq.draws.cfg = ggplot(rot.seq.df.draws, aes(x=difference.control.failure.gens,
+                                                   y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "#78c679",
+                        colour = "#004529"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="black")+
+    xlab("Difference in Control Failure Generations")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Control Failure Generations")+
+    theme_classic()+
+    facet_grid(deployment.frequency~start.resistance.status)
+  
+  rot.seq.draws.plot = rot.seq.draws.peak + rot.seq.draws.mean + rot.seq.draws.cfg + plot_annotation(title = "Sequence vs Rotation: Secondary Outcomes")
+  
+  return(rot.seq.draws.plot)
+}
+plot_seq_rot_secondary_outcome()
+##Sequences & Rotations vs Mixtures
 
+rot.duration = c(rotation.df.10$simulation.duration, rotation.df.30$simulation.duration)
+seq.duration = c(sequence.df.10$simulation.duration, sequence.df.30$simulation.duration)
+mix.duration = c(mixture.df.10$simulation.duration, mixture.df.30$simulation.duration)
 
-####Comparing Mixtures, Rotations and Sequences
-rot.duration = rotation.set$simulation.duration
-seq.duration = sequence.set$simulation.duration
-mix.duration = mixture.set$simulation.duration
-
-outcome = c()
+seq.rot.mix.outcome = c()
 for(i in 1:length(rot.duration)){
   if(rot.duration[i] > seq.duration[i] &
-     rot.duration[i] > mix.duration[i]){outcome[i] = "rotation.win"}
+     rot.duration[i] > mix.duration[i]){seq.rot.mix.outcome[i] = "rotation.win"}
   if(seq.duration[i] > rot.duration[i] & 
-     seq.duration[i] > mix.duration[i]){outcome[i] = "sequence.win"}
+     seq.duration[i] > mix.duration[i]){seq.rot.mix.outcome[i] = "sequence.win"}
   if(mix.duration[i] > seq.duration[i] &
-     mix.duration[i] > rot.duration[i]){outcome[i] = "mixture.win"}
+     mix.duration[i] > rot.duration[i]){seq.rot.mix.outcome[i] = "mixture.win"}
   if(rot.duration[i] == seq.duration[i] & 
-     rot.duration[i] == mix.duration[i]){outcome[i] = "draw"}
+     rot.duration[i] == mix.duration[i]){seq.rot.mix.outcome[i] = "draw"}
   if(rot.duration[i] > seq.duration[i] & 
-     rot.duration[i] == mix.duration[i]){outcome[i] = "sequence.loss"}
+     rot.duration[i] == mix.duration[i]){seq.rot.mix.outcome[i] = "sequence.loss"}
   if(seq.duration[i] > rot.duration[i] & 
-     seq.duration[i] == mix.duration[i]){outcome[i] = "rotation.loss"}
+     seq.duration[i] == mix.duration[i]){seq.rot.mix.outcome[i] = "rotation.loss"}
   
 }
 
-sum(is.na(outcome))#all accounted for
+sum(is.na(seq.rot.mix.outcome))#all accounted for
 
 prop.diff.seq.mix = 1 - (seq.duration/mix.duration)
 prop.diff.seq.rot = 1 - (seq.duration/rot.duration)
 prop.diff.rot.mix = 1 - (rot.duration/mix.duration)
 
-operational.outcome = c()
+rot.seq.mix.operational.outcome = c()
 for(i in 1:length(seq.duration)){
   
   if(prop.diff.seq.mix[i] >= 0.1 &
-     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "sequence loss"}
+     prop.diff.rot.mix[i] < 0.1 ){rot.seq.mix.operational.outcome[i] = "sequence loss"}
   if(prop.diff.rot.mix[i] >= 0.1 &
-     prop.diff.seq.mix[i] < 0.1 ){operational.outcome[i] = "rotation loss"}
+     prop.diff.seq.mix[i] < 0.1 ){rot.seq.mix.operational.outcome[i] = "rotation loss"}
   if(prop.diff.seq.mix[i] >= 0.1 &
-     prop.diff.rot.mix[i] >= 0.1 ){operational.outcome[i] = "mixture win"}
+     prop.diff.rot.mix[i] >= 0.1 ){rot.seq.mix.operational.outcome[i] = "mixture win"}
   if(prop.diff.rot.mix[i] < -0.1 &
-     prop.diff.seq.rot[i] > 0.1 ){operational.outcome[i] = "rotation win"}
+     prop.diff.seq.rot[i] > 0.1 ){rot.seq.mix.operational.outcome[i] = "rotation win"}
   if(prop.diff.rot.mix[i] < -0.1 &
-     prop.diff.seq.rot[i] < -0.1 ){operational.outcome[i] = "sequence win"}
+     prop.diff.seq.rot[i] < -0.1 ){rot.seq.mix.operational.outcome[i] = "sequence win"}
   if(prop.diff.seq.mix[i] < 0.1 &
-     prop.diff.rot.mix[i] < 0.1 ){operational.outcome[i] = "no operational win"}
-}
-sum(is.na(operational.outcome))#all accounted for
-
-
-rot.peak = rotation.set$peak.resistance
-seq.peak = sequence.set$peak.resistance
-mix.peak = mixture.set$peak.resistance
-
-rot.average = rotation.set$mean.resistance.intensity.
-seq.average = sequence.set$mean.resistance.intensity.
-mix.average = mixture.set$mean.resistance.intensity.
-
-rot.peak.survival = c()
-rot.mean.survival = c()
-seq.peak.survival = c()
-seq.mean.survival = c()
-mix.peak.survival = c()
-mix.mean.survival = c()
-
-for(i in 1:110000){
-  
-  rot.peak.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = rot.peak[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)  
-  
-rot.mean.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = rot.average[i],
-                                                      sd.population.resistance = 0, #measured without error
-                                                      nsim = 1,
-                                                      michaelis.menten.slope = 1,
-                                                      maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                             0)
-
-  seq.peak.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = seq.peak[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)
-  
-  
-  
-  seq.mean.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = seq.average[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)
-  
-  mix.peak.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = mix.peak[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)
-  
-  
-  
-  mix.mean.survival[i] = round((resistance_to_bioassay_survival(mean.population.resistance = mix.average[i],
-                                                                sd.population.resistance = 0, #measured without error
-                                                                nsim = 1,
-                                                                michaelis.menten.slope = 1,
-                                                                maximum.bioassay.survival.proportion = 1)*100), #convert to percentage
-                               0)
+     prop.diff.rot.mix[i] < 0.1 ){rot.seq.mix.operational.outcome[i] = "no operational win"}
 }
 
-  
+sum(is.na(rot.seq.mix.operational.outcome))#all accounted for
+##Sequences vs Mixtures:::
+rot.seq.df.all$prop.diff.seq.mix = prop.diff.seq.mix
 
-secondary.outcome.peak = c()
-for(i in 1:110000){
-  if(rot.peak.survival[i] < seq.peak.survival[i] &
-     rot.peak.survival[i] < mix.peak.survival[i]){secondary.outcome.peak[i] = "rotation.win"}
-  if(seq.peak.survival[i] < rot.peak.survival[i] & 
-     seq.peak.survival[i] < mix.peak.survival[i]){secondary.outcome.peak[i] = "sequence.win"}
-  if(mix.peak.survival[i] < seq.peak.survival[i] &
-     mix.peak.survival[i] < rot.peak.survival[i]){secondary.outcome.peak[i] = "mixture.win"}
-  if(rot.peak.survival[i] == seq.peak.survival[i] & 
-     rot.peak.survival[i] == mix.peak.survival[i]){secondary.outcome.peak[i] = "draw"}
-  if(rot.peak.survival[i] < seq.peak.survival[i] & 
-     rot.peak.survival[i] == mix.peak.survival[i]){secondary.outcome.peak[i] = "sequence.loss"}
-  if(seq.peak.survival[i] < rot.peak.survival[i] & 
-     seq.peak.survival[i] == mix.peak.survival[i]){secondary.outcome.peak[i] = "rotation.loss"}
-  if(mix.peak.survival[i] > rot.peak.survival[i]&
-     mix.peak.survival[i] > seq.peak.survival[i]){secondary.outcome.peak[i] = "mixture.loss"}
+seq.mix.df.no.draws = rot.seq.df.all%>%
+  dplyr::filter(prop.diff.seq.mix != 0)
+
+plot_seq_mix_primary_outcome = function(){
+  
+  label.seq.mix= data.frame(x.coord = c(-10, 25),
+                            y.coord = c(6000, 6000),
+                            label.text = c(paste("Favours \nSequences"), paste("Favours \nMixtures")))
+  
+  seq.mix.plot.all = ggplot(seq.mix.df.no.draws, aes(x=prop.diff.seq.mix*100))+
+    geom_histogram(bins = 40,
+                   fill = "#1b9e77",
+                   colour = "skyblue",
+                   alpha = 0.8)+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey",
+               size = 2)+
+    geom_label(data = label.seq.mix,
+               aes(x=x.coord,
+                   y=y.coord,
+                   label = label.text),
+               fill= "#e7298a")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ggtitle("Overall")+
+    xlim(-15, 80)+
+    theme_classic() 
+  
+  seq.mix.no.draws.10.0 = seq.mix.df.no.draws%>%
+    dplyr::filter(deployment.frequency == 10)%>%
+    dplyr::filter(start.resistance == 0)
+  
+  seq.mix.no.draws.30.0 = seq.mix.df.no.draws%>%
+    dplyr::filter(deployment.frequency == 30)%>%
+    dplyr::filter(start.resistance == 0)
+  
+  seq.mix.no.draws.10.50 = seq.mix.df.no.draws%>%
+    dplyr::filter(deployment.frequency == 10)%>%
+    dplyr::filter(start.resistance == 50)
+  
+  seq.mix.no.draws.30.50 = seq.mix.df.no.draws%>%
+    dplyr::filter(deployment.frequency == 30)%>%
+    dplyr::filter(start.resistance == 50)
+  
+  seq.mix.plot.10.0  = ggplot(seq.mix.no.draws.10.0, aes(x=prop.diff.seq.mix*100,
+                                                         y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Novel - Deployment Interval: 10")+
+    xlim(0, 80)+
+    theme_classic()
+  
+  seq.mix.plot.30.0  = ggplot(seq.mix.no.draws.30.0, aes(x=prop.diff.seq.mix*100,
+                                                         y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Novel - Deployment Interval: 30")+
+    xlim(0, 80)+
+    theme_classic()
+  
+  seq.mix.plot.10.50  = ggplot(seq.mix.no.draws.10.50, aes(x=prop.diff.seq.mix*100,
+                                                           y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Pre-Used - Deployment Interval: 10")+
+    xlim(0, 80)+
+    theme_classic()
+  
+  
+  seq.mix.plot.30.50  = ggplot(seq.mix.no.draws.30.50, aes(x=prop.diff.seq.mix*100,
+                                                           y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    xlim(0, 80)+
+    ggtitle("Pre-Used - Deployment Interval: 30")+
+    theme_classic()
+  
+  
+  #Combine the plots into a single plot
+  top.seq.mix = seq.mix.plot.10.0 + seq.mix.plot.10.50
+  bottom.seq.mix = seq.mix.plot.30.0 + seq.mix.plot.30.50
+  side.panel.seq.mix = top.seq.mix / bottom.seq.mix
+  final.figure.seq.mix = seq.mix.plot.all + side.panel.seq.mix + plot_layout(widths = c(1, 2)) +
+    plot_annotation(title = "Sequences vs Mixtures")
+  final.figure.seq.mix
+  
+  return(final.figure.seq.mix)
+}
+plot_seq_mix_primary_outcome()
+
+
+#Rotations vs Mixtures::::
+rot.seq.df.all$prop.diff.rot.mix = prop.diff.rot.mix
+
+rot.mix.df.no.draws = rot.seq.df.all%>%
+  dplyr::filter(prop.diff.rot.mix != 0)
+
+
+plot_rot_mix_primary_outcome = function(){
+  
+  label.rot.mix= data.frame(x.coord = c(-10, 25),
+                            y.coord = c(8000, 8000),
+                            label.text = c(paste("Favours \nRotations"), paste("Favours \nMixtures")))
+  
+  rot.mix.plot.all = ggplot(rot.mix.df.no.draws, aes(x=prop.diff.rot.mix*100))+
+    geom_histogram(bins = 40,
+                   fill = "#1b9e77",
+                   colour = "skyblue",
+                   alpha = 0.8)+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey",
+               size = 2)+
+    geom_label(data = label.rot.mix,
+               aes(x=x.coord,
+                   y=y.coord,
+                   label = label.text),
+               fill= "#e7298a")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ggtitle("Overall")+
+    xlim(-15, 80)+
+    theme_classic() 
+  
+  rot.mix.no.draws.10.0 = rot.mix.df.no.draws%>%
+    dplyr::filter(deployment.frequency == 10)%>%
+    dplyr::filter(start.resistance == 0)
+  
+  rot.mix.no.draws.30.0 = rot.mix.df.no.draws%>%
+    dplyr::filter(deployment.frequency == 30)%>%
+    dplyr::filter(start.resistance == 0)
+  
+  rot.mix.no.draws.10.50 = rot.mix.df.no.draws%>%
+    dplyr::filter(deployment.frequency == 10)%>%
+    dplyr::filter(start.resistance == 50)
+  
+  rot.mix.no.draws.30.50 = rot.mix.df.no.draws%>%
+    dplyr::filter(deployment.frequency == 30)%>%
+    dplyr::filter(start.resistance == 50)
+  
+  rot.mix.plot.10.0  = ggplot(rot.mix.no.draws.10.0, aes(x=prop.diff.rot.mix*100,
+                                                         y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Novel - Deployment Interval: 10")+
+    xlim(0, 80)+
+    theme_classic()
+  
+  rot.mix.plot.30.0  = ggplot(rot.mix.no.draws.30.0, aes(x=prop.diff.rot.mix*100,
+                                                         y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Novel - Deployment Interval: 30")+
+    xlim(0, 80)+
+    theme_classic()
+  
+  rot.mix.plot.10.50  = ggplot(rot.mix.no.draws.10.50, aes(x=prop.diff.rot.mix*100,
+                                                           y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    ggtitle("Pre-Used - Deployment Interval: 10")+
+    xlim(0, 80)+
+    theme_classic()
+  
+  
+  rot.mix.plot.30.50  = ggplot(rot.mix.no.draws.30.50, aes(x=prop.diff.rot.mix*100,
+                                                           y = as.factor(cross.selection)))+
+    geom_density_ridges(alpha = 0.4, 
+                        #stat="binline",
+                        fill = "red",
+                        colour = "darkred"#,
+                        #bins = 50
+    )+
+    geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
+    xlab("Percentage Difference in Simulation Duration")+
+    ylab("Cross Selection Between Insecticides")+
+    xlim(0, 80)+
+    ggtitle("Pre-Used - Deployment Interval: 30")+
+    theme_classic()
+  
+  
+  #Combine the plots into a single plot
+  top.rot.mix = rot.mix.plot.10.0 + rot.mix.plot.10.50
+  bottom.rot.mix = rot.mix.plot.30.0 + rot.mix.plot.30.50
+  side.panel.rot.mix = top.rot.mix / bottom.rot.mix
+  final.figure.rot.mix = rot.mix.plot.all + side.panel.rot.mix + plot_layout(widths = c(1, 2)) +
+    plot_annotation(title = "Rotations vs Mixtures")
+  
+  return(final.figure.rot.mix)
+}
+plot_rot_mix_primary_outcome()
+
+
+
+##Unique Insecticides:
+sequence.unique.duration = sequence.df.unique$simulation.duration
+rotation.unique.duration = rotation.df.unique$simulation.duration
+adaptive.rotation.unique.duration = adaptive.rotation.df.unique$simulation.duration
+mixture.unique.duration = mixture.df.unique$simulation.duration
+
+difference.sr = 1 - (sequence.unique.duration/rotation.unique.duration)
+difference.sa = 1 - (sequence.unique.duration/adaptive.rotation.unique.duration)
+difference.sm = 1 - (sequence.unique.duration/mixture.unique.duration)
+difference.ra = 1 - (rotation.unique.duration/adaptive.rotation.unique.duration)
+difference.rm = 1 - (rotation.unique.duration/mixture.unique.duration)
+difference.am = 1 - (adaptive.rotation.unique.duration/mixture.unique.duration)
+
+unique.df = cbind(data.frame(sequence.unique.duration,
+                             rotation.unique.duration,
+                             adaptive.rotation.unique.duration,
+                             mixture.unique.duration,
+                             difference.sr,
+                             difference.sa,
+                             difference.sm,
+                             difference.ra,
+                             difference.rm, 
+                             difference.am), parameter.space.unique)
+
+outcome.sr = c()
+outcome.sa = c()
+outcome.sm = c()
+outcome.ra = c()
+outcome.rm = c()
+outcome.am = c()
+
+operational.outcome.sr = c()
+operational.outcome.sa = c()
+operational.outcome.sm = c()
+operational.outcome.ra = c()
+operational.outcome.rm = c()
+operational.outcome.am = c()
+operational.outcome.sam = c()
+
+for(i in 1:50000){
+  if(difference.sr[i] == 0){outcome.sr[i] = "draw"}
+  if(difference.sr[i] > 0){outcome.sr[i] = "rotation win"}
+  if(difference.sr[i] < 0){outcome.sr[i] = "sequence win"}
+  
+  if(difference.sr[i] <= 0.1 &
+     difference.sr[i] >= -0.1){operational.outcome.sr[i] = "no operational win"}
+  if(difference.sr[i] > 0.1){operational.outcome.sr[i] = "rotation operational win"}
+  if(difference.sr[i] < -0.1){operational.outcome.sr[i] = "sequence operational win"} 
+  
+  
+  
+  
+  if(difference.sa[i] == 0){outcome.sa[i] = "draw"}
+  if(difference.sa[i] > 0){outcome.sa[i] = "adaptive rotation win"}
+  if(difference.sa[i] < 0){outcome.sa[i] = "sequence win"}
+  
+  if(difference.sa[i] <= 0.1 &
+     difference.sa[i] >= -0.1){operational.outcome.sa[i] = "no operational win"}
+  if(difference.sa[i] > 0.1){operational.outcome.sa[i] = "adaptive rotation operational win"}
+  if(difference.sa[i] < -0.1){operational.outcome.sa[i] = "sequence operational win"} 
+  
+  if(difference.sm[i] == 0){outcome.sm[i] = "draw"}
+  if(difference.sm[i] > 0){outcome.sm[i] = "mixture win"}
+  if(difference.sm[i] < 0){outcome.sm[i] = "sequence win"}
+  
+  if(difference.sm[i] <= 0.1 &
+     difference.sm[i] >= -0.1){operational.outcome.sm[i] = "no operational win"}
+  if(difference.sm[i] > 0.1){operational.outcome.sm[i] = "mixture operational win"}
+  if(difference.sm[i] < -0.1){operational.outcome.sm[i] = "sequence operational win"} 
+  
+  if(difference.ra[i] == 0){outcome.ra[i] = "draw"}
+  if(difference.ra[i] > 0){outcome.ra[i] = "adaptive rotation win"}
+  if(difference.ra[i] < 0){outcome.ra[i] = "rotation win"}
+  
+  if(difference.ra[i] <= 0.1 &
+     difference.ra[i] >= -0.1){operational.outcome.ra[i] = "no operational win"}
+  if(difference.ra[i] > 0.1){operational.outcome.ra[i] = "adaptive rotation operational win"}
+  if(difference.ra[i] < -0.1){operational.outcome.ra[i] = "rotation operational win"} 
+  
+  if(difference.rm[i] == 0){outcome.rm[i] = "draw"}
+  if(difference.rm[i] > 0){outcome.rm[i] = "mixture win"}
+  if(difference.rm[i] < 0){outcome.rm[i] = "rotation win"}
+  
+  if(difference.rm[i] <= 0.1 &
+     difference.rm[i] >= -0.1){operational.outcome.rm[i] = "no operational win"}
+  if(difference.rm[i] > 0.1){operational.outcome.rm[i] = "mixture operational win"}
+  if(difference.rm[i] < -0.1){operational.outcome.rm[i] = "rotation operational win"} 
+  
+  if(difference.am[i] == 0){outcome.am[i] = "draw"}
+  if(difference.am[i] > 0){outcome.am[i] = "mixture win"}
+  if(difference.am[i] < 0){outcome.am[i] = "adaptive rotation win"}
+  
+  if(difference.am[i] <= 0.1 &
+     difference.am[i] >= -0.1){operational.outcome.am[i] = "no operational win"}
+  if(difference.am[i] > 0.1){operational.outcome.am[i] = "mixture operational win"}
+  if(difference.am[i] < -0.1){operational.outcome.am[i] = "adaptive rotation operational win"} 
+  
+  
+  if(difference.sm[i] >= 0.1 &
+     difference.am[i] < 0.1 ){operational.outcome.sam[i] = "sequence loss"}
+  if(difference.am[i] >= 0.1 &
+     difference.sm[i] < 0.1 ){operational.outcome.sam[i] = "rotation loss"}
+  if(difference.sm[i] >= 0.1 &
+     difference.am[i] >= 0.1 ){operational.outcome.sam[i] = "mixture win"}
+  if(difference.am[i] < -0.1 &
+     difference.sa[i] > 0.1 ){operational.outcome.sam[i] = "adaptive rotation win"}
+  if(difference.am[i] < -0.1 &
+     difference.sa[i] < -0.1 ){operational.outcome.sam[i] = "sequence win"}
+  if(difference.sm[i] < 0.1 &
+     difference.am[i] < 0.1 ){operational.outcome.sam[i] = "no operational win"}
 }
 
-#Check for any NAs: if sums to 110000 then all values were assigned
-sum(!is.na(secondary.outcome.peak))
 
-secondary.outcome.average = c()
-for(i in 1:110000){
-  if(rot.mean.survival[i] < seq.mean.survival[i] &
-     rot.mean.survival[i] < mix.mean.survival[i]){secondary.outcome.average[i] = "rotation.win"}
+table(outcome.sr)
+table(outcome.sr)/50000*100
+
+table(operational.outcome.sr)
+table(operational.outcome.sr)/50000*100
+
+table(outcome.sa)
+table(outcome.sa)/50000*100
+table(operational.outcome.sa)
+table(operational.outcome.sa)/50000*100
+
+table(outcome.ra)
+table(outcome.ra)/50000*100
+
+table(operational.outcome.ra)
+table(operational.outcome.ra)/50000*100
+
+table(outcome.sm)
+table(operational.outcome.sm)
+
+
+table(outcome.rm)
+table(outcome.am)
+
+unique.df = cbind(data.frame(sequence.unique.duration,
+                             rotation.unique.duration,
+                             adaptive.rotation.unique.duration,
+                             mixture.unique.duration,
+                             difference.sr,
+                             difference.sa,
+                             difference.sm,
+                             difference.ra,
+                             difference.rm, 
+                             difference.am,
+                             outcome.sr,
+                             outcome.sa,
+                             outcome.sm,
+                             outcome.ra,
+                             outcome.rm,
+                             outcome.am,
+                             operational.outcome.sr,
+                             operational.outcome.sa,
+                             operational.outcome.sm,
+                             operational.outcome.ra,
+                             operational.outcome.rm,
+                             operational.outcome.am), parameter.space.unique)
+
+plot_unique_insecticide_difference = function(){
+  unique.df.1 = unique.df%>%
+    dplyr::filter(difference.sr >= 0.1 |
+                    difference.sr <= -0.1)
   
-  if(seq.mean.survival[i] < rot.mean.survival[i] & 
-     seq.mean.survival[i] < mix.mean.survival[i]){secondary.outcome.average[i] = "sequence.win"}
+  plot.difference.sr = ggplot(unique.df.1, aes(x=difference.sr*100))+
+    geom_histogram(bins = 50,
+                   colour = "skyblue",
+                   fill = "blue")+
+    xlab("Percentage Difference in Simulation Duration")+
+    geom_vline(xintercept = 0, colour = "grey", linetype = "dashed")+
+    ggtitle("Sequence vs Rotation")+
+    theme_classic()
   
-  if(mix.mean.survival[i] < seq.mean.survival[i] &
-     mix.mean.survival[i] < rot.mean.survival[i]){secondary.outcome.average[i] = "mixture.win"}
   
-  if(rot.mean.survival[i] == seq.mean.survival[i] & 
-     rot.mean.survival[i] == mix.mean.survival[i]){secondary.outcome.average[i] = "draw"}
+  unique.df.2 = unique.df%>%
+    dplyr::filter(difference.sa >= 0.1 |
+                    difference.sa <= -0.1)
   
-  if(rot.mean.survival[i] < seq.mean.survival[i] & 
-     rot.mean.survival[i] == mix.mean.survival[i]){secondary.outcome.average[i] = "sequence.loss"}
+  plot.difference.sa = ggplot(unique.df.2, aes(x=difference.sa*100))+
+    geom_histogram(bins = 50,
+                   colour = "skyblue",
+                   fill = "blue")+
+    xlab("Percentage Difference in Simulation Duration")+
+    geom_vline(xintercept = 0, colour = "grey", linetype = "dashed")+
+    ggtitle("Sequence vs Adaptive Rotations")+
+    theme_classic()
   
-  if(seq.mean.survival[i] < rot.mean.survival[i] & 
-     seq.mean.survival[i] == mix.mean.survival[i]){secondary.outcome.average[i] = "rotation.loss"}
   
-  if(mix.mean.survival[i] > rot.mean.survival[i]&
-     mix.mean.survival[i] > seq.mean.survival[i]){secondary.outcome.average[i] = "mixture.loss"}
+  unique.df.3 = unique.df%>%
+    dplyr::filter(difference.sm >= 0.1 |
+                    difference.sm <= -0.1)
+  
+  plot.difference.sm = ggplot(unique.df.3, aes(x=difference.sm*100))+
+    geom_histogram(bins = 50,
+                   colour = "skyblue",
+                   fill = "blue")+
+    xlab("Percentage Difference in Simulation Duration")+
+    geom_vline(xintercept = 0, colour = "grey", linetype = "dashed")+
+    ggtitle("Sequence vs Mixtures")+
+    theme_classic()
+  
+  unique.df.4 = unique.df%>%
+    dplyr::filter(difference.ra >= 0.1 |
+                    difference.ra <= -0.1)
+  
+  plot.difference.ra = ggplot(unique.df.4, aes(x=difference.ra*100))+
+    geom_histogram(bins = 50,
+                   colour = "skyblue",
+                   fill = "blue")+
+    xlab("Percentage Difference in Simulation Duration")+
+    geom_vline(xintercept = 0, colour = "grey", linetype = "dashed")+
+    ggtitle("Rotations vs Adaptive Rotations")+
+    theme_classic()
+  
+  
+  unique.df.5 = unique.df%>%
+    dplyr::filter(difference.rm >= 0.1 |
+                    difference.rm <= -0.1)
+  
+  plot.difference.rm = ggplot(unique.df.5, aes(x=difference.rm*100))+
+    geom_histogram(bins = 50,
+                   colour = "skyblue",
+                   fill = "blue")+
+    xlab("Percentage Difference in Simulation Duration")+
+    geom_vline(xintercept = 0, colour = "grey", linetype = "dashed")+
+    ggtitle("Rotations vs Mixtures")+
+    theme_classic()
+  
+  
+  
+  unique.df.6 = unique.df%>%
+    dplyr::filter(difference.am >= 0.1 |
+                    difference.am <= -0.1)
+  
+  plot.difference.am = ggplot(unique.df.6, aes(x=difference.am*100))+
+    geom_histogram(bins = 50,
+                   colour = "skyblue",
+                   fill = "blue")+
+    xlab("Percentage Difference in Simulation Duration")+
+    geom_vline(xintercept = 0, colour = "grey", linetype = "dashed")+
+    ggtitle("Adaptive Rotations vs Mixtures")+
+    theme_classic()
+  
+  
+  
+  the.plot = (plot.difference.sr + plot.difference.ra + plot.difference.sm) /(
+    plot.difference.ra + plot.difference.rm + plot.difference.am) + plot_annotation(title = "Comparing Insecticide Resistance Management Strategies with Unique Insecticides")
+  
+  return(the.plot)
 }
-#check for NAs, if sums to 110000 all values assigned
-sum(!is.na(secondary.outcome.average)) #all accounted for
-
-
-parameter.space.df = read.csv("Simulation Experiments/Sets_of_Simulations/Publication Simulations/paramater.space.df.publication.csv")
-
-outcome.df = data.frame(parameter.space.df, outcome, operational.outcome,
-                        secondary.outcome.average, secondary.outcome.peak)
-
-
-
-outcome.df$starting.status = ifelse(outcome.df$start.resistance.values == 0,
-                                    yes = "novel",
-                                    no = "pre-used")
-
-
-
-table(outcome.df$outcome)
-#as percentage
-table(outcome.df$outcome)/110000 * 100
-
-
-table(outcome.df$operational.outcome)
-#as percentange:
-table(outcome.df$operational.outcome)/110000 * 100
-
-
-
-#compare draws on secondary outcomes: can only compare secondary outcomes where duration is identical
-draw.outcome.df = outcome.df%>%
-  dplyr::filter(outcome == "draw")
-
-table(draw.outcome.df$secondary.outcome.peak)
-
-round(table(draw.outcome.df$secondary.outcome.peak)/68753*100, 2)
-
-table(draw.outcome.df$secondary.outcome.average)
-round(table(draw.outcome.df$secondary.outcome.average)/68753*100, 2)
-
-
-
+plot_unique_insecticide_difference()
 
 
 #######################################################################
@@ -1131,7 +1881,9 @@ pcor.df = do.call(rbind, do.call(rbind, pcor.list2))
 
 return(pcor.df)
 }
-
+sequence.set = rbind(sequence.df.10, sequence.df.30)
+rotation.set = rbind(rotation.df.10, rotation.df.30)
+mixture.set = rbind(mixture.df.10, mixture.df.30)
 
 pcor.seq.df = pcor_df_function("sequence", sequence.set)
 pcor.rot.df = pcor_df_function("rotation", rotation.set)
@@ -1183,17 +1935,17 @@ make_pcor_plot()
 sequence.set.glm = sequence.set%>%
   dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
                 "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure", "simulation.duration",
-                "strategy", "start.resistance", "cross.selection")
+                "strategy", "start.resistance", "cross.selection", "dep.freq")
 
 rotation.set.glm = rotation.set%>%
   dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
                 "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure", "simulation.duration",
-                "strategy", "start.resistance", "cross.selection")
+                "strategy", "start.resistance", "cross.selection", "dep.freq")
 
 mixture.set.glm = mixture.set%>%
   dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
                 "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure", "simulation.duration",
-                "strategy", "start.resistance", "cross.selection")
+                "strategy", "start.resistance", "cross.selection", "dep.freq")
 
 
 df.for.glm = rbind(sequence.set.glm,
@@ -1219,24 +1971,30 @@ gam.heritability = mgcv::bam(simulation.duration ~
                                Male.Insecticide.Exposure+
                                Female.Insecticide.Exposure+
                                Dispersal+
+                               cross.selection+
                                Intervention.Coverage +
+                               as.factor(starting.status)+
+                               as.factor(dep.freq),
                              data = df.for.glm.2,
                              family = "poisson")
 
 plot(gam.heritability)#broadly linear, as expected
 
 gam.fitness.cost = mgcv::bam(simulation.duration ~ 
-                               as.factor(strategy) +
+                               as.factor(strategy)+
                                Heritability +
                                s(Fitness.Cost) +
                                Male.Insecticide.Exposure+
                                Female.Insecticide.Exposure+
                                Dispersal+
-                               Intervention.Coverage+
+                               cross.selection+
+                               Intervention.Coverage +
+                               as.factor(starting.status)+
+                               as.factor(dep.freq),
                              data = df.for.glm.2,
                              family = "poisson")
 
-plot(gam.fitness.cost)#wiggly but generally trending upwards
+plot(gam.fitness.cost)#linear
 
 gam.male.exposure = mgcv::bam(simulation.duration ~ 
                                 as.factor(strategy)+
@@ -1245,7 +2003,10 @@ gam.male.exposure = mgcv::bam(simulation.duration ~
                                 s(Male.Insecticide.Exposure)+
                                 Female.Insecticide.Exposure+
                                 Dispersal+
-                                Intervention.Coverage,
+                                cross.selection+
+                                Intervention.Coverage +
+                                as.factor(starting.status)+
+                                as.factor(dep.freq),
                               data = df.for.glm.2,
                               family = "poisson")
 
@@ -1253,13 +2014,16 @@ plot(gam.male.exposure)#linear relationship
 
 
 gam.female.exposure = mgcv::bam(simulation.duration ~ 
-                                 as.factor(strategy)+
-                                 Heritability +
-                                 Fitness.Cost +
-                                 Male.Insecticide.Exposure+
-                                 s(Female.Insecticide.Exposure)+
-                                 Dispersal+
-                                 Intervention.Coverage,
+                                  as.factor(strategy)+
+                                  Heritability +
+                                  Fitness.Cost +
+                                  Male.Insecticide.Exposure+
+                                  s(Female.Insecticide.Exposure)+
+                                  Dispersal+
+                                  cross.selection+
+                                  Intervention.Coverage +
+                                  as.factor(starting.status)+
+                                  as.factor(dep.freq),
                                data = df.for.glm.2,
                                family = "poisson")
 
@@ -1274,12 +2038,15 @@ gam.dispersal= mgcv::bam(simulation.duration ~
                            Male.Insecticide.Exposure+
                            Female.Insecticide.Exposure+
                            s(Dispersal)+
-                           Intervention.Coverage,
+                           cross.selection+
+                           Intervention.Coverage +
+                           as.factor(starting.status)+
+                           as.factor(dep.freq),
                          data = df.for.glm.2,
                          family = "poisson")
 
 plot(gam.dispersal)#hugely wiggly
-#Look to put splines in at: ~0.3, ~0.8
+#Look to put splines in at: ~0.3, ~0.8 and maximise likelihood
 summary(gam.dispersal)
 
 gam.coverage= mgcv::bam(simulation.duration ~ 
@@ -1289,7 +2056,10 @@ gam.coverage= mgcv::bam(simulation.duration ~
                           Male.Insecticide.Exposure+
                           Female.Insecticide.Exposure+
                           Dispersal+
-                          s(Intervention.Coverage),
+                          cross.selection+
+                          s(Intervention.Coverage) +
+                          as.factor(starting.status)+
+                          as.factor(dep.freq),
                         data = df.for.glm.2,
                         family = "poisson")
 
@@ -1315,6 +2085,7 @@ find.max.logLik = function(dspline1, dspline2,  data){
                    dispersal.spline2+
                    Intervention.Coverage+
                    starting.status+
+                   as.factor(dep.freq)+
                    cross.selection,
                  data = data,
                  family = "poisson")
@@ -1326,8 +2097,12 @@ find.max.logLik(dspline1 = 0.238,
                 dspline2 = 0.785, 
                 data = df.for.glm.2)
 
-df.for.glm$disperal.spline1 = ifelse(df.for.glm$Dispersal > 0.238, df.for.glm$Dispersal-0.387, 0)
-df.for.glm$dispersal.spline2  = ifelse(df.for.glm$Dispersal > 0.785, df.for.glm$Dispersal-0.486, 0 )
+find.max.logLik(dspline1 = 0.238, 
+                dspline2 = 0.785, 
+                data = df.for.glm.2)
+
+df.for.glm.2$disperal.spline1 = ifelse(df.for.glm.2$Dispersal > 0.238, df.for.glm.2$Dispersal-0.238, 0)
+df.for.glm.2$dispersal.spline2  = ifelse(df.for.glm.2$Dispersal > 0.785, df.for.glm.2$Dispersal-0.785, 0 )
 
 
 
@@ -1342,6 +2117,7 @@ poisson.glm =  glm(simulation.duration ~
                      dispersal.spline2+
                      Intervention.Coverage+
                      starting.status +
+                     as.factor(dep.freq)+
                      cross.selection,
                      data = df.for.glm.2,
                    family = "poisson")
@@ -1358,6 +2134,7 @@ neg.bin.glm =  MASS::glm.nb(simulation.duration ~
                               disperal.spline1+
                               dispersal.spline2+
                               Intervention.Coverage+
+                              as.factor(dep.freq)+
                               starting.status +
                               cross.selection,
                             data = df.for.glm.2)
@@ -1366,117 +2143,483 @@ summary(neg.bin.glm)
 confint(neg.bin.glm)
 
 
-##########################################################################
-##5. Regression Classification Trees: Mixtures, Rotations and Sequences ##
-##########################################################################
+############################################################################
+##5. Random Forest to Identify Variables with the Best Predictive Ability ##
+############################################################################
 
-sample.size = floor(0.75 * nrow(outcome.df))
+library(randomForest)
+#First for choosing between sequences and rotations:::
+rf.dataset.rot.seq = sequence.set%>%
+  dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
+                "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+                "start.resistance", "cross.selection")%>%
+  dplyr::mutate(start.resistance = as.factor(start.resistance))
 
-train.ind = sample(seq_len(nrow(outcome.df)), size = sample.size)
+rf.dataset.rot.seq$operational.outcome = c(rot.seq.10.operational.outcome, rot.seq.30.operational.outcome)
 
-data.train = outcome.df[train.ind, ]
-data.test = outcome.df[-train.ind, ]
-
-mix.rot.seq.fit.model1 = rpart(operational.outcome~
-                                 Heritability +
-                                 Fitness.Cost +
-                                 Male.Insecticide.Exposure+
-                                 Female.Insecticide.Exposure+
-                                 Dispersal+
-                                 Intervention.Coverage +
-                                 starting.status+
-                                 cross.selection.values, 
-                               data = data.train, 
-                               method = 'class',
-                               control = rpart.control(minbucket = 200, #each split is ~0.5% of samples
-                                                       maxdepth = 6,
-                                                       cp = 0))
-
-predict.unseen = predict(mix.rot.seq.fit.model1, data.test, type = 'class')
-actual.outcome = data.test$operational.outcome
-
-correct.outcome = ifelse(predict.unseen == actual.outcome,
-                         yes = 1,
-                         no = 0)  
-
-sum(correct.outcome)/length(correct.outcome)
-
-#Of those that were wrong, how wrong were they::
-  prediction.df = data.frame(predict.unseen, actual.outcome)
-
-incorrect.prediction.df = prediction.df%>%
-  dplyr::filter(predict.unseen != actual.outcome)
-
-#could deploy a loss::
-wrongly.deploys.sequence = incorrect.prediction.df%>%
-  dplyr::filter(predict.unseen == "no operational win")%>%
-  dplyr::filter(actual.outcome == "sequence loss" |
-                actual.outcome == "mixture win")
-
-wrongly.deploys.rotation = incorrect.prediction.df%>%
-  dplyr::filter(predict.unseen == "no operational win")%>%
-  dplyr::filter(actual.outcome == "rotation loss"|
-                  actual.outcome == "mixture win")
-
-wrongly.deploys.mixture = incorrect.prediction.df%>%
-  dplyr::filter(predict.unseen == "no operational win")%>%
-  dplyr::filter(actual.outcome == "mixture win")
+rf.dataset.rot.seq = rf.dataset.rot.seq%>%
+   dplyr::mutate(operational.outcome = as.factor(operational.outcome))
 
 
-rpart.plot(mix.rot.seq.fit.model1,
-           type = 5,
-           tweak = 1,
-           extra = 100,
-           legend.y = "NULL",
-           box.palette = list("#f03b20",
-                              "#377eb8"),
-           fallen.leaves = TRUE,
-           uniform = TRUE)
-title("A: Regression Classification Tree - Sequences, Rotations and Mixtures")
+## 75% of the sample size
+sample.size = floor(0.7 * nrow(rf.dataset.rot.seq))
+
+## set the seed to make your partition reproducible
+set.seed(42)
+train.ind = sample(seq_len(nrow(rf.dataset.rot.seq)), size = sample.size)
+
+train.rf.dataset.rot.seq = rf.dataset.rot.seq[train.ind, ]
+test.rf.dataset.rot.seq = rf.dataset.rot.seq[-train.ind, ]
+
+rf.model = randomForest::randomForest(operational.outcome ~ .,
+                                      data = train.rf.dataset.rot.seq,
+                                      type = "classification",
+                                      importance = TRUE,
+                                      ntree = 300,
+                                      mtry = 4,
+                                      node.size = 1000)
 
 
+randomForest::varImpPlot(rf.model)
 
-mix.rot.seq.fit.model2 = rpart(operational.outcome~
-                                 Female.Insecticide.Exposure+
-                                 Intervention.Coverage +
-                                 starting.status+
-                                 cross.selection.values, 
-                               data = data.train, 
-                               method = 'class',
-                               control = rpart.control(minbucket = 400, #each split is ~0.5% of samples
-                                                       maxdepth = 10,
-                                                       cp = 0))
+rf.model.seq.rot.df = data.frame(rf.model$importance)
+rf.model.seq.rot.df.sd = data.frame(rf.model$importanceSD)
 
-predict.unseen = predict(mix.rot.seq.fit.model2, data.test, type = 'class')
-actual.outcome = data.test$operational.outcome
-
-correct.outcome = ifelse(predict.unseen == actual.outcome,
-                         yes = 1,
-                         no = 0)  
-
-sum(correct.outcome)/length(correct.outcome)
+rf.model.seq.rot.df$parameter = c("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
+  "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+  "Start.Resistance", "Cross.Selection")
 
 
-rpart.plot(mix.rot.seq.fit.model2,
-           type = 5,
-           tweak = 1.08,
-           extra = 100,
-           legend.y = "NULL",
-           box.palette = list("#377eb8",
-                              "#b2df8a",
-                              "#ffff33"),
-           fallen.leaves = TRUE,
-           uniform = TRUE)
-title("B: Regression Classification Tree - Sequences, Rotations and Mixtures")
+rf.predic.seq.rot = predict(rf.model, test.rf.dataset.rot.seq)
+
+accuracy = ifelse(rf.predic.seq.rot == test.rf.dataset.rot.seq$operational.outcome,
+                  yes = 1,
+                  no = 0)
+
+sum(accuracy)/66000*100
+#Model accuracy is 87.65%
+
+seq.rot.rf.plot.acc = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseAccuracy,
+                                y=parameter))+
+  
+  geom_col(fill = "skyblue",
+           colour = "blue")+
+  xlab("Mean Decrease Accuracy")+
+  ylab("Parameter")+
+  ggtitle("A")+
+  theme_classic()
+
+seq.rot.rf.plot.gini = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseGini,
+                                y=parameter))+
+  
+  geom_col(fill = "skyblue",
+           colour = "blue")+
+  xlab("Mean Decrease Gini")+
+  ylab("Parameter")+
+  ggtitle("B")+
+  theme_classic()
+
+gridExtra::grid.arrange(seq.rot.rf.plot.acc, seq.rot.rf.plot.gini,
+                        nrow = 1)
 
 
 
+##Unique Insecticides Seq vs Adaptive Rot:
+parameter.space.unique.rf = parameter.space.unique%>%
+  dplyr::select(-"X")
+
+parameter.space.unique.rf$operational.outcome = as.factor(operational.outcome.sa)
+## 75% of the sample size
+sample.size = floor(0.7 * nrow(parameter.space.unique.rf))
+
+## set the seed to make your partition reproducible
+set.seed(42)
+train.ind = sample(seq_len(nrow(parameter.space.unique.rf)), size = sample.size)
+
+train.rf.dataset.seq.adrot = parameter.space.unique.rf[train.ind, ]
+test.rf.dataset.seq.adrot= parameter.space.unique.rf[-train.ind, ]
+
+rf.model.seq.adrot = randomForest::randomForest(operational.outcome ~ .,
+                                      data = train.rf.dataset.seq.adrot,
+                                      type = "classification",
+                                      importance = TRUE,
+                                      ntree = 300,
+                                      mtry = 4,
+                                      node.size = 1000)
 
 
 
 
 
 
+randomForest::varImpPlot(rf.model.seq.adrot)
+
+rf.model.seq.adrot.df = data.frame(rf.model.seq.adrot$importance)
+
+rf.model.seq.adrot.df$parameter = c("Heritability.1", "Heritability.2", "Fitness.Cost.1",
+                                 "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
+                                 "Cross.Selection", "Dispersal", "Intervention.Coverage", 
+                                 "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
+
+
+rf.predic.seq.adrot= predict(rf.model.seq.adrot, test.rf.dataset.seq.adrot)
+
+accuracy = ifelse(rf.predic.seq.adrot == test.rf.dataset.seq.adrot$operational.outcome,
+                  yes = 1,
+                  no = 0)
+
+sum(accuracy)/15000*100
+#Model accuracy is 90.98
+
+seq.adrot.rf.plot.acc = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseAccuracy,
+                                                      y=parameter))+
+  
+  geom_col(fill = "seagreen1",
+           colour = "seagreen")+
+  xlab("Mean Decrease Accuracy")+
+  ylab("Parameter")+
+  ggtitle("C")+
+  theme_classic()
+
+seq.adrot.rf.plot.gini = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseGini,
+                                                       y=parameter))+
+  
+  geom_col(fill = "seagreen1",
+           colour = "seagreen")+
+  xlab("Mean Decrease Gini")+
+  ylab("Parameter")+
+  ggtitle("D")+
+  theme_classic()
+
+gridExtra::grid.arrange(seq.adrot.rf.plot.acc, seq.adrot.rf.plot.gini,
+                        nrow = 1)
+
+
+((seq.rot.rf.plot.acc + seq.rot.rf.plot.gini)/
+(seq.adrot.rf.plot.acc + seq.adrot.rf.plot.gini)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
+                        
+
+
+
+#Random Forest: Sequence, Rotation and Mixtures
+
+rf.dataset.rot.seq.mix = sequence.set%>%
+  dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
+                "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+                "start.resistance", "cross.selection")%>%
+  dplyr::mutate(start.resistance = as.factor(start.resistance))
+
+rf.dataset.rot.seq.mix$operational.outcome = as.factor(rot.seq.mix.operational.outcome)
+
+# 70% of the sample size
+sample.size = floor(0.7 * nrow(rf.dataset.rot.seq.mix))
+
+## set the seed to make your partition reproducible
+set.seed(42)
+train.ind = sample(seq_len(nrow(rf.dataset.rot.seq.mix)), size = sample.size)
+
+train.rf.dataset.rot.seq.mix = rf.dataset.rot.seq.mix[train.ind, ]
+test.rf.dataset.rot.seq.mix = rf.dataset.rot.seq.mix[-train.ind, ]
+
+rf.model.seq.rot.mix = randomForest::randomForest(operational.outcome ~ .,
+                                      data = train.rf.dataset.rot.seq.mix,
+                                      type = "classification",
+                                      importance = TRUE,
+                                      ntree = 300,
+                                      mtry = 4,
+                                      node.size = 1000)
+
+rf.model.seq.rot.mix.df = data.frame(rf.model.seq.rot.mix$importance)
+rf.model.seq.rot.mix.df$parameter = c("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
+                                     "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+                                     "Start.Resistance", "Cross.Selection")
+
+rf.predic.seq.rot.mix= predict(rf.model.seq.rot.mix, test.rf.dataset.rot.seq.mix)
+
+
+accuracy = ifelse(rf.predic.seq.rot.mix == test.rf.dataset.rot.seq.mix$operational.outcome,
+                  yes = 1,
+                  no = 0)
+
+sum(accuracy)/66000*100
+#Model accuracy is 96.14%
+
+seq.rot.mix.rf.plot.acc = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseAccuracy,
+                                                      y=parameter))+
+  
+  geom_col(fill = "skyblue",
+           colour = "blue")+
+  xlab("Mean Decrease Accuracy")+
+  ylab("Parameter")+
+  ggtitle("A")+
+  theme_classic()
+
+seq.rot.mix.rf.plot.gini = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseGini,
+                                                       y=parameter))+
+  
+  geom_col(fill = "skyblue",
+           colour = "blue")+
+  xlab("Mean Decrease Gini")+
+  ylab("Parameter")+
+  ggtitle("B")+
+  theme_classic()
+
+
+seq.rot.mix.rf.plot.acc
+seq.rot.mix.rf.plot.gini
+
+
+##Unique Insecticides Seq vs Adaptive Rot vs Mixtures
+rf.parameter.space.unique.sam = parameter.space.unique%>%
+  dplyr::select(-"X")
+
+rf.parameter.space.unique.sam$operational.outcome = as.factor(operational.outcome.sam)
+## 75% of the sample size
+sample.size = floor(0.7 * nrow(rf.parameter.space.unique.sam))
+
+## set the seed to make your partition reproducible
+set.seed(42)
+train.ind = sample(seq_len(nrow(rf.parameter.space.unique.sam)), size = sample.size)
+
+train.rf.dataset.sam = rf.parameter.space.unique.sam[train.ind, ]
+test.rf.dataset.sam= rf.parameter.space.unique.sam[-train.ind, ]
+
+rf.model.sam = randomForest::randomForest(operational.outcome ~ .,
+                                                data = train.rf.dataset.sam,
+                                                type = "classification",
+                                                importance = TRUE,
+                                                ntree = 300,
+                                                mtry = 4,
+                                                node.size = 1000)
+
+rf.model.sam.df = data.frame(rf.model.sam$importance)
+
+rf.model.sam.df$parameter = c("Heritability.1", "Heritability.2", "Fitness.Cost.1",
+                                    "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
+                                    "Cross.Selection", "Dispersal", "Intervention.Coverage", 
+                                    "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
+
+
+rf.predict.sam= predict(rf.model.sam, test.rf.dataset.sam)
+
+accuracy = ifelse(rf.predict.sam == test.rf.dataset.sam$operational.outcome,
+                  yes = 1,
+                  no = 0)
+
+sum(accuracy)/15000*100
+#Model accuracy is 91.16
+
+rf.plot.acc.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseAccuracy,
+                                                          y=parameter))+
+  
+  geom_col(fill = "seagreen1",
+           colour = "seagreen")+
+  xlab("Mean Decrease Accuracy")+
+  ylab("Parameter")+
+  ggtitle("C")+
+  theme_classic()
+
+rf.plot.gini.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseGini,
+                                                           y=parameter))+
+  
+  geom_col(fill = "seagreen1",
+           colour = "seagreen")+
+  xlab("Mean Decrease Gini")+
+  ylab("Parameter")+
+  ggtitle("D")+
+  theme_classic()
+
+gridExtra::grid.arrange(rf.plot.acc.sam, rf.plot.gini.sam,
+                        nrow = 1)
+
+
+((seq.rot.mix.rf.plot.acc + seq.rot.mix.rf.plot.gini)/
+    (rf.plot.acc.sam + rf.plot.gini.sam)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures")
+
+
+#Figure out what could be considered high/low coverage::
+
+violin.plot.a = ggplot(rf.dataset.rot.seq, aes(x=Intervention.Coverage,
+                                   y=operational.outcome))+
+  geom_violin(fill = "skyblue", alpha = 0.5,
+              colour = "blue")+
+  geom_vline(xintercept = 0.5, colour = "black",
+             linetype = "dashed", size = 2)+
+  xlab("Intervention Coverage")+
+  ylab("Operational Outcome")+
+  ggtitle("A")+
+  theme_classic()
+
+violin.plot.b = ggplot(parameter.space.unique.rf, aes(x=Coverage,
+                                          y=operational.outcome))+
+  geom_violin(fill = "skyblue", alpha = 0.5,
+              colour = "blue")+
+  geom_vline(xintercept = 0.5, colour = "black",
+             linetype = "dashed", size = 2)+
+  xlab("Intervention Coverage")+
+  ylab("Operational Outcome")+
+  ggtitle("B")+
+  theme_classic()
+
+violin.plot.c = ggplot(rf.dataset.rot.seq.mix, aes(x=Intervention.Coverage,
+                               y=operational.outcome))+
+  geom_violin(fill = "skyblue", alpha = 0.5,
+              colour = "blue")+
+  geom_vline(xintercept = 0.5, colour = "black",
+             linetype = "dashed", size = 2)+
+  xlab("Intervention Coverage")+
+  ylab("Operational Outcome")+
+  ggtitle("C")+
+  theme_classic()
+
+ggplot(rf.parameter.space.unique.sam, aes(x=Coverage,
+                                      y=operational.outcome))+
+  geom_violin(fill = "skyblue", alpha = 0.5,
+               colour = "blue")+
+  geom_vline(xintercept = 0.5, colour = "black",
+             linetype = "dashed", size = 2)+
+  xlab("Intervention Coverage")+
+  ylab("Operational Outcome")+
+  ggtitle("D")+
+  theme_classic()
+
+
+#Remove simulations where coverage was "low":
+rf.dataset.rot.seq.mix.high = rf.dataset.rot.seq.mix%>%
+  dplyr::filter(Intervention.Coverage >= 0.5)%>%
+  dplyr::mutate(operational.outcome = as.factor(operational.outcome))
+
+# 70% of the sample size
+sample.size = floor(0.7 * nrow(rf.dataset.rot.seq.mix.high))
+
+## set the seed to make your partition reproducible
+set.seed(42)
+train.ind = sample(seq_len(nrow(rf.dataset.rot.seq.mix.high)), size = sample.size)
+
+train.rf.dataset.rot.seq.mix.high = rf.dataset.rot.seq.mix.high[train.ind, ]
+test.rf.dataset.rot.seq.mix.high = rf.dataset.rot.seq.mix.high[-train.ind, ]
+
+rf.model.seq.rot.mix.high = randomForest::randomForest(operational.outcome ~ .,
+                                                  data = train.rf.dataset.rot.seq.mix.high,
+                                                  type = "classification",
+                                                  importance = TRUE,
+                                                  ntree = 300,
+                                                  mtry = 4,
+                                                  node.size = 1000)
+
+rf.model.seq.rot.mix.high.df = data.frame(rf.model.seq.rot.mix.high$importance)
+rf.model.seq.rot.mix.high.df$parameter = c("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
+                                      "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+                                      "Start.Resistance", "Cross.Selection")
+
+rf.predic.seq.rot.mix.high= predict(rf.model.seq.rot.mix.high, test.rf.dataset.rot.seq.mix.high)
+
+
+accuracy = ifelse(rf.predic.seq.rot.mix.high == test.rf.dataset.rot.seq.mix.high$operational.outcome,
+                  yes = 1,
+                  no = 0)
+
+sum(accuracy)/33000*100
+#Model accuracy is 94.31%
+
+seq.rot.mix.rf.plot.acc.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDecreaseAccuracy,
+                                                              y=parameter))+
+  
+  geom_col(fill = "skyblue",
+           colour = "blue")+
+  xlab("Mean Decrease Accuracy")+
+  ylab("Parameter")+
+  ggtitle("A")+
+  theme_classic()
+
+seq.rot.mix.rf.plot.gini.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDecreaseGini,
+                                                               y=parameter))+
+  
+  geom_col(fill = "skyblue",
+           colour = "blue")+
+  xlab("Mean Decrease Gini")+
+  ylab("Parameter")+
+  ggtitle("B")+
+  theme_classic()
+
+
+seq.rot.mix.rf.plot.acc.high
+seq.rot.mix.rf.plot.gini.high
+
+
+
+
+##Same for Unique Insecticides Seq vs Adaptive Rot vs Mixtures
+rf.parameter.space.unique.sam.high = rf.parameter.space.unique.sam%>%
+  dplyr::filter(Coverage >= 0.5)
+
+
+
+## 75% of the sample size
+sample.size = floor(0.7 * nrow(rf.parameter.space.unique.sam.high))
+
+## set the seed to make your partition reproducible
+set.seed(42)
+train.ind = sample(seq_len(nrow(rf.parameter.space.unique.sam.high)), size = sample.size)
+
+train.rf.dataset.sam.high = rf.parameter.space.unique.sam.high[train.ind, ]
+test.rf.dataset.sam.high= rf.parameter.space.unique.sam.high[-train.ind, ]
+
+rf.model.sam.high = randomForest::randomForest(operational.outcome ~ .,
+                                          data = train.rf.dataset.sam.high,
+                                          type = "classification",
+                                          importance = TRUE,
+                                          ntree = 300,
+                                          mtry = 4,
+                                          node.size = 1000)
+
+rf.model.sam.df.high = data.frame(rf.model.sam.high$importance)
+
+rf.model.sam.df.high$parameter = c("Heritability.1", "Heritability.2", "Fitness.Cost.1",
+                              "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
+                              "Cross.Selection", "Dispersal", "Intervention.Coverage", 
+                              "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
+
+
+rf.predict.sam.high= predict(rf.model.sam.high, test.rf.dataset.sam.high)
+
+accuracy = ifelse(rf.predict.sam.high == test.rf.dataset.sam.high$operational.outcome,
+                  yes = 1,
+                  no = 0)
+
+sum(accuracy)/7500*100
+#Model accuracy is 87.63%
+
+rf.plot.acc.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseAccuracy,
+                                              y=parameter))+
+  
+  geom_col(fill = "seagreen1",
+           colour = "seagreen")+
+  xlab("Mean Decrease Accuracy")+
+  ylab("Parameter")+
+  ggtitle("C")+
+  theme_classic()
+
+rf.plot.gini.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseGini,
+                                               y=parameter))+
+  
+  geom_col(fill = "seagreen1",
+           colour = "seagreen")+
+  xlab("Mean Decrease Gini")+
+  ylab("Parameter")+
+  ggtitle("D")+
+  theme_classic()
+
+rf.plot.acc.sam.high
+rf.plot.gini.sam.high
+
+
+
+
+
+
+((seq.rot.mix.rf.plot.acc.high + seq.rot.mix.rf.plot.gini.high)/
+    (rf.plot.acc.sam.high + rf.plot.gini.sam.high)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures for Intervention Coverage Greater than 0.5")
 
 
 
@@ -1770,3 +2913,55 @@ table_resistance_from_survival_and_sd(half.population.bioassay.survival.resistan
                                       nsim = 10000000, 
                                       minimum.resistance.value = 0, 
                                       maximum.resistance.value = 25000)
+
+
+
+
+
+
+#Identifying Parameters to Inform Decision Making
+
+library(randomForest)
+
+parameter.space.rf = rbind(parameter.space.10.30,
+                           parameter.space.10.30)
+
+
+parameter.space.rf$outcome = rot.seq.mix.operational.outcome
+parameter.space.rf$deployment.freq = c(rep(10, 110000), rep(30, 110000))
+parameter.space.rf$replicate = seq(1, 220000, 1)
+
+
+sample = caTools::sample.split(parameter.space.rf$replicate, SplitRatio = 0.7)
+
+train = subset(parameter.space.rf, sample == TRUE)
+test  = subset(parameter.space.rf, sample == FALSE)
+
+rf.fit = randomForest(as.factor(outcome)~
+                        Heritability+               
+                        Male.Insecticide.Exposure+
+                        Female.Insecticide.Exposure+
+                        Fitness.Cost+
+                        Intervention.Coverage+
+                        Dispersal+
+                        cross.selection.values+    
+                        start.resistance.values+
+                        deployment.freq,
+                      data = parameter.space.rf,
+                      ntree = 1000,
+                      max.nodes = 20,
+                      importance = TRUE)
+
+
+
+
+pred = predict(rf.fit, newdata = test)
+
+table(test$outcome, pred)
+
+varImpPlot(rf.fit)
+
+
+
+
+
