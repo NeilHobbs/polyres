@@ -29,9 +29,9 @@
 run_simulation_intervention_mixtures_special_cases = function(number.of.insecticides = 2,
                                                               exposure.scaling.factor = 10,
                                                               nsim = 1000,
-                                                             insecticide.resistance.heritability = 0.05,
-                                                              minimum.male.insecticide.exposure = 0,
-                                                              maximum.male.insecticide.exposure = 1,
+                                                             insecticide.resistance.heritability = 0.3,
+                                                             minimum.male.insecticide.exposure = 0,
+                                                             maximum.male.insecticide.exposure = 1,
                                                               minimum.female.insecticide.exposure = 0.4,
                                                               maximum.female.insecticide.exposure = 0.9,
                                                               resistance.cost = 0,
@@ -88,7 +88,8 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                       threshold.generation = threshold.generation,
                                                                       base.efficacy.decay.rate = base.efficacy.decay.rate,
                                                                       rapid.decay.rate = rapid.decay.rate,
-                                                                      insecticide.resistance.heritability = insecticide.resistance.heritability,
+                                                                      minimum.insecticide.resistance.heritability=insecticide.resistance.heritability,
+                                                                      maximum.insecticide.resistance.heritability=insecticide.resistance.heritability,
                                                                       resistance.cost = resistance.cost)
 
 
@@ -179,8 +180,8 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
           #calculate population mean from previous population mean when insecticide present
           mean(insecticide_deployed_migration_mixtures_special_cases(exposure.scaling.factor = exposure.scaling.factor,
                                                                      nsim = nsim, 
-                                                                     minimum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide], 
-                                                                     maximum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide],
+                                                                     minimum.insecticide.resistance.heritability = insecticide.parameters.df$heritabilities[insecticide], 
+                                                                     maximum.insecticide.resistance.heritability = insecticide.parameters.df$heritabilities[insecticide],
                                                                      minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
                                                                      maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                      minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
@@ -224,8 +225,8 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                         initial.refugia.resistance = sim.array["refugia", insecticide, generation-1],
                                                                         resistance.cost = insecticide.parameters.df$resistance.cost[insecticide],
                                                                         exposure.scaling.factor = exposure.scaling.factor,
-                                                                        minimum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide], 
-                                                                        maximum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide],
+                                                                        minimum.insecticide.resistance.heritability = insecticide.parameters.df$heritabilities[insecticide], 
+                                                                        maximum.insecticide.resistance.heritability = insecticide.parameters.df$heritabilities[insecticide],
                                                                         minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
                                                                         maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                         minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
@@ -252,8 +253,8 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
           #calculate population mean from previous population mean when insecticide present
           mean(refugia_migration_effect_insecticide_deployed_mixture_special_cases(exposure.scaling.factor = exposure.scaling.factor,
                                                                                    nsim = nsim, 
-                                                                                   minimum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide], 
-                                                                                   maximum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide],
+                                                                                   minimum.insecticide.resistance.heritability = insecticide.parameters.df$heritabilities[insecticide], 
+                                                                                   maximum.insecticide.resistance.heritability = insecticide.parameters.df$heritabilities[insecticide],
                                                                                    minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
                                                                                    maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                                    minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
@@ -290,8 +291,8 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
         #calculate population mean when insecticide not deployed from previous population mean
         else(mean(refugia_migration_effect_insecticide_not_deployed_mixture_special_cases(exposure.scaling.factor = exposure.scaling.factor,
                                                                                           nsim = nsim, 
-                                                                                          minimum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide], 
-                                                                                          maximum.insecticide.resistance.heritability = insecticide.parameters.df$insecticide.resistance.heritability[insecticide],
+                                                                                          minimum.insecticide.resistance.heritability = insecticide.parameters.df$heritabilities[insecticide], 
+                                                                                          maximum.insecticide.resistance.heritability = insecticide.parameters.df$heritabilities[insecticide],
                                                                                           minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
                                                                                           maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                                                                           minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
@@ -363,6 +364,21 @@ run_simulation_intervention_mixtures_special_cases = function(number.of.insectic
                                                                           deployment.frequency = deployment.frequency,
                                                                           deployment.df = deployed.mixture,
                                                                           insecticide.parameters.df = insecticide.parameters.df)
+                                          }else{
+                                            if(irm.switch.strategy == "insecticide.1"){
+                                              decision_on_insecticide_1_only(number.of.insecticides = number.of.insecticides,
+                                                                                  current.generation = generation,
+                                                                                  withdrawal.threshold = calc.withdrawal.threshold,
+                                                                                  return.threshold = calc.return.threshold,
+                                                                                  simulation.array = sim.array,
+                                                                                  available.vector = available.vector,
+                                                                                  withdrawn.vector = withdrawn.vector,
+                                                                                  mixture.df = mixture.df,
+                                                                                  current.mixture = deployed.mixture$mixture.id[generation],
+                                                                                  deployment.frequency = deployment.frequency,
+                                                                                  deployment.df = deployed.mixture,
+                                                                                  insecticide.parameters.df = insecticide.parameters.df)
+                                            }
                                           }
                                         }
 
