@@ -20,7 +20,7 @@
 #'@param intercept = 0.15
 
 #See insecticide_deployed_selection_cost_cross_selection and
-  #insecticide_deployed_selection_cost_mixture
+#insecticide_deployed_selection_cost_mixture
 
 insecticide_deployed_selection_cost_mixture_cross_selection = function(exposure.scaling.factor = 10,
                                                                        nsim = 1000, 
@@ -45,18 +45,18 @@ insecticide_deployed_selection_cost_mixture_cross_selection = function(exposure.
   previous.intensity = initial.resistance.intensity
   
   direct.selection = response_to_insecticide_selection(exposure.scaling.factor = exposure.scaling.factor,
-                                                                   nsim = nsim, 
-                                                                   minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                                                   maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                                                                   minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                                                                   maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                                                                   minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                                                   maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) +
-    effect_of_fitness_cost(resistance.cost = resistance.cost,
+                                                       nsim = nsim, 
+                                                       minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability[currently.deployed.insecticide], 
+                                                       maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability[currently.deployed.insecticide],
+                                                       minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                       maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                       minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                       maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) +
+    effect_of_fitness_cost(resistance.cost = resistance.cost[currently.deployed.insecticide],
                            exposure.scaling.factor = exposure.scaling.factor,
                            nsim = nsim, 
-                           minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                           maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                           minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability[currently.deployed.insecticide], 
+                           maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability[currently.deployed.insecticide],
                            minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
                            maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                            minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
@@ -64,36 +64,27 @@ insecticide_deployed_selection_cost_mixture_cross_selection = function(exposure.
   
   
   indirect.selection = (response_to_insecticide_selection(exposure.scaling.factor = exposure.scaling.factor,
-                                                         nsim = nsim, 
-                                                         minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                                         maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                                                         minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                                                         maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                                                         minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                                         maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) +
-    effect_of_fitness_cost(resistance.cost = resistance.cost,
-                           exposure.scaling.factor = exposure.scaling.factor,
-                           nsim = nsim, 
-                           minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                           maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                           minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                           maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                           minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                           maximum.female.insecticide.exposure = maximum.female.insecticide.exposure))*cross.selection.matrix[other.mixture.part, currently.deployed.insecticide]
+                                                          nsim = nsim, 
+                                                          minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability[other.mixture.part], 
+                                                          maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability[other.mixture.part],
+                                                          minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                          maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                          minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                          maximum.female.insecticide.exposure = maximum.female.insecticide.exposure) +
+                          effect_of_fitness_cost(resistance.cost = resistance.cost[other.mixture.part],
+                                                 exposure.scaling.factor = exposure.scaling.factor,
+                                                 nsim = nsim, 
+                                                 minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability[other.mixture.part], 
+                                                 maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability[other.mixture.part],
+                                                 minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                 maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                 minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                 maximum.female.insecticide.exposure = maximum.female.insecticide.exposure))*cross.selection.matrix[other.mixture.part, currently.deployed.insecticide]
   
   
   
   survival.to.other.insecticide = convert_bioassay_survival_to_field(bioassay.survival = resistance_to_bioassay_survival(maximum.bioassay.survival.proportion = 1,
-                                                                                                          mean.population.resistance = intensity.to.other.mixture.part,
-                                                                                                          michaelis.menten.slope = 1, 
-                                                                                                          half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
-                                                                                                          sd.population.resistance = 0, 
-                                                                                                          nsim = nsim),
-                                                      conversion.factor = conversion.factor,
-                                                      intercept = intercept)
-  
-  survival.tracked.insecticide = convert_bioassay_survival_to_field(bioassay.survival = resistance_to_bioassay_survival(maximum.bioassay.survival.proportion = 1,
-                                                                                                                         mean.population.resistance = initial.resistance.intensity,
+                                                                                                                         mean.population.resistance = intensity.to.other.mixture.part,
                                                                                                                          michaelis.menten.slope = 1, 
                                                                                                                          half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
                                                                                                                          sd.population.resistance = 0, 
@@ -101,9 +92,18 @@ insecticide_deployed_selection_cost_mixture_cross_selection = function(exposure.
                                                                      conversion.factor = conversion.factor,
                                                                      intercept = intercept)
   
+  survival.tracked.insecticide = convert_bioassay_survival_to_field(bioassay.survival = resistance_to_bioassay_survival(maximum.bioassay.survival.proportion = 1,
+                                                                                                                        mean.population.resistance = initial.resistance.intensity,
+                                                                                                                        michaelis.menten.slope = 1, 
+                                                                                                                        half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
+                                                                                                                        sd.population.resistance = 0, 
+                                                                                                                        nsim = nsim),
+                                                                    conversion.factor = conversion.factor,
+                                                                    intercept = intercept)
+  
   track.resistance.intensity = sum(previous.intensity, (direct.selection*survival.to.other.insecticide), (indirect.selection*survival.tracked.insecticide))
-    
-    
+  
+  
   return(track.resistance.intensity)
 }
 
