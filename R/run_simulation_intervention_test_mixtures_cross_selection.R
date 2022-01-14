@@ -27,34 +27,34 @@
 
 
 run_simulation_intervention_test_mixtures_cross_selection = function(number.of.insecticides = 2,
-                                                     exposure.scaling.factor = 10,
-                                                     nsim = 1000,
-                                                     minimum.insecticide.resistance.heritability = 0.05,
-                                                     maximum.insecticide.resistance.heritability = 0.30,
-                                                     minimum.male.insecticide.exposure = 0,
-                                                     maximum.male.insecticide.exposure = 1,
-                                                     minimum.female.insecticide.exposure = 0.4,
-                                                     maximum.female.insecticide.exposure = 0.9,
-                                                     resistance.cost = 0,
-                                                     starting.treatment.site.intensity = 0,
-                                                     starting.refugia.intensity = 0,
-                                                     min.intervention.coverage = 0.1,
-                                                     max.intervention.coverage = 0.9,
-                                                     min.dispersal.rate = 0.1,
-                                                     max.dispersal.rate = 0.9,
-                                                     maximum.generations = 500,
-                                                     irm.deployment.strategy = "mixtures", #single, mixtures
-                                                     mixture.strategy = "mix.sequential.discrete", #can be: random.mixtures; pyrethroid.plus; mix.sequential.continous; mix.sequential.discrete
-                                                     irm.switch.strategy = "sequence", #will be sequence or rotation;default should be sequence
-                                                     half.population.bioassay.survival.resistance = 900,
-                                                     withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
-                                                     return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
-                                                     deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
-                                                     maximum.resistance.value = 25000,
-                                                     min.cross.selection = -1,
-                                                     max.cross.selection = 1,
-                                                     conversion.factor = 0.48,
-                                                     intercept = 0.15){
+                                                                     exposure.scaling.factor = 10,
+                                                                     nsim = 1000,
+                                                                     minimum.insecticide.resistance.heritability = 0.05,
+                                                                     maximum.insecticide.resistance.heritability = 0.30,
+                                                                     minimum.male.insecticide.exposure = 0,
+                                                                     maximum.male.insecticide.exposure = 1,
+                                                                     minimum.female.insecticide.exposure = 0.4,
+                                                                     maximum.female.insecticide.exposure = 0.9,
+                                                                     resistance.cost = 0,
+                                                                     starting.treatment.site.intensity = 0,
+                                                                     starting.refugia.intensity = 0,
+                                                                     min.intervention.coverage = 0.1,
+                                                                     max.intervention.coverage = 0.9,
+                                                                     min.dispersal.rate = 0.1,
+                                                                     max.dispersal.rate = 0.9,
+                                                                     maximum.generations = 500,
+                                                                     irm.deployment.strategy = "mixtures", #single, mixtures
+                                                                     mixture.strategy = "mix.sequential.discrete", #can be: random.mixtures; pyrethroid.plus; mix.sequential.continous; mix.sequential.discrete
+                                                                     irm.switch.strategy = "sequence", #will be sequence or rotation;default should be sequence
+                                                                     half.population.bioassay.survival.resistance = 900,
+                                                                     withdrawal.threshold.value = 0.1, #this is the survival proportion in a bioassay that would withdraw the insecticide from the arsenal
+                                                                     return.threshold.value = 0.05, #this is the survival proportion in a bioassay that would return insecticide to arsenal
+                                                                     deployment.frequency = 10, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
+                                                                     maximum.resistance.value = 25000,
+                                                                     min.cross.selection = -1,
+                                                                     max.cross.selection = 1,
+                                                                     conversion.factor = 0.48,
+                                                                     intercept = 0.15){
   
   #Start by creating an array (calls the array_named function):
   #dimension 1: site = c("refugia", "treatment"), which hold resistance intensities.
@@ -130,7 +130,14 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
                                                            max.cross.selection = max.cross.selection)
   
   
-
+  
+  fitness.cost.vector = allow_unique_fitness_costs(resistance.cost = resistance.cost,
+                                                   number.of.insecticides = number.of.insecticides)
+  
+  heritabilities.vector = allow_unique_heritabilities(minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
+                                                      maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                                      number.of.insecticides = number.of.insecticides)
+  
   
   #Also worth considering turning the for generation and for insecticide loops into functions,
   #as the code is other wise very large and chunky and therefore complicated to edit and adapt.
@@ -150,11 +157,11 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
             nsim = nsim,
             minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability,
             maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-            minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-            maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
+            minimum.male.insecticide.exposure = heritabilities.vector,
+            maximum.male.insecticide.exposure = heritabilities.vector,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
             maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-            resistance.cost = resistance.cost,
+            resistance.cost = fitness.cost.vector,
             initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],
             min.intervention.coverage = min.intervention.coverage,
             max.intervention.coverage = max.intervention.coverage,
@@ -207,30 +214,30 @@ run_simulation_intervention_test_mixtures_cross_selection = function(number.of.i
                                                            deployed.mixture$mixture.part.2[generation]){#Insecticide is deployed in treatment site
           #calculate population mean from previous population mean when insecticide present
           mean(refugia_migration_effect_insecticide_deployed_mixture_cross_selection(initial.refugia.resistance = sim.array["refugia", insecticide, generation - 1],
-                                                                     initial.resistance.intensity = sim.array["treatment", insecticide, generation - 1],
-                                                                     resistance.cost = resistance.cost,
-                                                                     exposure.scaling.factor = exposure.scaling.factor,
-                                                                     nsim = nsim, 
-                                                                     minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                                                     maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
-                                                                     minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
-                                                                     maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
-                                                                     minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
-                                                                     maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-                                                                     min.intervention.coverage = min.intervention.coverage, 
-                                                                     max.intervention.coverage = max.intervention.coverage, 
-                                                                     min.dispersal.rate = min.dispersal.rate,
-                                                                     max.dispersal.rate = max.dispersal.rate,
-                                                                     intensity.to.other.mixture.part = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
-                                                                                                                                                     generation = generation,
-                                                                                                                                                     insecticide = insecticide,
-                                                                                                                                                     sim.array = sim.array),
-                                                                     half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
-                                                                     currently.deployed.insecticide = insecticide,
-                                                                     cross.selection.matrix = genetic.correlation.matrix,
-                                                                     number.of.insecticides = number.of.insecticides,
-                                                                     conversion.factor = conversion.factor,
-                                                                     intercept = intercept))}
+                                                                                     initial.resistance.intensity = sim.array["treatment", insecticide, generation - 1],
+                                                                                     resistance.cost = fitness.cost.vector,
+                                                                                     exposure.scaling.factor = exposure.scaling.factor,
+                                                                                     nsim = nsim, 
+                                                                                     minimum.insecticide.resistance.heritability = heritabilities.vector, 
+                                                                                     maximum.insecticide.resistance.heritability = heritabilities.vector,
+                                                                                     minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
+                                                                                     maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
+                                                                                     minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
+                                                                                     maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
+                                                                                     min.intervention.coverage = min.intervention.coverage, 
+                                                                                     max.intervention.coverage = max.intervention.coverage, 
+                                                                                     min.dispersal.rate = min.dispersal.rate,
+                                                                                     max.dispersal.rate = max.dispersal.rate,
+                                                                                     intensity.to.other.mixture.part = resistance_intensity_to_other_part_of_mixture(deployed.mixture = deployed.mixture,
+                                                                                                                                                                     generation = generation,
+                                                                                                                                                                     insecticide = insecticide,
+                                                                                                                                                                     sim.array = sim.array),
+                                                                                     half.population.bioassay.survival.resistance = half.population.bioassay.survival.resistance,
+                                                                                     currently.deployed.insecticide = insecticide,
+                                                                                     cross.selection.matrix = genetic.correlation.matrix,
+                                                                                     number.of.insecticides = number.of.insecticides,
+                                                                                     conversion.factor = conversion.factor,
+                                                                                     intercept = intercept))}
         #calculate population mean when insecticide not deployed from previous population mean
         else(mean(refugia_migration_effect_insecticide_not_deployed_cross_selection(
           initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],#use previous generation info in treatment site
