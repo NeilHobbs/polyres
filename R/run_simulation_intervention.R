@@ -135,7 +135,8 @@ run_simulation_intervention = function(number.of.insecticides = 2,
                                                                       maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
                                                                       number.of.insecticides = number.of.insecticides)
   
-  
+  fitness.cost.vector = allow_unique_fitness_costs(resistance.cost = resistance.cost,
+                                                   number.of.insecticides = number.of.insecticides)
   
   #Also worth considering turning the for generation and for insecticide loops into functions,
   #as the code is other wise very large and chunky and therefore complicated to edit and adapt.
@@ -158,7 +159,7 @@ run_simulation_intervention = function(number.of.insecticides = 2,
             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
             maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-            resistance.cost = resistance.cost,
+            resistance.cost = fitness.cost.vector[insecticide],
             initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],
             min.intervention.coverage = min.intervention.coverage,
             max.intervention.coverage = max.intervention.coverage,
@@ -169,7 +170,7 @@ run_simulation_intervention = function(number.of.insecticides = 2,
           #calculate population mean when insecticide not deployed from previous population mean
           mean(insecticide_not_deployed_migration(#this function calls insecticide_not_deployed_selection_costs
             initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],#use previous generation info in treatment site
-            resistance.cost = resistance.cost,
+            resistance.cost = fitness.cost.vector[insecticide],
             initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1], # use previous generation info in refugia
             exposure.scaling.factor = exposure.scaling.factor,
             nsim = nsim,
@@ -198,7 +199,7 @@ run_simulation_intervention = function(number.of.insecticides = 2,
             maximum.male.insecticide.exposure = maximum.male.insecticide.exposure,
             minimum.female.insecticide.exposure = minimum.female.insecticide.exposure,
             maximum.female.insecticide.exposure = maximum.female.insecticide.exposure,
-            resistance.cost = resistance.cost,
+            resistance.cost = fitness.cost.vector[insecticide],
             initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],
             min.intervention.coverage = min.intervention.coverage,
             max.intervention.coverage = max.intervention.coverage,
@@ -209,7 +210,7 @@ run_simulation_intervention = function(number.of.insecticides = 2,
           #calculate population mean when insecticide not deployed from previous population mean
           mean(refugia_migration_effect_insecticide_not_deployed(
             initial.resistance.intensity = sim.array['treatment', insecticide, generation - 1],#use previous generation info in treatment site
-            resistance.cost = resistance.cost,
+            resistance.cost = fitness.cost.vector[insecticide],
             initial.refugia.resistance = sim.array['refugia', insecticide, generation - 1], # use previous generation info in refugia
             exposure.scaling.factor = exposure.scaling.factor,
             nsim = nsim,
@@ -266,8 +267,8 @@ run_simulation_intervention = function(number.of.insecticides = 2,
                   current.insecticide = deployed.insecticide[generation],
                   deployment.frequency = deployment.frequency,
                   deployment.vector = deployed.insecticide) 
-              }
-              if(irm.strategy == "rotation.sequence"){
+              }else{
+              if(irm.strategy == "adaptive.rotation"){
                 irm_strategy_rotation_with_temporary_sequences(
                   number.of.insecticides = number.of.insecticides,
                   current.generation = generation,
@@ -280,7 +281,7 @@ run_simulation_intervention = function(number.of.insecticides = 2,
                   deployment.frequency = deployment.frequency,
                   deployment.vector = deployed.insecticide) 
               }
-            } 
+            }} 
         
         #update.insectide.info[[1]] is the vector of the available insecticides
         #update.insecticide.info[[2]] is the vector of the withdrawn insecticides
