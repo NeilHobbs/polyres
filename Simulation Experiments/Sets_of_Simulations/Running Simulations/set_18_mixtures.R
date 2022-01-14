@@ -1,6 +1,6 @@
 #start out with some resistance present already
   #use same parameter space as previously
-sim.output.df =read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/mixtures.field.bioassay.relationship.csv")
+sim.output.df =read.csv("Simulation Experiments/Sets_of_Simulations/Data from Simulations/set_18_mixtures.csv")
 
 regression.parameter.space = sim.output.df%>%
   dplyr::select("regresssion.intercept", "regression.coefficient")

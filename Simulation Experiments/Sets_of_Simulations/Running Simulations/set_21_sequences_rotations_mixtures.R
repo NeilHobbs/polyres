@@ -171,7 +171,9 @@ for(v in 1: nrow(parameter.space)){
                                                                                                threshold.generation = 15,
                                                                                                base.efficacy.decay.rate = 0.015, #default estimated from Toe et al
                                                                                                rapid.decay.rate = 0.08, #default estimated from Toe et al
-                                                                                               insecticide.suppression = TRUE), 
+                                                                                               insecticide.suppression = TRUE,
+                                                                                               min.cross.selection = 0,
+                                                                                               max.cross.selection = 0), 
                                             maximum.generations = 500, number.of.insecticides = 2)                                              
   
   

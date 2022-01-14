@@ -1,12 +1,18 @@
-#Looking at the impact of allowing insecticide decay
+#Looking at the impact of allowing insecticide decay and and cross selection
 
 #using the default decay values: as estimated from Toe et al 2019
-#SET 20
+#SET 23
 #1. load in the required R packages:
 library(devtools)
 load_all() #for polyres
 
 parameter.space = read.csv("Simulation Experiments/Sets_of_Simulations/Setting up Simulations/parameter.space.csv")[1:5000, 2:7]
+
+cross.selection = c(rep(-0.3, 5000), rep(-0.2, 5000), rep(-0.1, 5000), rep(0, 5000), rep(0.1, 5000), rep(0.2, 5000), rep(0.3, 5000))
+
+parameter.space = rbind(parameter.space, parameter.space, parameter.space, parameter.space, parameter.space, parameter.space, parameter.space)
+parameter.space$cross.selection = cross.selection
+
 
 #First run for sequences 
 temp.list.sequence = list()
@@ -35,8 +41,8 @@ for(v in 1:nrow(parameter.space)){
                                                                              return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
                                                                              deployment.frequency = 20, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
                                                                              maximum.resistance.value = 25000, #have arbitrarily high just in case
-                                                                             min.cross.selection = 0,
-                                                                             max.cross.selection = 0,
+                                                                             min.cross.selection = parameter.space$cross.selection[v],
+                                                                             max.cross.selection = parameter.space$cross.selection[v],
                                                                              applied.insecticide.dose = 1, #deployment is a ratio.
                                                                              recommended.insecticide.dose = 1,
                                                                              threshold.generation = 15,
@@ -97,8 +103,8 @@ for(v in 1:nrow(parameter.space)){
                                                                              return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
                                                                              deployment.frequency = 20, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
                                                                              maximum.resistance.value = 25000, #have arbitrarily high just in case
-                                                                             min.cross.selection = 0,
-                                                                             max.cross.selection = 0,
+                                                                             min.cross.selection = parameter.space$cross.selection[v],
+                                                                             max.cross.selection = parameter.space$cross.selection[v],
                                                                              applied.insecticide.dose = 1, #deployment is a ratio.
                                                                              recommended.insecticide.dose = 1,
                                                                              threshold.generation = 15,
@@ -133,7 +139,7 @@ rotation.df = do.call(rbind, temp.list.rotation)
 rotation.df.complete = cbind(rotation.df, parameter.space)
 
 seq.rot.df = rbind(sequence.df.complete, rotation.df.complete)
-write.csv(seq.rot.df, ".//set.20.rotations.sequences.csv")
+write.csv(seq.rot.df, ".//set.23.rotations.sequences.csv")
 
 #Then do mixtures:
 temp.list.mixtures = list()
@@ -153,9 +159,14 @@ for(v in 1: nrow(parameter.space)){
                                                                                                starting.refugia.intensity = 0,
                                                                                                min.intervention.coverage = parameter.space$Intervention.Coverage[v],
                                                                                                max.intervention.coverage = parameter.space$Intervention.Coverage[v],
-                                                                                               min.dispersal.rate = parameter.space$Dispersal[v],
-                                                                                               max.dispersal.rate = parameter.space$Dispersal[v],
+                                                                                               min.dispersal.rate = parameter.space$Intervention.Coverage[v],
+                                                                                               max.dispersal.rate = parameter.space$Intervention.Coverage[v],
                                                                                                maximum.generations = 500,
+                                                                                               applied.insecticide.dose = 1,
+                                                                                               recommended.insecticide.dose = 1,
+                                                                                               base.efficacy.decay.rate = 0.08,
+                                                                                               rapid.decay.rate = 0.015,
+                                                                                               threshold.generation = 15,
                                                                                                irm.deployment.strategy = "mixtures", #single, mixtures
                                                                                                mixture.strategy = "mix.sequential.discrete", #can be: random.mixtures; pyrethroid.plus; mix.sequential.continous; mix.sequential.discrete
                                                                                                irm.switch.strategy = "sequence", #will be sequence or rotation;default should be sequence
@@ -164,16 +175,9 @@ for(v in 1: nrow(parameter.space)){
                                                                                                return.threshold.value = 0.08, #this is the survival proportion in a bioassay that would return insecticide to arsenal
                                                                                                deployment.frequency = 20, #Number of mosquito generations between choosing insecticides (note, 1 year is 10 generations)
                                                                                                maximum.resistance.value = 25000,
-                                                                                               conversion.factor = 0.48,
-                                                                                               intercept = 0.15,
-                                                                                               applied.insecticide.dose = 1, #deployment is a ratio.
-                                                                                               recommended.insecticide.dose = 1,
-                                                                                               threshold.generation = 15,
-                                                                                               base.efficacy.decay.rate = 0.015, #default estimated from Toe et al
-                                                                                               rapid.decay.rate = 0.08, #default estimated from Toe et al
                                                                                                insecticide.suppression = FALSE,
-                                                                                               min.cross.selection = 0,
-                                                                                               max.cross.selection = 0), 
+                                                                                               min.cross.selection = parameter.space$cross.selection[v],
+                                                                                               max.cross.selection = parameter.space$cross.selection[v]), 
                                             maximum.generations = 500, number.of.insecticides = 2)                                              
   
   
@@ -213,5 +217,5 @@ for(v in 1: nrow(parameter.space)){
 mixture.df = do.call(rbind, temp.list.mixtures)
 mixture.df.1 = cbind(mixture.df, parameter.space)
 
-write.csv(mixture.df.1, ".//set.20.mixtures.csv")
+write.csv(mixture.df.1, ".//set.23.mixtures.csv")
 

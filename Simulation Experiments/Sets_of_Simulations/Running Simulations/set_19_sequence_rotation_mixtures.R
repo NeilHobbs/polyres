@@ -169,7 +169,9 @@ for(v in 1: nrow(parameter.space)){
                                                                                       threshold.generation = 10 ,
                                                                                       base.efficacy.decay.rate = 0,
                                                                                       rapid.decay.rate = 0,
-                                                                                      insecticide.suppression = TRUE), 
+                                                                                      insecticide.suppression = TRUE,
+                                                                                      min.cross.selection = 0,
+                                                                                      max.cross.selection = 0), 
                                             maximum.generations = 500, number.of.insecticides = 2)                                              
   
   
