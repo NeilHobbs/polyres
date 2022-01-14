@@ -27,11 +27,11 @@ insecticide_deployed_migration_mixture_cross_selection = function(exposure.scali
                                                                   other.mixture.part){
   
   refugia.intensity = refugia_selection_costs(initial.refugia.resistance = initial.refugia.resistance,
-                                              resistance.cost = resistance.cost,
+                                              resistance.cost = resistance.cost[currently.deployed.insecticide],
                                               exposure.scaling.factor = exposure.scaling.factor,
                                               nsim = nsim, 
-                                              minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability, 
-                                              maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability,
+                                              minimum.insecticide.resistance.heritability = minimum.insecticide.resistance.heritability[currently.deployed.insecticide], 
+                                              maximum.insecticide.resistance.heritability = maximum.insecticide.resistance.heritability[currently.deployed.insecticide],
                                               minimum.male.insecticide.exposure = minimum.male.insecticide.exposure,
                                               maximum.male.insecticide.exposure = maximum.male.insecticide.exposure, 
                                               minimum.female.insecticide.exposure = minimum.female.insecticide.exposure, 
