@@ -273,18 +273,6 @@ mixture.df = select_mixing_stategy(mixture.strategy = mixture.strategy,
       update.mixture.info = if(generation %% deployment.frequency == 0){
         if(irm.switch.strategy == "rotation"){
           irm_strategy_rotation_mixture(number.of.insecticides = number.of.insecticides,
-                                        current.generation = generation,
-                                        withdrawal.threshold = calc.withdrawal.threshold,
-                                        return.threshold = calc.return.threshold,
-                                        simulation.array = sim.array,
-                                        available.vector = available.vector,
-                                        withdrawn.vector = withdrawn.vector,
-                                        mixture.df = mixture.df,
-                                        current.mixture = deployed.mixture$mixture.id[generation],
-                                        deployment.frequency = deployment.frequency,
-                                        deployment.df = deployed.mixture)} else{
-              if(irm.switch.strategy == "sequence"){
-                irm_strategy_sequence_mixture(number.of.insecticides = number.of.insecticides,
                                               current.generation = generation,
                                               withdrawal.threshold = calc.withdrawal.threshold,
                                               return.threshold = calc.return.threshold,
@@ -294,28 +282,52 @@ mixture.df = select_mixing_stategy(mixture.strategy = mixture.strategy,
                                               mixture.df = mixture.df,
                                               current.mixture = deployed.mixture$mixture.id[generation],
                                               deployment.frequency = deployment.frequency,
-                                              deployment.df = deployed.mixture)
-              }
-            } 
+                                              deployment.df = deployed.mixture)} else{
+                                                if(irm.switch.strategy == "sequence"){
+                                                  irm_strategy_sequence_mixture(number.of.insecticides = number.of.insecticides,
+                                                                                      current.generation = generation,
+                                                                                      withdrawal.threshold = calc.withdrawal.threshold,
+                                                                                      return.threshold = calc.return.threshold,
+                                                                                      simulation.array = sim.array,
+                                                                                      available.vector = available.vector,
+                                                                                      withdrawn.vector = withdrawn.vector,
+                                                                                      mixture.df = mixture.df,
+                                                                                      current.mixture = deployed.mixture$mixture.id[generation],
+                                                                                      deployment.frequency = deployment.frequency,
+                                                                                      deployment.df = deployed.mixture)
+                                                }else{
+                                                  if(irm.switch.strategy == "insecticide.1"){
+                                                    decision_on_insecticide_1_only_standard(number.of.insecticides = number.of.insecticides,
+                                                                                   current.generation = generation,
+                                                                                   withdrawal.threshold = calc.withdrawal.threshold,
+                                                                                   return.threshold = calc.return.threshold,
+                                                                                   simulation.array = sim.array,
+                                                                                   available.vector = available.vector,
+                                                                                   withdrawn.vector = withdrawn.vector,
+                                                                                   mixture.df = mixture.df,
+                                                                                   current.mixture = deployed.mixture$mixture.id[generation],
+                                                                                   deployment.frequency = deployment.frequency,
+                                                                                   deployment.df = deployed.mixture)
+                                                  }
+                                                }
+                                              }
         
         # mixture.info = list(available.mixtures, available.vector, withdrawn.vector, deployed.mixture)
       }
       if(generation %% deployment.frequency == 0){available.mixtures = update.mixture.info[[1]]}
       if(generation %% deployment.frequency == 0){available.vector = update.mixture.info[[2]]}
       if(generation %% deployment.frequency == 0){withdrawn.vector = update.mixture.info[[3]]}
-      if(generation %% deployment.frequency == 0){deployed.mixture = update.mixture.info[[4]]}
+      if(generation %% deployment.frequency == 0){deployed.mixture = update.mixture.info[[4]]
+      
+      }
     }
-    #A break point to stop simuation if there is no insecticide deployed
-    #if(is.na(deployed.insecticide[generation])){break}
-    
   }#end of for(generation) loop
+    #ensure the simulation array is return after running
+    #need to develop an quick and easy way to turn array into dataframes for plotting purposes
+    return(list(sim.array, deployed.mixture))
+  }
   
-  #ensure the simulation array is return after running
-  #need to develop an quick and easy way to turn array into dataframes for plotting purposes
-  return(list(sim.array, deployed.mixture))
-}
-
-
+  
 # A = run_simulation_intervention_test_mixtures(number.of.insecticides = 4,
 #                                               exposure.scaling.factor = 10,
 #                                               nsim = 1,
