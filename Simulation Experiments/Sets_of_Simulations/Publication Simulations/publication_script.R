@@ -24,7 +24,7 @@ load_all()
 
 # ##Step 1: Create a data frame for the parameter space: ##hashed out to prevent re-sampling
 # 
-# parameter.space.df = data.frame(lhs::randomLHS(5000, 6)) #20,000 random samples of the 6 input parameters.
+# parameter.space.df = data.frame(lhs::randomLHS(5000, 6)) #5,000 random samples of the 6 input parameters.
 # 
 # 
 # #Rename and sample from the uniform distributions
@@ -67,7 +67,7 @@ load_all()
 #     # -Secondary Outcome = Peak Resistance.
 # 
 # 
-# #Do the sequence runs: run in chunks of 40,000
+# #Do the sequence runs:
 # 
 # 
 # temp.list.sequence = list()
@@ -305,12 +305,12 @@ load_all()
 # write.csv(mixture.df.publication, ".//mixture.df.publication.csv")
 
 
-    ##The simulation running has been been deliberately hashed out. To run highlight lines 23 to 303.
-      #then press crtl+shft+c and this should unhash all those lines. 
-      #The simulations can take a long time time to run. We therefore letting each 
-      #strategy run separately after each has finished. Depending on your computer,
-      #it may be worth running each for loop in chunks of say 50000. 
-      
+##The simulation running has been been deliberately hashed out. To run highlight lines 23 to 303.
+#then press crtl+shft+c and this should unhash all those lines. 
+#The simulations can take a long time time to run. We therefore letting each 
+#strategy run separately after each has finished. Depending on your computer,
+#it may be worth running each for loop in chunks of say 50000. 
+
 
 ##RUN WITH A 30 GENERATION DEPLOYMENT INTERVAL - For LLINs
 
@@ -898,11 +898,11 @@ for(i in 1:50000){
 polygenic.resistance.values = seq(0, 900, by = 0.1)
 bioassay.values = c()
 for(i in 1:length(polygenic.resistance.values)){
-bioassay.values[i] = resistance_to_bioassay_survival(mean.population.resistance = polygenic.resistance.values[i],
-                                                     nsim = 1,
-                                                     sd.population.resistance = 0, #measure without error,
-                                                     michaelis.menten.slope = 1,
-                                                     maximum.bioassay.survival.proportion = 1)
+  bioassay.values[i] = resistance_to_bioassay_survival(mean.population.resistance = polygenic.resistance.values[i],
+                                                       nsim = 1,
+                                                       sd.population.resistance = 0, #measure without error,
+                                                       michaelis.menten.slope = 1,
+                                                       maximum.bioassay.survival.proportion = 1)
 }
 
 field.survival = c()
@@ -920,16 +920,16 @@ for(i in 1:length(bioassay.values)){
 example.df = data.frame(polygenic.resistance.values, bioassay.values, field.survival)
 
 
-ggplot(example.df, aes(x=polygenic.resistance.values,
-                       y = bioassay.values))+
+scale.plot.a = ggplot(example.df, aes(x=polygenic.resistance.values,
+                                      y = bioassay.values))+
   geom_line(aes(x=polygenic.resistance.values,
-                 y=bioassay.values*100),
-             colour = "black",
+                y=bioassay.values*100),
+            colour = "black",
             size = 3,
             alpha = 0.7)+
   geom_line(aes(x=polygenic.resistance.values,
-                 y=field.survival*100),
-             colour = "green",
+                y=field.survival*100),
+            colour = "green",
             size = 3,
             alpha = 0.7)+
   geom_segment(aes(x=0, y=10, xend=100, yend=10),
@@ -951,8 +951,51 @@ ggplot(example.df, aes(x=polygenic.resistance.values,
   scale_x_continuous(breaks=c(0, 100, 300, 500, 700, 900))+
   xlab("Mean Population Polygenic Resistance Score")+
   ylab("Survival (%)")+
+  ggtitle("A")+
   theme_classic()+
-  theme(text = element_text(size=20))
+  theme(text = element_text(size=15))
+
+
+scale.plot.b = ggplot(example.df, aes(x=polygenic.resistance.values,
+                                      y = bioassay.values))+
+  geom_line(aes(x=polygenic.resistance.values,
+                y=bioassay.values*100),
+            colour = "black",
+            size = 3,
+            alpha = 0.7)+
+  geom_line(aes(x=polygenic.resistance.values,
+                y=field.survival*100),
+            colour = "green",
+            size = 3,
+            alpha = 0.7)+
+  geom_segment(aes(x=0, y=10, xend=100, yend=10),
+               linetype = "dashed",
+               size = 1.5,
+               colour = "blue")+
+  geom_segment(aes(x=100, y=0, xend=100, yend=10),
+               linetype = "dashed",
+               size = 1.5,
+               colour = "blue")+
+  annotate("text", x=50, y = 18.5,
+           label = "Field Survival",
+           angle = 12,
+           colour = "green",
+           size = 6)+
+  annotate("text", x=50, y = 6.4,
+           label = "Bioassay Survival",
+           colour = "black",
+           angle = 21,
+           size = 6)+
+  xlab("Mean Population Polygenic Resistance Score")+
+  ylab("Survival (%)")+
+  xlim(0, 100)+
+  ylim(0, 25)+
+  ggtitle("B")+
+  theme_classic()+
+  theme(text = element_text(size=15))
+
+#FIGURE 1
+scale.plot.a + scale.plot.b
 
 
 ## Read in the data sets
@@ -1075,8 +1118,8 @@ rot.seq.df.all.no.draws = rot.seq.df.all%>%
   dplyr::filter(proportion.difference != 0)
 
 seq.rot.count.labels = data.frame(table(rot.seq.df.all.no.draws$cross.selection,
-      rot.seq.df.all.no.draws$deployment.frequency,
-      rot.seq.df.all.no.draws$start.resistance))
+                                        rot.seq.df.all.no.draws$deployment.frequency,
+                                        rot.seq.df.all.no.draws$start.resistance))
 
 seq.rot.count.labels = seq.rot.count.labels%>%
   dplyr::rename("cross.selection" = Var1)%>%
@@ -1093,6 +1136,28 @@ seq.rot.count.labels$cross.selection.category = ifelse(as.numeric(as.character(s
 
 plot_seq_rot_primary_outcome = function(){
   
+  
+  rot.seq.df.all.no.draws = rot.seq.df.all%>%
+    dplyr::filter(proportion.difference != 0)
+  
+  seq.rot.count.labels = data.frame(table(rot.seq.df.all.no.draws$cross.selection,
+                                          rot.seq.df.all.no.draws$deployment.frequency,
+                                          rot.seq.df.all.no.draws$start.resistance))
+  
+  seq.rot.count.labels = seq.rot.count.labels%>%
+    dplyr::rename("cross.selection" = Var1)%>%
+    dplyr::rename("deployment.frequency" = Var2)%>%
+    dplyr::rename("start.resistance" = Var3)
+  
+  seq.rot.count.labels$cross.selection.category = ifelse(as.numeric(as.character(seq.rot.count.labels$cross.selection)) > 0,
+                                                         yes = "Positive",
+                                                         no = ifelse(as.numeric(as.character(seq.rot.count.labels$cross.selection)) < 0,
+                                                                     yes = "Negative",
+                                                                     no = "None"))
+  
+  
+  
+  
   rot.seq.df.all.no.draws$operational.outcome = ifelse(rot.seq.df.all.no.draws$proportion.difference > 0,
                                                        yes = "Favours Rotations",
                                                        no = ifelse(rot.seq.df.all.no.draws$proportion.difference < 0,
@@ -1108,7 +1173,7 @@ plot_seq_rot_primary_outcome = function(){
                                                                         no = "None"))
   
   
- 
+  
   seq.rot.plot.all = ggplot(rot.seq.df.all.no.draws, aes(x=proportion.difference*100))+
     geom_histogram(aes(fill = operational.outcome),
                    bins = 50,
@@ -1117,6 +1182,10 @@ plot_seq_rot_primary_outcome = function(){
     scale_fill_manual(values = c("red", "blue"))+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey",
                size = 2)+
+    annotate("segment", x = -25, xend = -75, y = 7000, yend = 7000, colour = "blue", size=3, alpha=0.4, arrow=arrow())+
+    annotate("segment", x = 10, xend = 45, y = 7000, yend = 7000, colour = "red", size=3, alpha=0.4, arrow=arrow())+
+    annotate("text", x = -50, y = 7200, label = paste0("Increasing \n Benefit \n Sequences"))+
+    annotate("text", x = 25, y = 7200, label = paste0("Increasing \n Benefit \n Rotations"))+
     #xlim(-50, 50)+
     xlab("Percentage Difference in Operational Lifespan")+
     ylab("Count")+
@@ -1124,7 +1193,6 @@ plot_seq_rot_primary_outcome = function(){
     guides(fill=guide_legend(title="Outcome"))+
     theme_classic()+ #draws = 158337
     theme(legend.position = "bottom")
-  
   
   seq.rot.no.draws.10.0 = rot.seq.df.all.no.draws%>%
     dplyr::filter(deployment.frequency == 10)%>%
@@ -1158,85 +1226,86 @@ plot_seq_rot_primary_outcome = function(){
     dplyr::filter(deployment.frequency == 30)%>%
     dplyr::filter(start.resistance == 50)
   
-  seq.rot.plot.10.0  = ggplot(seq.rot.no.draws.10.0, aes(x=proportion.difference*100,
-                                                         y = cross.selection.category))+
+  seq.rot.plot.10.0 = ggplot(seq.rot.no.draws.10.0, aes(x=proportion.difference*100,
+                                                        y = as.factor(cross.selection)))+
     geom_density_ridges(aes(fill = operational.outcome),alpha = 0.4, 
-                        #stat="binline",
-                        colour = "black"#,
-                        #bins = 50
+                        stat="binline",
+                        colour = "black",
+                        bins = 50
     )+
     scale_fill_manual(values = c("red", "blue"))+
     geom_label(data = seq.rot.count.labels.10.0,
                aes(x=50,
-                   y=cross.selection.category,
+                   y=cross.selection,
                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    xlab(" ")+
+    ylab("Cross Resistance")+
     xlim(-100, 50)+
     ggtitle("Novel - Deployment Interval: 10 Generations")+
     theme_classic()+
     theme(legend.position = "none")
   
+  
   seq.rot.plot.30.0  = ggplot(seq.rot.no.draws.30.0, aes(x=proportion.difference*100,
-                                                         y = cross.selection.category))+
+                                                         y = as.factor(cross.selection)))+
     geom_density_ridges(aes(fill = operational.outcome),alpha = 0.4, 
-                        #stat="binline",
-                        colour = "black"#,
-                        #bins = 50
+                        stat="binline",
+                        colour = "black",
+                        bins = 50
     )+
     scale_fill_manual(values = c("red", "blue"))+
     geom_label(data = seq.rot.count.labels.30.0,
                aes(x=50,
-                   y=cross.selection.category,
+                   y=cross.selection,
                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    ylab("Cross Resistance")+
     xlim(-100, 50)+
     ggtitle("Novel - Deployment Interval: 30 Generations")+
     theme_classic()+
     theme(legend.position = "none")
   
   seq.rot.plot.10.50  = ggplot(seq.rot.no.draws.10.50, aes(x=proportion.difference*100,
-                                                           y = cross.selection.category))+
+                                                           y = as.factor(cross.selection)))+
     geom_density_ridges(aes(fill = operational.outcome),alpha = 0.4, 
-                        #stat="binline",
-                        colour = "black"#,
-                        #bins = 50
+                        stat="binline",
+                        colour = "black",
+                        bins = 50
     )+
     scale_fill_manual(values = c("red", "blue"))+
     geom_label(data = seq.rot.count.labels.10.50,
                aes(x=50,
-                   y=cross.selection.category,
+                   y=cross.selection,
                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    xlab(" ")+
+    ylab(" ")+
     xlim(-100, 50)+
     ggtitle("Pre-Used - Deployment Interval: 10 Generations")+
     theme_classic()+
     theme(legend.position = "none")
   
   seq.rot.plot.30.50  = ggplot(seq.rot.no.draws.30.50, aes(x=proportion.difference*100,
-                                                           y = cross.selection.category))+
+                                                           y = as.factor(cross.selection)))+
     geom_density_ridges(aes(fill = operational.outcome),alpha = 0.4, 
-                        #stat="binline",
-                        colour = "black"#,
-                        #bins = 50
+                        stat="binline",
+                        colour = "black",
+                        bins = 50
     )+
     scale_fill_manual(values = c("red", "blue"))+
     geom_label(data = seq.rot.count.labels.30.50,
                aes(x=50,
-                   y=cross.selection.category,
+                   y=cross.selection,
                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+    
+    ylab(" ")+    
     xlim(-100, 50)+
     ggtitle("Pre-Used - Deployment Interval: 30 Generations")+
     theme_classic()+
@@ -1303,84 +1372,86 @@ rot.seq.draws.label = rot.seq.draws.label%>%
 
 plot_seq_rot_secondary_outcome = function(){
   
-  secondary.peak.plot = ggplot(rot.seq.df.draws, aes(x=difference.peak.resistance.bioassay*100))+
-    geom_histogram(aes(fill = as.character(cross.selection)),
-                   colour = "black",
-                   binwidth = 0.25)+
-    scale_fill_manual(values =rev(c("#67001f",
-                                    "#b2182b",
-                                    "#d6604d",
-                                    "#f4a582",
-                                    "#fddbc7",
-                                    "#4d9221",
-                                    "#d1e5f0",
-                                    "#92c5de",
-                                    "#4393c3",
-                                    "#2166ac",
-                                    "#053061")))+
+  rot.seq.df.draws$secondary.peak = ifelse(rot.seq.df.draws$difference.peak.resistance.bioassay > 0.001,
+                                           yes = "sequence better",
+                                           no = ifelse(rot.seq.df.draws$difference.peak.resistance.bioassay < 0.001,
+                                                       yes = "draw",
+                                                       no = "rotation better"))
+  
+  count.labels = data.frame(table(rot.seq.df.draws$cross.selection))
+  
+  count.labels = count.labels%>%
+    dplyr::rename("cross.selection" = Var1)
+  
+  secondary.peak.plot = ggplot(rot.seq.df.draws, aes(x=difference.peak.resistance.bioassay*100,
+                                                     y = as.factor(cross.selection)))+
+    geom_density_ridges(aes(fill = secondary.peak),
+                        colour = "black",
+                        stat = "binline",
+                        bins = 50)+
+    scale_fill_manual(values = c("grey","red"))+
+    geom_vline(xintercept = 0, colour = "black",
+               linetype = "dashed")+
+    geom_label(data = count.labels, aes(x=10.5,
+                                        y=cross.selection,
+                                        label = Freq),
+               size = 3)+
     theme_bw()+
-    xlim(-2, 10)+
+    annotate("segment", x = 1, xend = 6, y = 12, yend = 12,
+             colour = "red", size = 2, arrow = arrow())+
+    annotate("text", y=12.2, x = 3, label = paste0("Increasing Benefit Rotations"))+
+    ylab("Cross Resistance")+
     xlab("Difference in Peak Bioassay Survival")+
     guides(fill=guide_legend(title="Cross Selection"))+
-    theme(legend.position = "none")
+    theme(legend.position = "none",
+          axis.title.x = element_text(size = 12),
+          axis.title.y = element_text(size = 12))
   
-  secondary.mean.plot = ggplot(rot.seq.df.draws, aes(x=difference.mean.resistance.bioassay*100))+
-    geom_histogram(aes(fill = as.character(cross.selection)),
-                   colour = "black",
-                   binwidth = 0.25)+
-    scale_fill_manual(values =rev(c("#67001f",
-                                    "#b2182b",
-                                    "#d6604d",
-                                    "#f4a582",
-                                    "#fddbc7",
-                                    "#4d9221",
-                                    "#d1e5f0",
-                                    "#92c5de",
-                                    "#4393c3",
-                                    "#2166ac",
-                                    "#053061")))+
-    xlim(-2, 10)+
+  
+  rot.seq.df.draws$secondary.mean = ifelse(rot.seq.df.draws$difference.mean.resistance.bioassay > 0.001,
+                                           yes = "sequence better",
+                                           no = ifelse(rot.seq.df.draws$difference.mean.resistance.bioassay < 0.001,
+                                                       yes = "draw",
+                                                       no = "rotation better"))
+  
+  
+  secondary.mean.plot = ggplot(rot.seq.df.draws, aes(x=difference.mean.resistance.bioassay*100,
+                                                     y = as.factor(cross.selection)))+
+    geom_density_ridges(aes(fill = secondary.mean),
+                        colour = "black",
+                        stat = "binline",
+                        bins = 50)+
+    scale_fill_manual(values = c("grey","red"))+
+    geom_vline(xintercept = 0, colour = "black",
+               linetype = "dashed")+
+    geom_label(data = count.labels, aes(x=10.5,
+                                        y=cross.selection,
+                                        label = Freq),
+               size = 3)+
     theme_bw()+
+    annotate("segment", x = 1, xend = 6, y = 12, yend = 12,
+             colour = "red", size = 2, arrow = arrow())+
+    annotate("text", y=12.2, x = 3, label = paste0("Increasing Benefit Rotations"))+
+    ylab("Cross Resistance")+
     xlab("Difference in Mean Bioassay Survival")+
-    guides(fill=guide_legend(title="Cross Selection"))+
-    theme(legend.position = "none")
-  
-  get.legend =ggplot(rot.seq.df.draws, aes(x=difference.mean.resistance.bioassay*100))+
-    geom_histogram(aes(fill = as.character(cross.selection)),
-                   colour = "black",
-                   binwidth = 0.25)+
-    scale_fill_manual(values =rev(c("#67001f",
-                                    "#b2182b",
-                                    "#d6604d",
-                                    "#f4a582",
-                                    "#fddbc7",
-                                    "#4d9221",
-                                    "#d1e5f0",
-                                    "#92c5de",
-                                    "#4393c3",
-                                    "#2166ac",
-                                    "#053061")))+
-    theme_bw()+
-    xlab("Difference in Mean Bioassay Survival")+
-    guides(fill=guide_legend(title="Cross Selection"),
-    )+
-    theme(legend.direction="horizontal")
+    guides(fill=guide_legend(title="Cross Resistance"))+
+    theme(legend.position = "none",
+          axis.title.x = element_text(size = 12),
+          axis.title.y = element_text(size = 12))
   
   
-  B = cowplot::get_legend(get.legend)
   
-  layout <- "
-AAABBB
-AAABBB
-##CC##
-"
-  final.plot = secondary.peak.plot + secondary.mean.plot + B + 
-    plot_layout(design = layout)
+  final.plot = secondary.peak.plot +
+    secondary.mean.plot
   
   return(final.plot)
 }
 
+
 plot_seq_rot_secondary_outcome()
+
+
+
 
 
 ##Sequences & Rotations vs Mixtures
@@ -1446,8 +1517,8 @@ seq.mix.df.no.draws = rot.seq.df.all%>%
   dplyr::filter(prop.diff.seq.mix != 0)
 
 seq.mix.df.labels = data.frame(table(seq.mix.df.no.draws$deployment.frequency,
-                          seq.mix.df.no.draws$cross.selection,
-                          seq.mix.df.no.draws$start.resistance))
+                                     seq.mix.df.no.draws$cross.selection,
+                                     seq.mix.df.no.draws$start.resistance))
 
 seq.mix.df.labels = seq.mix.df.labels%>%
   dplyr::rename("deployment.frequency" = Var1)%>%
@@ -1469,12 +1540,12 @@ plot_seq_mix_primary_outcome = function(){
                                                                     no = "None"))
   
   seq.mix.df.labels = data.frame(table(seq.mix.df.no.draws$deployment.frequency,
-                                       seq.mix.df.no.draws$cross.selection.category,
+                                       seq.mix.df.no.draws$cross.selection,
                                        seq.mix.df.no.draws$start.resistance))
   
   seq.mix.df.labels = seq.mix.df.labels%>%
     dplyr::rename("deployment.frequency" = Var1)%>%
-    dplyr::rename("cross.selection.category" = Var2)%>%
+    dplyr::rename("cross.selection" = Var2)%>%
     dplyr::rename("start.resistance" = Var3)
   
   label.seq.mix= data.frame(x.coord = c(-10, 25),
@@ -1483,9 +1554,13 @@ plot_seq_mix_primary_outcome = function(){
   
   seq.mix.plot.all = ggplot(seq.mix.df.no.draws, aes(x=prop.diff.seq.mix*100))+
     geom_histogram(fill = "#005a32",
-                   colour = "#a1d99b")+
+                   colour = "black",
+                   alpha = 0.7,
+                   bins = 50)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey",
                size = 2)+
+    annotate("segment", x = 10, xend = 45, y = 5200, yend = 5200, colour = "#005a32", size=3, alpha=0.7, arrow=arrow())+
+    annotate("text", x = 20, y = 5600, label = paste0("Increasing \n Benefit \n Mixtures"))+
     xlab("Percentage Difference in Operational Lifespan")+
     ylab("Count")+
     ggtitle("Overall - 79845 Simulations")+
@@ -1525,70 +1600,78 @@ plot_seq_mix_primary_outcome = function(){
     dplyr::filter(start.resistance == 50)
   
   seq.mix.plot.10.0  = ggplot(seq.mix.no.draws.10.0, aes(x=prop.diff.seq.mix*100,
-                                                         y = cross.selection.category))+
+                                                         y = as.factor(cross.selection)))+
     geom_density_ridges(alpha = 0.7, 
                         fill = "#005a32",
-                        colour = "#a1d99b"
+                        colour = "black",
+                        stat = "binline",
+                        bins = 30
     )+
     geom_label(data = seq.mix.df.labels.10.0, aes(x=80,
-                                                  y=cross.selection.category,
+                                                  y=cross.selection,
                                                   label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    xlab(" ")+
+    ylab("Cross Resistance")+
     ggtitle("Novel - Deployment Interval: 10 Generations")+
     xlim(0, 80)+
     theme_classic()
   
   seq.mix.plot.30.0  = ggplot(seq.mix.no.draws.30.0, aes(x=prop.diff.seq.mix*100,
-                                                         y = cross.selection.category))+
+                                                         y = as.factor(cross.selection)))+
     geom_density_ridges(alpha = 0.7, 
                         fill = "#005a32",
-                        colour = "#a1d99b"
+                        colour = "black",
+                        stat = "binline",
+                        bins = 30
     )+
     geom_label(data = seq.mix.df.labels.30.0, aes(x=80,
-                                                  y=cross.selection.category,
+                                                  y=cross.selection,
                                                   label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    ylab("Cross Resistance")+
     ggtitle("Novel - Deployment Interval: 30 Generations")+
     xlim(0, 80)+
     theme_classic()
   
   seq.mix.plot.10.50  = ggplot(seq.mix.no.draws.10.50, aes(x=prop.diff.seq.mix*100,
-                                                           y = cross.selection.category))+
+                                                           y = as.factor(cross.selection)))+
     geom_density_ridges(alpha = 0.7, 
                         fill = "#005a32",
-                        colour = "#a1d99b"
+                        colour = "black",
+                        stat = "binline",
+                        bins = 30
     )+
     geom_label(data = seq.mix.df.labels.10.50, aes(x=80,
-                                                   y=cross.selection.category,
+                                                   y=cross.selection,
                                                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    xlab(" ")+
+    ylab(" ")+
     ggtitle("Pre-Used - Deployment Interval: 10 Generations")+
     xlim(0, 80)+
     theme_classic()
   
   
   seq.mix.plot.30.50  = ggplot(seq.mix.no.draws.30.50, aes(x=prop.diff.seq.mix*100,
-                                                           y = cross.selection.category))+
+                                                           y = as.factor(cross.selection)))+
     geom_density_ridges(alpha = 0.7, 
                         fill = "#005a32",
-                        colour = "#a1d99b"
+                        colour = "black",
+                        stat = "binline",
+                        bins = 30
     )+
     geom_label(data = seq.mix.df.labels.30.50, aes(x=80,
-                                                   y=cross.selection.category,
+                                                   y=cross.selection,
                                                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    ylab(" ")+
     xlim(0, 80)+
     ggtitle("Pre-Used - Deployment Interval: 30 Generations")+
     theme_classic()
@@ -1600,12 +1683,13 @@ plot_seq_mix_primary_outcome = function(){
   side.panel.seq.mix = top.seq.mix / bottom.seq.mix
   final.figure.seq.mix = seq.mix.plot.all + side.panel.seq.mix + plot_layout(widths = c(1, 2)) +
     plot_annotation(title = "Sequences vs Mixtures")
-  final.figure.seq.mix
+  
   
   return(final.figure.seq.mix)
 }
 #Figure 6
 plot_seq_mix_primary_outcome()
+
 
 
 #Rotations vs Mixtures::::
@@ -1637,19 +1721,23 @@ plot_rot_mix_primary_outcome = function(){
                                                                     no = "None"))
   
   rot.mix.df.labels = data.frame(table(rot.mix.df.no.draws$deployment.frequency,
-                                       rot.mix.df.no.draws$cross.selection.category,
+                                       rot.mix.df.no.draws$cross.selection,
                                        rot.mix.df.no.draws$start.resistance))
   
   rot.mix.df.labels = rot.mix.df.labels%>%
     dplyr::rename("deployment.frequency" = Var1)%>%
-    dplyr::rename("cross.selection.category" = Var2)%>%
+    dplyr::rename("cross.selection" = Var2)%>%
     dplyr::rename("start.resistance" = Var3)
   
   rot.mix.plot.all = ggplot(rot.mix.df.no.draws, aes(x=prop.diff.rot.mix*100))+
     geom_histogram(fill = "#005a32",
-                   colour = "#a1d99b")+
+                   colour = "black",
+                   bins = 50,
+                   alpha = 0.7)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey",
                size = 2)+
+    annotate("segment", x = 10, xend = 45, y = 8000, yend =8000, colour = "#005a32", size=3, alpha=0.7, arrow=arrow())+
+    annotate("text", x = 20, y =7600, label = paste0("Increasing \n Benefit \n Mixtures"))+
     xlab("Percentage Difference in Operational Lifespan")+
     ylab("Count")+
     ggtitle("Overall - 75885 Simulations")+
@@ -1689,70 +1777,78 @@ plot_rot_mix_primary_outcome = function(){
     dplyr::filter(start.resistance == 50)
   
   rot.mix.plot.10.0  = ggplot(rot.mix.no.draws.10.0, aes(x=prop.diff.rot.mix*100,
-                                                         y = cross.selection.category))+
+                                                         y = as.factor(cross.selection)))+
     geom_density_ridges(alpha = 0.7, 
                         fill = "#005a32",
-                        colour = "#a1d99b"
+                        colour = "black",
+                        stat = "binline",
+                        bins = 30
     )+
     geom_label(data = rot.mix.df.labels.10.0, aes(x=80,
-                                                  y=cross.selection.category,
+                                                  y=cross.selection,
                                                   label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    xlab(" ")+
+    ylab("Cross Resistance")+
     ggtitle("Novel - Deployment Interval: 10 Generations")+
     xlim(0, 80)+
     theme_classic()
   
   rot.mix.plot.30.0  = ggplot(rot.mix.no.draws.30.0, aes(x=prop.diff.rot.mix*100,
-                                                         y = cross.selection.category))+
+                                                         y = as.factor(cross.selection)))+
     geom_density_ridges(alpha = 0.7, 
                         fill = "#005a32",
-                        colour = "#a1d99b"
+                        colour = "black",
+                        stat = "binline",
+                        bins = 30
     )+
     geom_label(data = rot.mix.df.labels.30.0, aes(x=80,
-                                                  y=cross.selection.category,
+                                                  y=cross.selection,
                                                   label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    ylab("Cross Resistance")+
     ggtitle("Novel - Deployment Interval: 30 Generations")+
     xlim(0, 80)+
     theme_classic()
   
   rot.mix.plot.10.50  = ggplot(rot.mix.no.draws.10.50, aes(x=prop.diff.rot.mix*100,
-                                                           y = cross.selection.category))+
+                                                           y = as.factor(cross.selection)))+
     geom_density_ridges(alpha = 0.7, 
                         fill = "#005a32",
-                        colour = "#a1d99b"
+                        colour = "black",
+                        stat = "binline",
+                        bins = 30
     )+
     geom_label(data = rot.mix.df.labels.10.50, aes(x=80,
-                                                   y=cross.selection.category,
+                                                   y=cross.selection,
                                                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    xlab(" ")+
+    ylab(" ")+
     ggtitle("Pre-Used - Deployment Interval: 10 Generations")+
     xlim(0, 80)+
     theme_classic()
   
   
   rot.mix.plot.30.50  = ggplot(rot.mix.no.draws.30.50, aes(x=prop.diff.rot.mix*100,
-                                                           y = cross.selection.category))+
+                                                           y = as.factor(cross.selection)))+
     geom_density_ridges(alpha = 0.7, 
                         fill = "#005a32",
-                        colour = "#a1d99b"
+                        colour = "black",
+                        stat = "binline",
+                        bins = 30
     )+
     geom_label(data = rot.mix.df.labels.30.50, aes(x=80,
-                                                   y=cross.selection.category,
+                                                   y=cross.selection,
                                                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab("Percentage Difference in Operational Lifespan")+
-    ylab("Cross Selection Between Insecticides")+
+    ylab(" ")+
     xlim(0, 80)+
     ggtitle("Pre-Used - Deployment Interval: 30 Generations")+
     theme_classic()
@@ -1938,21 +2034,20 @@ unique.df.1 = unique.df%>%
                   difference.sr <= -0.1)
 
 n.sims.1 = nrow(unique.df.1)
-  
-ggplot(unique.df.1, aes(x=difference.sr*100))+
-  geom_histogram(bins = 50,
-                 colour = "skyblue",
-                 fill = "operational.outcome.sr")+
-  geom_text(aes(x=-500, y=4000, label = paste0("Number of Simulations = ", n.sims.1
-                ),
-                size = 10))+
-  xlab("Percentage Difference in Operational Lifespan")+
-  ylab("Count")+
-  geom_vline(xintercept = 0, colour = "grey", linetype = "dashed")+
-  ggtitle("Favours Sequences vs Favours Rotations")+
-  theme_classic()+
-  theme(legend.position = "none",
-      )
+
+# ggplot(unique.df.1, aes(x=difference.sr*100))+
+#   geom_histogram(bins = 50,
+#                  colour = "skyblue")+
+#   geom_text(aes(x=-500, y=4000, label = paste0("Number of Simulations = ", n.sims.1
+#   ),
+#   size = 10))+
+#   xlab("Percentage Difference in Operational Lifespan")+
+#   ylab("Count")+
+#   geom_vline(xintercept = 0, colour = "grey", linetype = "dashed")+
+#   ggtitle("Favours Sequences vs Favours Rotations")+
+#   theme_classic()+
+#   theme(legend.position = "none"
+#   )
 
 plot_unique_insecticide_difference = function(){
   
@@ -1982,8 +2077,8 @@ plot_unique_insecticide_difference = function(){
   
   
   unique.df.2 = unique.df%>%
-     dplyr::filter(difference.sa >= 0.1 |
-                     difference.sa <= -0.1)
+    dplyr::filter(difference.sa >= 0.1 |
+                    difference.sa <= -0.1)
   n.sims.2 = nrow(unique.df.2)
   
   plot.difference.sa = ggplot(unique.df.2, aes(x=difference.sa*100))+
@@ -2016,7 +2111,7 @@ plot_unique_insecticide_difference = function(){
                    colour = "black",
                    alpha = 0.8,
                    aes(fill = operational.outcome.sm))+
-    scale_fill_manual(values = c("green", "blue"))+
+    scale_fill_manual(values = c("#005a32", "blue"))+
     geom_text(aes(x=0, y=2000, label = paste0("N = ", n.sims.3
     ),
     size = 10))+
@@ -2041,7 +2136,7 @@ plot_unique_insecticide_difference = function(){
                    alpha = 0.8,
                    aes(fill = operational.outcome.ra))+
     scale_fill_manual(values = c("purple", "red"))+
-    geom_text(aes(x=-50, y=2500, label = paste0("N = ", n.sims.4
+    geom_text(aes(x=-0, y=2500, label = paste0("N = ", n.sims.4
     ),
     size = 10))+
     xlab("Percentage Difference in Operational Lifespan")+    
@@ -2065,7 +2160,7 @@ plot_unique_insecticide_difference = function(){
                    colour = "black",
                    alpha = 0.8,
                    aes(fill = operational.outcome.rm))+
-    scale_fill_manual(values = c("green", "red"))+
+    scale_fill_manual(values = c("#005a32", "red"))+
     geom_text(aes(x=-20, y=2500, label = paste0("N = ", n.sims.5
     ),
     size = 10))+
@@ -2091,7 +2186,7 @@ plot_unique_insecticide_difference = function(){
                    colour = "black",
                    alpha = 0.8,
                    aes(fill = operational.outcome.am))+
-    scale_fill_manual(values = c("purple", "green"))+
+    scale_fill_manual(values = c("purple", "#005a32"))+
     geom_text(aes(x=0, y=2000, label = paste0("N = ", n.sims.6
     ),
     size = 10))+
@@ -2143,7 +2238,7 @@ df_from_pcor_test = function(irm.strategy,
     dplyr::filter(strategy == strategy)%>%
     dplyr::filter(start.resistance == start.resistance)%>%
     dplyr::filter(cross.selection == cross.selection)%>%
-        dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
+    dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
                   "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure", "simulation.duration")
   
   
@@ -2163,7 +2258,7 @@ df_from_pcor_test = function(irm.strategy,
   teststat = pcor.output$test.statistic
   lower.95.ci = pcor.output$lower
   upper.95.ci = pcor.output$upper
-
+  
   strategy = irm.strategy
   cross.selection = cross.selection
   
@@ -2178,22 +2273,22 @@ df_from_pcor_test = function(irm.strategy,
 
 pcor_df_function = function(X,
                             dataset){
-
-cross.selection.vals = seq(-0.5, 0.5, by = 0.1)
-start.resist.vals = c(0, 50)
-
-pcor.list = list()
-pcor.list2 = list()
-for(j in 1:2){
-  for(i in 1:11){
-  pcor.list[[i]] = df_from_pcor_test(X, dataset, start.resist.vals[j], cross.selection.vals[i])
+  
+  cross.selection.vals = seq(-0.5, 0.5, by = 0.1)
+  start.resist.vals = c(0, 50)
+  
+  pcor.list = list()
+  pcor.list2 = list()
+  for(j in 1:2){
+    for(i in 1:11){
+      pcor.list[[i]] = df_from_pcor_test(X, dataset, start.resist.vals[j], cross.selection.vals[i])
+    }
+    pcor.list2[[j]] = pcor.list
   }
-  pcor.list2[[j]] = pcor.list
-}
-
-pcor.df = do.call(rbind, do.call(rbind, pcor.list2))
-
-return(pcor.df)
+  
+  pcor.df = do.call(rbind, do.call(rbind, pcor.list2))
+  
+  return(pcor.df)
 }
 sequence.set = rbind(sequence.df.10, sequence.df.30)
 rotation.set = rbind(rotation.df.10, rotation.df.30)
@@ -2211,15 +2306,15 @@ pcor.df.all = rbind(pcor.seq.df,
 make_pcor_plot = function(){
   
   pals = c("#74c476", "#006d2c", "#fb6a4a", "#a50f15", "#4eb3d3", "#084081")
-
+  
   
   label.df = data.frame(
     text.label = c("Increases Resistance", "Decreases Resistance"),
     label_x_coord = c(-0.5, 0.5), #have the label fairly central.
     label_y_coord = c("Mosquito Dispersal", "Mosquito Dispersal")) #Should be far enough away to not be overlapping any bars/points
-
+  
   figure = ggplot(pcor.df.all, aes(x=estimate, y=parameter, xmin =lower.95.ci,
-                       xmax = upper.95.ci, fill = Simulation.Conditions)) +
+                                   xmax = upper.95.ci, fill = Simulation.Conditions)) +
     geom_bar(stat = "identity", position = position_dodge())+
     geom_errorbarh(position = position_dodge())+
     scale_fill_manual(values = pals)+
@@ -2233,7 +2328,7 @@ make_pcor_plot = function(){
     theme(legend.position = "bottom",
           legend.justification = "left")
   
-    return(figure)
+  return(figure)
 }
 
 make_pcor_plot()
@@ -2244,7 +2339,7 @@ make_pcor_plot()
 ####################################################
 
 ##Generalised Linear (and Addditive) Modelling::
-  #join the 3 dataframes together::
+#join the 3 dataframes together::
 
 sequence.set.glm = sequence.set%>%
   dplyr::select("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
@@ -2338,8 +2433,8 @@ gam.female.exposure = mgcv::bam(simulation.duration ~
                                   Intervention.Coverage +
                                   as.factor(starting.status)+
                                   as.factor(dep.freq),
-                               data = df.for.glm.2,
-                               family = "poisson")
+                                data = df.for.glm.2,
+                                family = "poisson")
 
 
 plot(gam.female.exposure)#linear
@@ -2386,7 +2481,7 @@ find.max.logLik = function(dspline1, dspline2,  data){
   
   data$disperal.spline1 = ifelse(data$Dispersal > dspline1, data$Dispersal-dspline1, 0)
   data$dispersal.spline2  = ifelse(data$Dispersal > dspline2, data$Dispersal-dspline2, 0 )
-
+  
   
   temp.glm = glm(simulation.duration ~ 
                    strategy +
@@ -2433,7 +2528,7 @@ poisson.glm =  glm(simulation.duration ~
                      starting.status +
                      as.factor(dep.freq)+
                      cross.selection,
-                     data = df.for.glm.2,
+                   data = df.for.glm.2,
                    family = "poisson")
 
 AER::dispersiontest(poisson.glm) #overdispersed
@@ -2452,7 +2547,7 @@ neg.bin.glm =  MASS::glm.nb(simulation.duration ~
                               starting.status +
                               cross.selection,
                             data = df.for.glm.2)
-  
+
 summary(neg.bin.glm)
 confint(neg.bin.glm)
 
@@ -2472,7 +2567,7 @@ rf.dataset.rot.seq = sequence.set%>%
 rf.dataset.rot.seq$operational.outcome = c(rot.seq.10.operational.outcome, rot.seq.30.operational.outcome)
 
 rf.dataset.rot.seq = rf.dataset.rot.seq%>%
-   dplyr::mutate(operational.outcome = as.factor(operational.outcome))
+  dplyr::mutate(operational.outcome = as.factor(operational.outcome))
 
 
 ## 75% of the sample size
@@ -2500,8 +2595,8 @@ rf.model.seq.rot.df = data.frame(rf.model$importance)
 rf.model.seq.rot.df.sd = data.frame(rf.model$importanceSD)
 
 rf.model.seq.rot.df$parameter = c("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
-  "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
-  "Start.Resistance", "Cross.Selection")
+                                  "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+                                  "Start.Resistance", "Cross.Resistance")
 
 
 rf.predic.seq.rot = predict(rf.model, test.rf.dataset.rot.seq)
@@ -2514,24 +2609,45 @@ sum(accuracy)/66000*100
 #Model accuracy is 87.65%
 
 seq.rot.rf.plot.acc = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseAccuracy,
-                                y=parameter))+
+                                                      y=parameter,
+                                                      fill = parameter))+
   
-  geom_col(fill = "skyblue",
-           colour = "blue")+
+  geom_col(colour = "blue")+
+  scale_fill_manual(values = c("darkblue", #cross selection
+                               "skyblue", #dispersal
+                               "skyblue",
+                               "darkblue",
+                               "darkblue",
+                               "darkblue",
+                               "skyblue",
+                               "skyblue"))+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("A")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
+
 
 seq.rot.rf.plot.gini = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseGini,
-                                y=parameter))+
+                                                       y=parameter,
+                                                       fill = parameter))+
   
-  geom_col(fill = "skyblue",
-           colour = "blue")+
+  geom_col(colour = "blue")+
+  scale_fill_manual(values = c("darkblue", #cross selection
+                               "skyblue", #dispersal
+                               "skyblue",
+                               "darkblue",
+                               "darkblue",
+                               "darkblue",
+                               "skyblue",
+                               "skyblue"))+
+  
+  
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("B")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 gridExtra::grid.arrange(seq.rot.rf.plot.acc, seq.rot.rf.plot.gini,
                         nrow = 1)
@@ -2554,12 +2670,12 @@ train.rf.dataset.seq.adrot = parameter.space.unique.rf[train.ind, ]
 test.rf.dataset.seq.adrot= parameter.space.unique.rf[-train.ind, ]
 
 rf.model.seq.adrot = randomForest::randomForest(operational.outcome ~ .,
-                                      data = train.rf.dataset.seq.adrot,
-                                      type = "classification",
-                                      importance = TRUE,
-                                      ntree = 300,
-                                      mtry = 4,
-                                      node.size = 1000)
+                                                data = train.rf.dataset.seq.adrot,
+                                                type = "classification",
+                                                importance = TRUE,
+                                                ntree = 300,
+                                                mtry = 4,
+                                                node.size = 1000)
 
 
 
@@ -2571,9 +2687,9 @@ randomForest::varImpPlot(rf.model.seq.adrot)
 rf.model.seq.adrot.df = data.frame(rf.model.seq.adrot$importance)
 
 rf.model.seq.adrot.df$parameter = c("Heritability.1", "Heritability.2", "Fitness.Cost.1",
-                                 "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
-                                 "Cross.Selection", "Dispersal", "Intervention.Coverage", 
-                                 "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
+                                    "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
+                                    "Cross.Resistance", "Dispersal", "Intervention.Coverage", 
+                                    "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
 
 
 rf.predic.seq.adrot= predict(rf.model.seq.adrot, test.rf.dataset.seq.adrot)
@@ -2586,32 +2702,56 @@ sum(accuracy)/15000*100
 #Model accuracy is 90.98
 
 seq.adrot.rf.plot.acc = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseAccuracy,
-                                                      y=parameter))+
+                                                          y=parameter,
+                                                          fill = parameter))+
   
-  geom_col(fill = "seagreen1",
-           colour = "seagreen")+
+  geom_col(colour = "darkgreen")+
+  scale_fill_manual(values = c("seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen"))+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("C")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 seq.adrot.rf.plot.gini = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseGini,
-                                                       y=parameter))+
+                                                           y=parameter,
+                                                           fill = parameter))+
   
-  geom_col(fill = "seagreen1",
-           colour = "seagreen")+
+  geom_col(colour = "seagreen")+
+  scale_fill_manual(values = c("seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen"))+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("D")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 gridExtra::grid.arrange(seq.adrot.rf.plot.acc, seq.adrot.rf.plot.gini,
                         nrow = 1)
 
 
 ((seq.rot.rf.plot.acc + seq.rot.rf.plot.gini)/
-(seq.adrot.rf.plot.acc + seq.adrot.rf.plot.gini)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
-                        
+    (seq.adrot.rf.plot.acc + seq.adrot.rf.plot.gini)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
+
 
 
 
@@ -2636,17 +2776,17 @@ train.rf.dataset.rot.seq.mix = rf.dataset.rot.seq.mix[train.ind, ]
 test.rf.dataset.rot.seq.mix = rf.dataset.rot.seq.mix[-train.ind, ]
 
 rf.model.seq.rot.mix = randomForest::randomForest(operational.outcome ~ .,
-                                      data = train.rf.dataset.rot.seq.mix,
-                                      type = "classification",
-                                      importance = TRUE,
-                                      ntree = 300,
-                                      mtry = 4,
-                                      node.size = 1000)
+                                                  data = train.rf.dataset.rot.seq.mix,
+                                                  type = "classification",
+                                                  importance = TRUE,
+                                                  ntree = 300,
+                                                  mtry = 4,
+                                                  node.size = 1000)
 
 rf.model.seq.rot.mix.df = data.frame(rf.model.seq.rot.mix$importance)
 rf.model.seq.rot.mix.df$parameter = c("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
-                                     "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
-                                     "Start.Resistance", "Cross.Selection")
+                                      "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+                                      "Start.Resistance", "Cross.Resistance")
 
 rf.predic.seq.rot.mix= predict(rf.model.seq.rot.mix, test.rf.dataset.rot.seq.mix)
 
@@ -2659,24 +2799,41 @@ sum(accuracy)/66000*100
 #Model accuracy is 96.14%
 
 seq.rot.mix.rf.plot.acc = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseAccuracy,
-                                                      y=parameter))+
+                                                              y=parameter,
+                                                              fill = parameter))+
   
-  geom_col(fill = "skyblue",
-           colour = "blue")+
+  geom_col(colour = "blue")+
+  scale_fill_manual(values = c("darkblue", #cross selection
+                               "skyblue", #dispersal
+                               "skyblue",
+                               "skyblue",
+                               "darkblue",
+                               "darkblue",
+                               "skyblue",
+                               "darkblue"))+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("A")+
-  theme_classic()
-
+  theme_classic()+
+  theme(legend.position = "none")
 seq.rot.mix.rf.plot.gini = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseGini,
-                                                       y=parameter))+
+                                                               y=parameter,
+                                                               fill = parameter))+
   
-  geom_col(fill = "skyblue",
-           colour = "blue")+
+  geom_col(colour = "blue")+
+  scale_fill_manual(values = c("darkblue", #cross selection
+                               "skyblue", #dispersal
+                               "skyblue",
+                               "darkblue",
+                               "darkblue",
+                               "darkblue",
+                               "skyblue",
+                               "skyblue"))+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("B")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 
 seq.rot.mix.rf.plot.acc
@@ -2699,19 +2856,19 @@ train.rf.dataset.sam = rf.parameter.space.unique.sam[train.ind, ]
 test.rf.dataset.sam= rf.parameter.space.unique.sam[-train.ind, ]
 
 rf.model.sam = randomForest::randomForest(operational.outcome ~ .,
-                                                data = train.rf.dataset.sam,
-                                                type = "classification",
-                                                importance = TRUE,
-                                                ntree = 300,
-                                                mtry = 4,
-                                                node.size = 1000)
+                                          data = train.rf.dataset.sam,
+                                          type = "classification",
+                                          importance = TRUE,
+                                          ntree = 300,
+                                          mtry = 4,
+                                          node.size = 1000)
 
 rf.model.sam.df = data.frame(rf.model.sam$importance)
 
 rf.model.sam.df$parameter = c("Heritability.1", "Heritability.2", "Fitness.Cost.1",
-                                    "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
-                                    "Cross.Selection", "Dispersal", "Intervention.Coverage", 
-                                    "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
+                              "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
+                              "Cross.Resistance", "Dispersal", "Intervention.Coverage", 
+                              "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
 
 
 rf.predict.sam= predict(rf.model.sam, test.rf.dataset.sam)
@@ -2724,24 +2881,48 @@ sum(accuracy)/15000*100
 #Model accuracy is 91.16
 
 rf.plot.acc.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseAccuracy,
-                                                          y=parameter))+
+                                              y=parameter,
+                                              fill = parameter))+
   
-  geom_col(fill = "seagreen1",
-           colour = "seagreen")+
+  geom_col(colour = "seagreen")+
+  scale_fill_manual(values = c("seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen"))+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("C")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 rf.plot.gini.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseGini,
-                                                           y=parameter))+
+                                               y=parameter,
+                                               fill = parameter))+
   
-  geom_col(fill = "seagreen1",
-           colour = "seagreen")+
+  geom_col(colour = "seagreen")+
+  scale_fill_manual(values = c("seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen"))+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("D")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 gridExtra::grid.arrange(rf.plot.acc.sam, rf.plot.gini.sam,
                         nrow = 1)
@@ -2754,44 +2935,76 @@ gridExtra::grid.arrange(rf.plot.acc.sam, rf.plot.gini.sam,
 #Figure out what could be considered high/low coverage::
 
 violin.plot.a = ggplot(rf.dataset.rot.seq, aes(x=Intervention.Coverage,
-                                   y=operational.outcome))+
+                                               y=operational.outcome))+
   geom_violin(fill = "aquamarine", alpha = 0.5,
               colour = "deepskyblue4")+
   geom_vline(xintercept = 0.5, colour = "black",
              linetype = "dashed", size = 2)+
+  annotate("text", x=0.25, 
+           y=1,
+           size = 4,
+           label = paste0("No Operational\n Win Dominant"))+
+  annotate("text", x=0.75, 
+           y=2.5,
+           size = 4,
+           label = paste0("Choosing Between \n Rotations and Sequences \n Important"))+
   xlab("Intervention Coverage")+
   ylab("Operational Outcome")+
   ggtitle("A")+
   theme_classic()
 
 violin.plot.b = ggplot(parameter.space.unique.rf, aes(x=Coverage,
-                                          y=operational.outcome))+
+                                                      y=operational.outcome))+
   geom_violin(fill = "aquamarine", alpha = 0.5,
               colour = "deepskyblue4")+
   geom_vline(xintercept = 0.5, colour = "black",
              linetype = "dashed", size = 2)+
+  annotate("text", x=0.25, 
+           y=2,
+           size = 4,
+           label = paste0("No Operational\n Win Dominant"))+
+  annotate("text", x=0.75, 
+           y=2,
+           size = 4,
+           label = paste0("Choosing Between \n Adaptive Rotations and Sequences \n Important"))+
   xlab("Intervention Coverage")+
   ylab("Operational Outcome")+
   ggtitle("B")+
   theme_classic()
 
 violin.plot.c = ggplot(rf.dataset.rot.seq.mix, aes(x=Intervention.Coverage,
-                               y=operational.outcome))+
+                                                   y=operational.outcome))+
   geom_violin(fill = "aquamarine", alpha = 0.5,
               colour = "deepskyblue4")+
   geom_vline(xintercept = 0.5, colour = "black",
              linetype = "dashed", size = 2)+
+  annotate("text", x=0.25, 
+           y=2,
+           size = 4,
+           label = paste0("No Operational\n Win Dominant"))+
+  annotate("text", x=0.75, 
+           y=2.5,
+           size = 4,
+           label = paste0("Choosing Between \n Rotations, Sequences & Mixtures \n Important"))+
   xlab("Intervention Coverage")+
   ylab("Operational Outcome")+
   ggtitle("C")+
   theme_classic()
 
 violin.plot.d = ggplot(rf.parameter.space.unique.sam, aes(x=Coverage,
-                                      y=operational.outcome))+
+                                                          y=operational.outcome))+
   geom_violin(fill = "aquamarine", alpha = 0.5,
-               colour = "deepskyblue4")+
+              colour = "deepskyblue4")+
   geom_vline(xintercept = 0.5, colour = "black",
              linetype = "dashed", size = 2)+
+  annotate("text", x=0.25, 
+           y=3,
+           size = 4,
+           label = paste0("No Operational\n Win Dominant"))+
+  annotate("text", x=0.75, 
+           y=3,
+           size = 4,
+           label = paste0("Choosing Between \n Adaptive Rotations, Sequences & Mixtures \n Important"))+
   xlab("Intervention Coverage")+
   ylab("Operational Outcome")+
   ggtitle("D")+
@@ -2801,10 +3014,12 @@ violin.plot.d = ggplot(rf.parameter.space.unique.sam, aes(x=Coverage,
 (violin.plot.a + violin.plot.b)/(violin.plot.c + violin.plot.d)
 
 
-ggplot(rf.dataset.rot.seq.mix, aes(x=Intervention.Coverage,
-                                   y=operational.outcome))+
-  geom_violin()+
-  facet_wrap(~cross.selection)
+
+# 
+# ggplot(rf.dataset.rot.seq.mix, aes(x=Intervention.Coverage,
+#                                    y=operational.outcome))+
+#   geom_violin()+
+#   facet_wrap(~cross.selection)
 
 #Remove simulations where coverage was "low": sequences and rotations:
 #First for choosing between sequences and rotations:::
@@ -2823,19 +3038,19 @@ train.rf.dataset.rot.seq.high = rf.dataset.rot.seq.high[train.ind, ]
 test.rf.dataset.rot.seq.high = rf.dataset.rot.seq.high[-train.ind, ]
 
 rf.model.high = randomForest::randomForest(operational.outcome ~ .,
-                                      data = train.rf.dataset.rot.seq.high,
-                                      type = "classification",
-                                      importance = TRUE,
-                                      ntree = 300,
-                                      mtry = 4,
-                                      node.size = 1000)
+                                           data = train.rf.dataset.rot.seq.high,
+                                           type = "classification",
+                                           importance = TRUE,
+                                           ntree = 300,
+                                           mtry = 4,
+                                           node.size = 1000)
 
 
 rf.model.seq.rot.df.high = data.frame(rf.model.high$importance)
 
 rf.model.seq.rot.df.high$parameter = c("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
-                                  "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
-                                  "Start.Resistance", "Cross.Selection")
+                                       "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+                                       "Start.Resistance", "Cross.Resistance")
 
 
 rf.predic.seq.rot.high = predict(rf.model.high, test.rf.dataset.rot.seq.high)
@@ -2848,24 +3063,42 @@ sum(accuracy)/33000*100
 #Model accuracy is 79.09%
 
 seq.rot.rf.plot.acc.high = ggplot(rf.model.seq.rot.df.high, aes(x=MeanDecreaseAccuracy,
-                                                      y=parameter))+
+                                                                y=parameter,
+                                                                fill = parameter))+
   
-  geom_col(fill = "skyblue",
-           colour = "blue")+
+  geom_col(colour = "blue")+
+  scale_fill_manual(values = c("darkblue", #cross selection
+                               "skyblue", #dispersal
+                               "skyblue",
+                               "darkblue",
+                               "darkblue",
+                               "darkblue",
+                               "skyblue",
+                               "skyblue"))+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("A")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 seq.rot.rf.plot.gini.high = ggplot(rf.model.seq.rot.df.high, aes(x=MeanDecreaseGini,
-                                                       y=parameter))+
+                                                                 y=parameter,
+                                                                 fill = parameter))+
   
-  geom_col(fill = "skyblue",
-           colour = "blue")+
+  geom_col(colour = "blue")+
+  scale_fill_manual(values = c("darkblue", #cross selection
+                               "skyblue", #dispersal
+                               "skyblue",
+                               "darkblue",
+                               "darkblue",
+                               "darkblue",
+                               "skyblue",
+                               "skyblue"))+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("B")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 gridExtra::grid.arrange(seq.rot.rf.plot.acc.high, seq.rot.rf.plot.gini.high,
                         nrow = 1)
@@ -2887,21 +3120,21 @@ train.rf.dataset.seq.adrot.high = parameter.space.unique.rf.high[train.ind, ]
 test.rf.dataset.seq.adrot.high= parameter.space.unique.rf.high[-train.ind, ]
 
 rf.model.seq.adrot.high = randomForest::randomForest(operational.outcome ~ .,
-                                                data = train.rf.dataset.seq.adrot.high,
-                                                type = "classification",
-                                                importance = TRUE,
-                                                ntree = 300,
-                                                mtry = 4,
-                                                node.size = 1000)
+                                                     data = train.rf.dataset.seq.adrot.high,
+                                                     type = "classification",
+                                                     importance = TRUE,
+                                                     ntree = 300,
+                                                     mtry = 4,
+                                                     node.size = 1000)
 
 
 
 rf.model.seq.adrot.df.high = data.frame(rf.model.seq.adrot.high$importance)
 
 rf.model.seq.adrot.df.high$parameter = c("Heritability.1", "Heritability.2", "Fitness.Cost.1",
-                                    "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
-                                    "Cross.Selection", "Dispersal", "Intervention.Coverage", 
-                                    "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
+                                         "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
+                                         "Cross.Resistance", "Dispersal", "Intervention.Coverage", 
+                                         "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
 
 
 rf.predic.seq.adrot.high= predict(rf.model.seq.adrot.high, test.rf.dataset.seq.adrot.high)
@@ -2914,26 +3147,52 @@ sum(accuracy)/7500*100
 #Model accuracy is 84.73%
 
 seq.adrot.rf.plot.acc.high = ggplot(rf.model.seq.adrot.df.high, aes(x=MeanDecreaseAccuracy,
-                                                          y=parameter))+
+                                                                    y=parameter,
+                                                                    fill = parameter))+
   
-  geom_col(fill = "seagreen1",
-           colour = "seagreen")+
+  geom_col(colour = "seagreen")+
+  scale_fill_manual(values = c("seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen"))+
+  xlab("Mean Decrease Gini")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("C")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 seq.adrot.rf.plot.gini.high = ggplot(rf.model.seq.adrot.df.high, aes(x=MeanDecreaseGini,
-                                                           y=parameter))+
+                                                                     y=parameter,
+                                                                     fill = parameter))+
   
-  geom_col(fill = "seagreen1",
-           colour = "seagreen")+
+  geom_col(colour = "seagreen")+
+  scale_fill_manual(values = c("seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen"))+
+  xlab("Mean Decrease Gini")+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("D")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
-gridExtra::grid.arrange(seq.adrot.rf.plot.acc, seq.adrot.rf.plot.gini,
+gridExtra::grid.arrange(seq.adrot.rf.plot.acc.high, seq.adrot.rf.plot.gini.high,
                         nrow = 1)
 
 
@@ -2961,17 +3220,17 @@ train.rf.dataset.rot.seq.mix.high = rf.dataset.rot.seq.mix.high[train.ind, ]
 test.rf.dataset.rot.seq.mix.high = rf.dataset.rot.seq.mix.high[-train.ind, ]
 
 rf.model.seq.rot.mix.high = randomForest::randomForest(operational.outcome ~ .,
-                                                  data = train.rf.dataset.rot.seq.mix.high,
-                                                  type = "classification",
-                                                  importance = TRUE,
-                                                  ntree = 300,
-                                                  mtry = 4,
-                                                  node.size = 1000)
+                                                       data = train.rf.dataset.rot.seq.mix.high,
+                                                       type = "classification",
+                                                       importance = TRUE,
+                                                       ntree = 300,
+                                                       mtry = 4,
+                                                       node.size = 1000)
 
 rf.model.seq.rot.mix.high.df = data.frame(rf.model.seq.rot.mix.high$importance)
 rf.model.seq.rot.mix.high.df$parameter = c("Heritability", "Fitness.Cost", "Male.Insecticide.Exposure",
-                                      "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
-                                      "Start.Resistance", "Cross.Selection")
+                                           "Intervention.Coverage", "Dispersal", "Female.Insecticide.Exposure",
+                                           "Start.Resistance", "Cross.Resistance")
 
 rf.predic.seq.rot.mix.high= predict(rf.model.seq.rot.mix.high, test.rf.dataset.rot.seq.mix.high)
 
@@ -2984,24 +3243,42 @@ sum(accuracy)/33000*100
 #Model accuracy is 94.31%
 
 seq.rot.mix.rf.plot.acc.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDecreaseAccuracy,
-                                                              y=parameter))+
+                                                                        y=parameter,
+                                                                        fill = parameter))+
   
-  geom_col(fill = "skyblue",
-           colour = "blue")+
+  geom_col(colour = "blue")+
+  scale_fill_manual(values = c("darkblue", 
+                               "skyblue", 
+                               "skyblue",
+                               "skyblue",
+                               "darkblue",
+                               "darkblue",
+                               "skyblue",
+                               "darkblue"))+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("A")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 seq.rot.mix.rf.plot.gini.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDecreaseGini,
-                                                               y=parameter))+
+                                                                         y=parameter,
+                                                                         fill = parameter))+
   
-  geom_col(fill = "skyblue",
-           colour = "blue")+
+  geom_col(colour = "blue")+
+  scale_fill_manual(values = c("darkblue", 
+                               "skyblue", 
+                               "skyblue",
+                               "skyblue",
+                               "darkblue",
+                               "darkblue",
+                               "skyblue",
+                               "skyblue"))+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("B")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 
 seq.rot.mix.rf.plot.acc.high
@@ -3027,19 +3304,19 @@ train.rf.dataset.sam.high = rf.parameter.space.unique.sam.high[train.ind, ]
 test.rf.dataset.sam.high= rf.parameter.space.unique.sam.high[-train.ind, ]
 
 rf.model.sam.high = randomForest::randomForest(operational.outcome ~ .,
-                                          data = train.rf.dataset.sam.high,
-                                          type = "classification",
-                                          importance = TRUE,
-                                          ntree = 300,
-                                          mtry = 4,
-                                          node.size = 1000)
+                                               data = train.rf.dataset.sam.high,
+                                               type = "classification",
+                                               importance = TRUE,
+                                               ntree = 300,
+                                               mtry = 4,
+                                               node.size = 1000)
 
 rf.model.sam.df.high = data.frame(rf.model.sam.high$importance)
 
 rf.model.sam.df.high$parameter = c("Heritability.1", "Heritability.2", "Fitness.Cost.1",
-                              "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
-                              "Cross.Selection", "Dispersal", "Intervention.Coverage", 
-                              "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
+                                   "Fitness.Cost.2", "Start.Resistace.1", "Start.Resistance.2",
+                                   "Cross.Resistance", "Dispersal", "Intervention.Coverage", 
+                                   "Female.Insecticide.Exposure", "Male.Insecticide.Exposure")
 
 
 rf.predict.sam.high= predict(rf.model.sam.high, test.rf.dataset.sam.high)
@@ -3052,27 +3329,48 @@ sum(accuracy)/7500*100
 #Model accuracy is 87.63%
 
 rf.plot.acc.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseAccuracy,
-                                              y=parameter))+
+                                                        y=parameter,
+                                                        fill = parameter))+
   
-  geom_col(fill = "seagreen1",
-           colour = "seagreen")+
+  geom_col(colour = "seagreen")+
+  scale_fill_manual(values = c("seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen"))+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("C")+
-  theme_classic()
+  theme_classic()+
+  theme(legend.position = "none")
 
 rf.plot.gini.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseGini,
-                                               y=parameter))+
+                                                         y=parameter,
+                                                         fill = parameter))+
   
-  geom_col(fill = "seagreen1",
-           colour = "seagreen")+
+  geom_col(colour = "seagreen")+
+  scale_fill_manual(values = c("seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen",
+                               "seagreen2",
+                               "seagreen2",
+                               "seagreen2"))+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("D")+
-  theme_classic()
-
-rf.plot.acc.sam.high
-rf.plot.gini.sam.high
+  theme_classic()+
+  theme(legend.position = "none")
 
 
 
@@ -3099,168 +3397,172 @@ sample.to.visualise = dplyr::sample_n(no.cross.selection, 1) #limit to those sta
 
 
 print(sample.to.visualise)
+#cross selection = 0, start resistance = 0, heritability = 0.2028686, male insecticide exposure = 0.2500806, female insecticide exposure = 0.8645515, fitness cost = 0.1730878, intervention coverage = 0.6885651, dispersal = 0.8844445. 
 
 plot.seq.df = get_simulation_dataframe(run_simulation_intervention(number.of.insecticides = 2,
-                                                                              exposure.scaling.factor = 10,
-                                                                              nsim = 1,
-                                                                              minimum.insecticide.resistance.heritability = sample.to.visualise$Heritability,
-                                                                              maximum.insecticide.resistance.heritability = sample.to.visualise$Heritability,
-                                                                              minimum.male.insecticide.exposure = sample.to.visualise$Male.Insecticide.Exposure,
-                                                                              maximum.male.insecticide.exposure = sample.to.visualise$Male.Insecticide.Exposure,
-                                                                              minimum.female.insecticide.exposure = sample.to.visualise$Female.Insecticide.Exposure,
-                                                                              maximum.female.insecticide.exposure = sample.to.visualise$Female.Insecticide.Exposure,
-                                                                              resistance.cost = sample.to.visualise$Fitness.Cost,
-                                                                              starting.treatment.site.intensity = sample.to.visualise$start.resistance.values,
-                                                                              starting.refugia.intensity = sample.to.visualise$start.resistance.values,
-                                                                              min.intervention.coverage = sample.to.visualise$Intervention.Coverage,
-                                                                              max.intervention.coverage = sample.to.visualise$Intervention.Coverage,
-                                                                              min.dispersal.rate = sample.to.visualise$Dispersal,
-                                                                              max.dispersal.rate = sample.to.visualise$Dispersal,
-                                                                              maximum.generations = 500, 
-                                                                              irm.strategy = "sequence",
-                                                                              half.population.bioassay.survival.resistance = 900,
-                                                                              withdrawal.threshold.value = 0.1, 
-                                                                              return.threshold.value = 0.08, 
-                                                                              deployment.frequency = 10, 
-                                                                              maximum.resistance.value = 25000),
-                                  maximum.generations = 500, number.of.insecticides = 2)
+                                                                   exposure.scaling.factor = 10,
+                                                                   nsim = 1,
+                                                                   minimum.insecticide.resistance.heritability = 0.2028686,
+                                                                   maximum.insecticide.resistance.heritability = 0.2028686,
+                                                                   minimum.male.insecticide.exposure = 0.2500806,
+                                                                   maximum.male.insecticide.exposure = 0.2500806,
+                                                                   minimum.female.insecticide.exposure = 0.8645515,
+                                                                   maximum.female.insecticide.exposure = 0.8645515,
+                                                                   resistance.cost = 0.1730878,
+                                                                   starting.treatment.site.intensity = 0,
+                                                                   starting.refugia.intensity = 0,
+                                                                   min.intervention.coverage = 0.6885651,
+                                                                   max.intervention.coverage = 0.6885651,
+                                                                   min.dispersal.rate = 0.8844445,
+                                                                   max.dispersal.rate = 0.8844445,
+                                                                   maximum.generations = 500, 
+                                                                   irm.strategy = "sequence",
+                                                                   half.population.bioassay.survival.resistance = 900,
+                                                                   withdrawal.threshold.value = 0.1, 
+                                                                   return.threshold.value = 0.08, 
+                                                                   deployment.frequency = 10, 
+                                                                   maximum.resistance.value = 25000),
+                                       maximum.generations = 500, number.of.insecticides = 2)
 
 plot.rot.df = get_simulation_dataframe(run_simulation_intervention(number.of.insecticides = 2,
-                                                                              exposure.scaling.factor = 10,
-                                                                              nsim = 1,
-                                                                              minimum.insecticide.resistance.heritability = sample.to.visualise$Heritability,
-                                                                              maximum.insecticide.resistance.heritability = sample.to.visualise$Heritability,
-                                                                              minimum.male.insecticide.exposure = sample.to.visualise$Male.Insecticide.Exposure,
-                                                                              maximum.male.insecticide.exposure = sample.to.visualise$Male.Insecticide.Exposure,
-                                                                              minimum.female.insecticide.exposure = sample.to.visualise$Female.Insecticide.Exposure,
-                                                                              maximum.female.insecticide.exposure = sample.to.visualise$Female.Insecticide.Exposure,
-                                                                              resistance.cost = sample.to.visualise$Fitness.Cost,
-                                                                              starting.treatment.site.intensity = sample.to.visualise$start.resistance.values,
-                                                                              starting.refugia.intensity = sample.to.visualise$start.resistance.values,
-                                                                              min.intervention.coverage = sample.to.visualise$Intervention.Coverage,
-                                                                              max.intervention.coverage = sample.to.visualise$Intervention.Coverage,
-                                                                              min.dispersal.rate = sample.to.visualise$Dispersal,
-                                                                              max.dispersal.rate = sample.to.visualise$Dispersal,
-                                                                              maximum.generations = 500, 
-                                                                              irm.strategy = "rotation",
-                                                                              half.population.bioassay.survival.resistance = 900,
-                                                                              withdrawal.threshold.value = 0.1, 
-                                                                              return.threshold.value = 0.08, 
-                                                                              deployment.frequency = 10, 
-                                                                              maximum.resistance.value = 25000),
-                                  maximum.generations = 500, number.of.insecticides = 2)
+                                                                   exposure.scaling.factor = 10,
+                                                                   nsim = 1,
+                                                                   minimum.insecticide.resistance.heritability = 0.2028686,
+                                                                   maximum.insecticide.resistance.heritability = 0.2028686,
+                                                                   minimum.male.insecticide.exposure = 0.2500806,
+                                                                   maximum.male.insecticide.exposure = 0.2500806,
+                                                                   minimum.female.insecticide.exposure = 0.8645515,
+                                                                   maximum.female.insecticide.exposure = 0.8645515,
+                                                                   resistance.cost = 0.1730878,
+                                                                   starting.treatment.site.intensity = 0,
+                                                                   starting.refugia.intensity = 0,
+                                                                   min.intervention.coverage = 0.6885651,
+                                                                   max.intervention.coverage = 0.6885651,
+                                                                   min.dispersal.rate = 0.8844445,
+                                                                   max.dispersal.rate = 0.8844445,
+                                                                   maximum.generations = 500, 
+                                                                   irm.strategy = "rotation",
+                                                                   half.population.bioassay.survival.resistance = 900,
+                                                                   withdrawal.threshold.value = 0.1, 
+                                                                   return.threshold.value = 0.08, 
+                                                                   deployment.frequency = 10, 
+                                                                   maximum.resistance.value = 25000),
+                                       maximum.generations = 500, number.of.insecticides = 2)
 
 plot.mix.df = get_simulation_dataframe_mixtures(run_simulation_intervention_test_mixtures(number.of.insecticides = 2,
-                                                                                            exposure.scaling.factor = 10,
-                                                                                            nsim = 1,
-                                                                                            minimum.insecticide.resistance.heritability = sample.to.visualise$Heritability,
-                                                                                            maximum.insecticide.resistance.heritability = sample.to.visualise$Heritability,
-                                                                                            minimum.male.insecticide.exposure = sample.to.visualise$Male.Insecticide.Exposure,
-                                                                                            maximum.male.insecticide.exposure = sample.to.visualise$Male.Insecticide.Exposure,
-                                                                                            minimum.female.insecticide.exposure = sample.to.visualise$Female.Insecticide.Exposure,
-                                                                                            maximum.female.insecticide.exposure = sample.to.visualise$Female.Insecticide.Exposure,
-                                                                                            resistance.cost = sample.to.visualise$Fitness.Cost,
-                                                                                            starting.treatment.site.intensity = sample.to.visualise$start.resistance.values,
-                                                                                            starting.refugia.intensity = sample.to.visualise$start.resistance.values,
-                                                                                            min.intervention.coverage = sample.to.visualise$Intervention.Coverage,
-                                                                                            max.intervention.coverage = sample.to.visualise$Intervention.Coverage,
-                                                                                            min.dispersal.rate = sample.to.visualise$Dispersal,
-                                                                                            max.dispersal.rate = sample.to.visualise$Dispersal,
-                                                                                            maximum.generations = 500, 
-                                                                                            irm.deployment.strategy = "mixtures", 
-                                                                                            mixture.strategy = "mix.sequential.discrete",
-                                                                                            irm.switch.strategy = "sequence", 
-                                                                                            half.population.bioassay.survival.resistance = 900,
-                                                                                            withdrawal.threshold.value = 0.1, 
-                                                                                            return.threshold.value = 0.08, 
-                                                                                            deployment.frequency = 10, 
-                                                                                            maximum.resistance.value = 25000, 
-                                                                                            conversion.factor = 0.48,
-                                                                                            intercept = 0.15),
+                                                                                          exposure.scaling.factor = 10,
+                                                                                          nsim = 1,
+                                                                                          minimum.insecticide.resistance.heritability = 0.2028686,
+                                                                                          maximum.insecticide.resistance.heritability = 0.2028686,
+                                                                                          minimum.male.insecticide.exposure = 0.2500806,
+                                                                                          maximum.male.insecticide.exposure = 0.2500806,
+                                                                                          minimum.female.insecticide.exposure = 0.8645515,
+                                                                                          maximum.female.insecticide.exposure = 0.8645515,
+                                                                                          resistance.cost = 0.1730878,
+                                                                                          starting.treatment.site.intensity = 0,
+                                                                                          starting.refugia.intensity = 0,
+                                                                                          min.intervention.coverage = 0.6885651,
+                                                                                          max.intervention.coverage = 0.6885651,
+                                                                                          min.dispersal.rate = 0.8844445,
+                                                                                          max.dispersal.rate = 0.8844445,
+                                                                                          maximum.generations = 500, 
+                                                                                          irm.deployment.strategy = "mixtures", 
+                                                                                          mixture.strategy = "mix.sequential.discrete",
+                                                                                          irm.switch.strategy = "sequence", 
+                                                                                          half.population.bioassay.survival.resistance = 900,
+                                                                                          withdrawal.threshold.value = 0.1, 
+                                                                                          return.threshold.value = 0.08, 
+                                                                                          deployment.frequency = 10, 
+                                                                                          maximum.resistance.value = 25000, 
+                                                                                          conversion.factor = 0.48,
+                                                                                          intercept = 0.15),
                                                 maximum.generations = 500, number.of.insecticides = 2)
 
 
 
 ###only plot the intervention sites:: convert resistance to bioassay
-  plot.seq.df = plot.seq.df%>%
+plot.seq.df = plot.seq.df%>%
   dplyr::filter(site == "treatment")%>%
-    dplyr::rowwise()%>%
-    dplyr::mutate(bioassay.survival = resistance_to_bioassay_survival(mean.population.resistance = resistance.intensity,
-                                                                      half.population.bioassay.survival.resistance = 900,
-                                                                      sd.population.resistance = 0, #measured without error
-                                                                      nsim = 1,
-                                                                      michaelis.menten.slope = 1)*100)
-  
-  
-  
-
-  plot.rot.df = plot.rot.df%>%
-    dplyr::filter(site == "treatment")%>%
-    dplyr::rowwise()%>%
-    dplyr::mutate(bioassay.survival = resistance_to_bioassay_survival(mean.population.resistance = resistance.intensity,
-                                                                      half.population.bioassay.survival.resistance = 900,
-                                                                      sd.population.resistance = 0, #measured without error
-                                                                      nsim = 1,
-                                                                      michaelis.menten.slope = 1)*100)
-  
-  
-  
-  plot.mix.df = plot.mix.df%>%
-    dplyr::filter(site == "treatment")%>%
-    dplyr::rowwise()%>%
-    dplyr::mutate(bioassay.survival = resistance_to_bioassay_survival(mean.population.resistance = resistance.intensity,
-                                                                      half.population.bioassay.survival.resistance = 900,
-                                                                      sd.population.resistance = 0, #measured without error
-                                                                      nsim = 1,
-                                                                      michaelis.menten.slope = 1)*100)
+  dplyr::rowwise()%>%
+  dplyr::mutate(bioassay.survival = resistance_to_bioassay_survival(mean.population.resistance = resistance.intensity,
+                                                                    half.population.bioassay.survival.resistance = 900,
+                                                                    sd.population.resistance = 0, #measured without error
+                                                                    nsim = 1,
+                                                                    michaelis.menten.slope = 1)*100)
 
 
-  panel_sequence = ggplot(plot.seq.df, aes(x=time.in.generations,
-                                           y=bioassay.survival,
-                                           colour = as.character(insecticide.tracked)))+
-    geom_line(size = 2.5, alpha = 0.7)+
-    scale_colour_manual(values = c("#e31a1c", "#377eb8"))+
-    geom_point(aes(x=time.in.generations,
-                  y=10, colour = insecticide.deployed),
-              size = 1)+
-    geom_hline(yintercept = 8)+
-    geom_vline(xintercept = max(plot.seq.df$time.in.generations),
-               colour = "orange",
-               linetype = "dashed",
-               size = 0.5)+
-     scale_y_continuous(breaks = c(0, 5, 8, 10),
-                        limits = c(0, 11))+
-    xlim(0, 500)+
-       ggtitle("Sequence")+
-    xlab("Time in Generations")+
-    ylab("Bioassay Survival (%)")+
-    theme_classic()+
-    theme(legend.position = "none")+
-    theme(text = element_text(size = 15))
-  
 
-panel_rotation = ggplot(plot.rot.df, aes(x=time.in.generations,
-                        y=bioassay.survival,
-                        colour = as.character(insecticide.tracked)))+
+
+plot.rot.df = plot.rot.df%>%
+  dplyr::filter(site == "treatment")%>%
+  dplyr::rowwise()%>%
+  dplyr::mutate(bioassay.survival = resistance_to_bioassay_survival(mean.population.resistance = resistance.intensity,
+                                                                    half.population.bioassay.survival.resistance = 900,
+                                                                    sd.population.resistance = 0, #measured without error
+                                                                    nsim = 1,
+                                                                    michaelis.menten.slope = 1)*100)
+
+
+
+plot.mix.df = plot.mix.df%>%
+  dplyr::filter(site == "treatment")%>%
+  dplyr::rowwise()%>%
+  dplyr::mutate(bioassay.survival = resistance_to_bioassay_survival(mean.population.resistance = resistance.intensity,
+                                                                    half.population.bioassay.survival.resistance = 900,
+                                                                    sd.population.resistance = 0, #measured without error
+                                                                    nsim = 1,
+                                                                    michaelis.menten.slope = 1)*100)
+
+
+panel_sequence = ggplot(plot.seq.df, aes(x=time.in.generations,
+                                         y=bioassay.survival,
+                                         colour = as.character(insecticide.tracked)))+
+  geom_hline(yintercept = 8, colour = "grey", size = 2)+
+  geom_hline(yintercept = 10, colour = "black", size = 2)+
   geom_line(size = 2.5, alpha = 0.7)+
   scale_colour_manual(values = c("#e31a1c", "#377eb8"))+
   geom_point(aes(x=time.in.generations,
-                y=10, colour = insecticide.deployed,
-                alpha = 0.6), size = 1)+
-  geom_hline(yintercept = 8)+
-  geom_vline(xintercept = max(plot.rot.df$time.in.generations),
-               linetype ="dashed", 
-               colour = "orange")+
+                 y=-0.5, colour = insecticide.deployed),
+             size = 1)+
+  geom_vline(xintercept = max(plot.seq.df$time.in.generations),
+             colour = "orange",
+             linetype = "dashed",
+             size = 0.5)+
   scale_y_continuous(breaks = c(0, 5, 8, 10),
-                     limits = c(0, 11))+
-  xlim(0, 500)+
+                     limits = c(-1, 11))+
+  xlim(1, 500)+
+  ggtitle("Sequence")+
   xlab("Time in Generations")+
   ylab("Bioassay Survival (%)")+
-  ggtitle("Rotation")+
   theme_classic()+
   theme(legend.position = "none")+
   theme(text = element_text(size = 15))
-  
+
+
+panel_rotation = ggplot(plot.rot.df, aes(x=time.in.generations,
+                                         y=bioassay.survival,
+                                         colour = as.character(insecticide.tracked)))+
+  geom_hline(yintercept = 8, colour = "grey", size = 2)+
+  geom_hline(yintercept = 10, colour = "black", size = 2)+
+  geom_line(size = 2.5, alpha = 0.7)+
+  scale_colour_manual(values = c("#e31a1c", "#377eb8"))+
+  geom_point(aes(x=time.in.generations,
+                 y=-0.5, colour = insecticide.deployed),
+             size = 1)+
+  geom_vline(xintercept = max(plot.rot.df$time.in.generations),
+             colour = "orange",
+             linetype = "dashed",
+             size = 0.5)+
+  scale_y_continuous(breaks = c(0, 5, 8, 10),
+                     limits = c(-1, 11))+
+  xlim(1, 500)+
+  ggtitle("Rotation")+
+  xlab("Time in Generations")+
+  ylab("Bioassay Survival (%)")+
+  theme_classic()+
+  theme(legend.position = "none")+
+  theme(text = element_text(size = 15))
+
 plot.mix.df.1 = plot.mix.df%>%
   dplyr::filter(insecticide.tracked == 1)
 
@@ -3269,33 +3571,38 @@ plot.mix.df.2 = plot.mix.df%>%
 
 
 panel_mixture = ggplot(plot.mix.df, aes(x=time.in.generations,
-                        y=bioassay.survival))+
+                                        y=bioassay.survival))+ 
+  
+  geom_hline(yintercept = 8, colour = "grey", size = 2)+
+  geom_hline(yintercept = 10, colour = "black", size = 2)+
   geom_line(data = plot.mix.df.1,
             aes(x=time.in.generations,
                 y=bioassay.survival),
             colour = "#377eb8",
-            size = 4, alpha =0.7)+
-    geom_line(data = plot.mix.df.1,
-              aes(x=time.in.generations,
-                  y=bioassay.survival),
-              size = 2,
-              colour = "#e31a1c",
-              alpha = 0.7)+
-  geom_hline(yintercept = 10, colour = "#377eb8",
-             size = 3)+
-  geom_hline(yintercept = 10, colour = "#e31a1c",
-             size = 1.5)+
-  geom_hline(yintercept = 8)+
+            size = 4)+
+  geom_line(data = plot.mix.df.1,
+            aes(x=time.in.generations,
+                y=bioassay.survival),
+            size = 2,
+            colour = "#e31a1c")+
+  geom_point(aes(x=time.in.generations,
+                 y=-0.5), colour = "#e31a1c",
+             size = 1)+
+  geom_point(aes(x=time.in.generations,
+                 y=-0.35), colour = "#377eb8",
+             size = 1)+
   geom_vline(xintercept = max(plot.mix.df$time.in.generations),
-               linetype ="dashed", 
-               colour = "orange")+
+             colour = "orange",
+             linetype = "dashed",
+             size = 0.5)+
   scale_y_continuous(breaks = c(0, 5, 8, 10),
-                     limits = c(0, 11))+
-  xlim(0, 500)+
+                     limits = c(-1, 11))+
+  xlim(1, 500)+
+  ggtitle("Mixture")+
   xlab("Time in Generations")+
   ylab("Bioassay Survival (%)")+
-  ggtitle("Mixture")+
   theme_classic()+
+  theme(legend.position = "none")+
   theme(text = element_text(size = 15))
 
 gridExtra::grid.arrange(panel_sequence,
@@ -3317,6 +3624,7 @@ response.values = response_to_insecticide_selection(exposure.scaling.factor = 10
 calibrated =  10/response.values
 df = data.frame(calibrated)
 
+#FIGURE 2
 ggplot(df, aes(x=calibrated))+
   geom_histogram(bins = 100,
                  colour = "black",
