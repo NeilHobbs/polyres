@@ -2316,17 +2316,18 @@ make_pcor_plot = function(){
   figure = ggplot(pcor.df.all, aes(x=estimate, y=parameter, xmin =lower.95.ci,
                                    xmax = upper.95.ci, fill = Simulation.Conditions)) +
     geom_bar(stat = "identity", position = position_dodge())+
-    geom_errorbarh(position = position_dodge())+
+    geom_errorbarh(position = position_dodge()
+    )+
     scale_fill_manual(values = pals)+
     geom_vline(xintercept = 0) +
-    xlim(-0.75, 0.75)+
+    xlim(-0.65, 0.3)+
     ylab("Parameter") +
     xlab("Partial Rank Correlation") +
-    guides(fill=guide_legend(ncol=3)) +
+    guides(fill=guide_legend(ncol=1)) +
+    coord_flip()+
     theme_classic()+
-    facet_wrap(~as.factor(cross.selection))+
-    theme(legend.position = "bottom",
-          legend.justification = "left")
+    facet_grid(as.factor(cross.selection)~.)+
+    theme(legend.position = "right")
   
   return(figure)
 }
