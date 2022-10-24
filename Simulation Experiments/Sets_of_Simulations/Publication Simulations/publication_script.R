@@ -997,6 +997,44 @@ scale.plot.b = ggplot(example.df, aes(x=polygenic.resistance.values,
 #FIGURE 1
 scale.plot.a + scale.plot.b
 
+# tiff("Figure_1.tiff", units="px", width=1000*6, height=600*6, res=100*6,
+#      pointsize = 1)
+# scale.plot.a + scale.plot.b
+# dev.off()
+
+####
+#Demonstrating the Scaling of Beta (exposure scaling factor):::
+response.values = response_to_insecticide_selection(exposure.scaling.factor = 10,
+                                                    minimum.insecticide.resistance.heritability = 0.05,
+                                                    maximum.insecticide.resistance.heritability = 0.30,
+                                                    minimum.female.insecticide.exposure = 0.4,
+                                                    maximum.female.insecticide.exposure = 0.9,
+                                                    minimum.male.insecticide.exposure = 0,
+                                                    maximum.male.insecticide.exposure = 1,
+                                                    nsim = 100000)
+calibrated =  10/response.values
+df = data.frame(calibrated)
+
+#FIGURE 2
+calibrated.plot = ggplot(df, aes(x=calibrated))+
+  geom_histogram(bins = 100,
+                 colour = "black",
+                 fill = "lightblue",)+
+  geom_vline(xintercept = 8, colour = "red",
+             size = 2, alpha = 0.7)+
+  geom_vline(xintercept = 12, colour = "red",
+             size = 2, alpha = 0.7)+
+  scale_x_continuous(breaks = seq(0, 80, by = 10))+
+  xlab("Years to 10% Bioassay Survival")+
+  ylab("Frequency")+
+  theme_classic()+
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 15))
+
+# tiff("Figure_2.tiff", units="px", width=1000*6, height=600*6, res=100*6,
+#      pointsize = 1)
+# calibrated.plot
+# dev.off()
 
 ## Read in the data sets
 ##Read in the datasets::
@@ -1324,6 +1362,11 @@ plot_seq_rot_primary_outcome = function(){
 plot_seq_rot_primary_outcome()
 #Sequences and Rotations: The Draws
 
+# tiff("Figure_4.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# plot_seq_rot_primary_outcome()
+# dev.off()
+
 rot.seq.df.all$difference.peak.resistance = c(sequence.df.10$peak.resistance - rotation.df.10$peak.resistance, sequence.df.30$peak.resistance - rotation.df.30$peak.resistance)
 rot.seq.df.all$difference.mean.resistance = c(sequence.df.10$mean.resistance.intensity. - rotation.df.10$mean.resistance.intensity., sequence.df.30$mean.resistance.intensity. - rotation.df.30$mean.resistance.intensity.)
 rot.seq.df.all$difference.control.failure.gens = c(sequence.df.10$exceedance.generations.deployed - rotation.df.10$exceedance.generations.deployed, sequence.df.30$exceedance.generations.deployed - rotation.df.30$exceedance.generations.deployed)
@@ -1401,7 +1444,7 @@ plot_seq_rot_secondary_outcome = function(){
              colour = "red", size = 2, arrow = arrow())+
     annotate("text", y=12.2, x = 3, label = paste0("Increasing Benefit Rotations"))+
     ylab("Cross Resistance")+
-    xlab("Difference in Peak Bioassay Survival")+
+    xlab("Absolute Difference in Peak Bioassay Survival")+
     guides(fill=guide_legend(title="Cross Selection"))+
     theme(legend.position = "none",
           axis.title.x = element_text(size = 12),
@@ -1433,7 +1476,7 @@ plot_seq_rot_secondary_outcome = function(){
              colour = "red", size = 2, arrow = arrow())+
     annotate("text", y=12.2, x = 3, label = paste0("Increasing Benefit Rotations"))+
     ylab("Cross Resistance")+
-    xlab("Difference in Mean Bioassay Survival")+
+    xlab("Absolute Difference in Mean Bioassay Survival")+
     guides(fill=guide_legend(title="Cross Resistance"))+
     theme(legend.position = "none",
           axis.title.x = element_text(size = 12),
@@ -1450,7 +1493,10 @@ plot_seq_rot_secondary_outcome = function(){
 
 plot_seq_rot_secondary_outcome()
 
-
+# tiff("Figure_5.tiff", units="px", width=1000*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# plot_seq_rot_secondary_outcome()
+# dev.off()
 
 
 
@@ -1690,7 +1736,10 @@ plot_seq_mix_primary_outcome = function(){
 #Figure 6
 plot_seq_mix_primary_outcome()
 
-
+# tiff("Figure_6.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# plot_seq_mix_primary_outcome()
+# dev.off()
 
 #Rotations vs Mixtures::::
 rot.seq.df.all$prop.diff.rot.mix = prop.diff.rot.mix
@@ -1865,7 +1914,10 @@ plot_rot_mix_primary_outcome = function(){
 }
 plot_rot_mix_primary_outcome()
 
-
+# tiff("Figure_7.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# plot_rot_mix_primary_outcome()
+# dev.off()
 
 ##Unique Insecticides:
 sequence.unique.duration = sequence.df.unique$simulation.duration
@@ -2209,10 +2261,19 @@ plot_unique_insecticide_difference = function(){
 plot_unique_insecticide_difference()
 
 
+# tiff("Figure_8.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# plot_unique_insecticide_difference()
+# dev.off()
+
+
+
+
 unique.df.mix.lost = unique.df%>%
   dplyr::filter(operational.outcome.sm == "sequence operational win")
 
 
+#supplementary figure:
 ggplot(unique.df.mix.lost, aes(x=Heritability.1 - Heritability.2,
                                y=Start.1 - Start.2))+
   geom_point()+
@@ -2334,6 +2395,10 @@ make_pcor_plot = function(){
 
 make_pcor_plot()
 
+# tiff("Figure_9.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# make_pcor_plot()
+# dev.off()
 
 ####################################################
 ## 4. Generalised Linear (and Additive) Modelling ##
@@ -2610,18 +2675,9 @@ sum(accuracy)/66000*100
 #Model accuracy is 87.65%
 
 seq.rot.rf.plot.acc = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseAccuracy,
-                                                      y=parameter,
-                                                      fill = parameter))+
+                                                      y=reorder(parameter, MeanDecreaseAccuracy)))+
   
-  geom_col(colour = "blue")+
-  scale_fill_manual(values = c("darkblue", #cross selection
-                               "skyblue", #dispersal
-                               "skyblue",
-                               "darkblue",
-                               "darkblue",
-                               "darkblue",
-                               "skyblue",
-                               "skyblue"))+
+  geom_col(colour = "blue", fill= "skyblue")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("A")+
@@ -2630,29 +2686,22 @@ seq.rot.rf.plot.acc = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseAccuracy,
 
 
 seq.rot.rf.plot.gini = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseGini,
-                                                       y=parameter,
-                                                       fill = parameter))+
+                                                       y=reorder(parameter, MeanDecreaseGini)))+
   
-  geom_col(colour = "blue")+
-  scale_fill_manual(values = c("darkblue", #cross selection
-                               "skyblue", #dispersal
-                               "skyblue",
-                               "darkblue",
-                               "darkblue",
-                               "darkblue",
-                               "skyblue",
-                               "skyblue"))+
-  
-  
+  geom_col(colour = "blue",
+           fill = "skyblue")+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("B")+
   theme_classic()+
   theme(legend.position = "none")
 
-gridExtra::grid.arrange(seq.rot.rf.plot.acc, seq.rot.rf.plot.gini,
-                        nrow = 1)
+seq.rot.rf.plot.acc / seq.rot.rf.plot.gini
 
+# tiff("Figure_9.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# seq.rot.rf.plot.acc / seq.rot.rf.plot.gini
+# dev.off()
 
 
 ##Unique Insecticides Seq vs Adaptive Rot:
@@ -2703,21 +2752,9 @@ sum(accuracy)/15000*100
 #Model accuracy is 90.98
 
 seq.adrot.rf.plot.acc = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseAccuracy,
-                                                          y=parameter,
-                                                          fill = parameter))+
+                                                          y=reorder(parameter, MeanDecreaseAccuracy)))+
   
-  geom_col(colour = "darkgreen")+
-  scale_fill_manual(values = c("seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen"))+
+  geom_col(colour = "darkgreen", fill = "seagreen2")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("C")+
@@ -2725,21 +2762,9 @@ seq.adrot.rf.plot.acc = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseAccuracy
   theme(legend.position = "none")
 
 seq.adrot.rf.plot.gini = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseGini,
-                                                           y=parameter,
-                                                           fill = parameter))+
+                                                           y=reorder(parameter, MeanDecreaseGini)))+
   
-  geom_col(colour = "seagreen")+
-  scale_fill_manual(values = c("seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen"))+
+  geom_col(colour = "darkgreen", fill = "seagreen2")+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("D")+
@@ -2754,7 +2779,11 @@ gridExtra::grid.arrange(seq.adrot.rf.plot.acc, seq.adrot.rf.plot.gini,
     (seq.adrot.rf.plot.acc + seq.adrot.rf.plot.gini)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
 
 
-
+# tiff("Figure_10.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# ((seq.rot.rf.plot.acc + seq.rot.rf.plot.gini)/
+# (seq.adrot.rf.plot.acc + seq.adrot.rf.plot.gini)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
+# dev.off()
 
 #Random Forest: Sequence, Rotation and Mixtures
 
@@ -2800,36 +2829,20 @@ sum(accuracy)/66000*100
 #Model accuracy is 96.14%
 
 seq.rot.mix.rf.plot.acc = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseAccuracy,
-                                                              y=parameter,
-                                                              fill = parameter))+
+                                                              y=reorder(parameter,
+                                                                        MeanDecreaseAccuracy)))+
   
-  geom_col(colour = "blue")+
-  scale_fill_manual(values = c("darkblue", #cross selection
-                               "skyblue", #dispersal
-                               "skyblue",
-                               "skyblue",
-                               "darkblue",
-                               "darkblue",
-                               "skyblue",
-                               "darkblue"))+
+  geom_col(colour = "blue", fill = "skyblue")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("A")+
   theme_classic()+
   theme(legend.position = "none")
 seq.rot.mix.rf.plot.gini = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseGini,
-                                                               y=parameter,
-                                                               fill = parameter))+
+                                                               y=reorder(parameter,
+                                                                         MeanDecreaseGini)))+
   
-  geom_col(colour = "blue")+
-  scale_fill_manual(values = c("darkblue", #cross selection
-                               "skyblue", #dispersal
-                               "skyblue",
-                               "darkblue",
-                               "darkblue",
-                               "darkblue",
-                               "skyblue",
-                               "skyblue"))+
+  geom_col(colour = "blue", fill = "skyblue")+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("B")+
@@ -2882,43 +2895,17 @@ sum(accuracy)/15000*100
 #Model accuracy is 91.16
 
 rf.plot.acc.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseAccuracy,
-                                              y=parameter,
-                                              fill = parameter))+
+                                              y=reorder(parameter, MeanDecreaseAccuracy)))+
   
-  geom_col(colour = "seagreen")+
-  scale_fill_manual(values = c("seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen"))+
-  xlab("Mean Decrease Accuracy")+
+  geom_col(colour = "darkgreen", fill = "seagreen2")+ 
   ylab("Parameter")+
   ggtitle("C")+
   theme_classic()+
   theme(legend.position = "none")
 
 rf.plot.gini.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseGini,
-                                               y=parameter,
-                                               fill = parameter))+
-  
-  geom_col(colour = "seagreen")+
-  scale_fill_manual(values = c("seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen"))+
+                                               y=reorder(parameter, MeanDecreaseGini)))+
+  geom_col(colour = "darkgreen", fill = "seagreen2")+ 
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("D")+
@@ -2931,6 +2918,13 @@ gridExtra::grid.arrange(rf.plot.acc.sam, rf.plot.gini.sam,
 
 ((seq.rot.mix.rf.plot.acc + seq.rot.mix.rf.plot.gini)/
     (rf.plot.acc.sam + rf.plot.gini.sam)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures")
+
+
+# tiff("Figure_11.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# ((seq.rot.mix.rf.plot.acc + seq.rot.mix.rf.plot.gini)/
+#     (rf.plot.acc.sam + rf.plot.gini.sam)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures")
+# dev.off()
 
 
 #Figure out what could be considered high/low coverage::
@@ -3005,7 +2999,7 @@ violin.plot.d = ggplot(rf.parameter.space.unique.sam, aes(x=Coverage,
   annotate("text", x=0.75, 
            y=3,
            size = 4,
-           label = paste0("Choosing Between \n Adaptive Rotations, Sequences & Mixtures \n Important"))+
+           label = paste0("Choosing Between \n Adaptive Rotations, Sequences \n & Mixtures Important"))+
   xlab("Intervention Coverage")+
   ylab("Operational Outcome")+
   ggtitle("D")+
@@ -3014,6 +3008,10 @@ violin.plot.d = ggplot(rf.parameter.space.unique.sam, aes(x=Coverage,
 
 (violin.plot.a + violin.plot.b)/(violin.plot.c + violin.plot.d)
 
+# tiff("Figure_12.tiff", units="px", width=1600*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# (violin.plot.a + violin.plot.b)/(violin.plot.c + violin.plot.d)
+# dev.off()
 
 
 # 
@@ -3064,18 +3062,9 @@ sum(accuracy)/33000*100
 #Model accuracy is 79.09%
 
 seq.rot.rf.plot.acc.high = ggplot(rf.model.seq.rot.df.high, aes(x=MeanDecreaseAccuracy,
-                                                                y=parameter,
-                                                                fill = parameter))+
+                                                                y=reorder(parameter, MeanDecreaseAccuracy)))+
   
-  geom_col(colour = "blue")+
-  scale_fill_manual(values = c("darkblue", #cross selection
-                               "skyblue", #dispersal
-                               "skyblue",
-                               "darkblue",
-                               "darkblue",
-                               "darkblue",
-                               "skyblue",
-                               "skyblue"))+
+  geom_col(colour = "blue", fill = "skyblue")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("A")+
@@ -3083,18 +3072,9 @@ seq.rot.rf.plot.acc.high = ggplot(rf.model.seq.rot.df.high, aes(x=MeanDecreaseAc
   theme(legend.position = "none")
 
 seq.rot.rf.plot.gini.high = ggplot(rf.model.seq.rot.df.high, aes(x=MeanDecreaseGini,
-                                                                 y=parameter,
-                                                                 fill = parameter))+
+                                                                 y=reorder(parameter, MeanDecreaseGini)))+
   
-  geom_col(colour = "blue")+
-  scale_fill_manual(values = c("darkblue", #cross selection
-                               "skyblue", #dispersal
-                               "skyblue",
-                               "darkblue",
-                               "darkblue",
-                               "darkblue",
-                               "skyblue",
-                               "skyblue"))+
+  geom_col(colour = "blue", fill = "skyblue")+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("B")+
@@ -3148,21 +3128,9 @@ sum(accuracy)/7500*100
 #Model accuracy is 84.73%
 
 seq.adrot.rf.plot.acc.high = ggplot(rf.model.seq.adrot.df.high, aes(x=MeanDecreaseAccuracy,
-                                                                    y=parameter,
-                                                                    fill = parameter))+
-  
-  geom_col(colour = "seagreen")+
-  scale_fill_manual(values = c("seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen"))+
+                                                                    y=reorder(parameter,
+                                                                              MeanDecreaseAccuracy)))+
+  geom_col(colour = "darkgreen", fill = "seagreen2")+
   xlab("Mean Decrease Gini")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
@@ -3171,22 +3139,9 @@ seq.adrot.rf.plot.acc.high = ggplot(rf.model.seq.adrot.df.high, aes(x=MeanDecrea
   theme(legend.position = "none")
 
 seq.adrot.rf.plot.gini.high = ggplot(rf.model.seq.adrot.df.high, aes(x=MeanDecreaseGini,
-                                                                     y=parameter,
-                                                                     fill = parameter))+
+                                                                     y=reorder(parameter, MeanDecreaseGini)))+
   
-  geom_col(colour = "seagreen")+
-  scale_fill_manual(values = c("seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen"))+
-  xlab("Mean Decrease Gini")+
+  geom_col(colour = "darkgreen", fill = "seagreen2")+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("D")+
@@ -3200,7 +3155,11 @@ gridExtra::grid.arrange(seq.adrot.rf.plot.acc.high, seq.adrot.rf.plot.gini.high,
 ((seq.rot.rf.plot.acc.high + seq.rot.rf.plot.gini.high)/
     (seq.adrot.rf.plot.acc.high + seq.adrot.rf.plot.gini.high)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations for Intervention Coverage Greater than 0.5")
 
-
+# tiff("Figure_13.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#      pointsize = 12)
+# ((seq.rot.rf.plot.acc.high + seq.rot.rf.plot.gini.high)/
+#     (seq.adrot.rf.plot.acc.high + seq.adrot.rf.plot.gini.high)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations for Intervention Coverage Greater than 0.5")
+# dev.off()
 
 
 
@@ -3244,18 +3203,10 @@ sum(accuracy)/33000*100
 #Model accuracy is 94.31%
 
 seq.rot.mix.rf.plot.acc.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDecreaseAccuracy,
-                                                                        y=parameter,
-                                                                        fill = parameter))+
+                                                                        y=reorder(parameter,
+                                                                                  MeanDecreaseAccuracy)))+
   
-  geom_col(colour = "blue")+
-  scale_fill_manual(values = c("darkblue", 
-                               "skyblue", 
-                               "skyblue",
-                               "skyblue",
-                               "darkblue",
-                               "darkblue",
-                               "skyblue",
-                               "darkblue"))+
+  geom_col(colour = "blue", fill = "skyblue")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("A")+
@@ -3263,18 +3214,9 @@ seq.rot.mix.rf.plot.acc.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDe
   theme(legend.position = "none")
 
 seq.rot.mix.rf.plot.gini.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDecreaseGini,
-                                                                         y=parameter,
-                                                                         fill = parameter))+
-  
-  geom_col(colour = "blue")+
-  scale_fill_manual(values = c("darkblue", 
-                               "skyblue", 
-                               "skyblue",
-                               "skyblue",
-                               "darkblue",
-                               "darkblue",
-                               "skyblue",
-                               "skyblue"))+
+                                                                         y=reorder(parameter,
+                                                                                   MeanDecreaseGini)))+
+  geom_col(colour = "blue", fill = "skyblue")+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("B")+
@@ -3330,21 +3272,10 @@ sum(accuracy)/7500*100
 #Model accuracy is 87.63%
 
 rf.plot.acc.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseAccuracy,
-                                                        y=parameter,
-                                                        fill = parameter))+
+                                                        y=reorder(parameter,
+                                                                  MeanDecreaseAccuracy)))+
   
-  geom_col(colour = "seagreen")+
-  scale_fill_manual(values = c("seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen"))+
+  geom_col(colour = "darkgreen", fill = "seagreen2")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
   ggtitle("C")+
@@ -3352,21 +3283,9 @@ rf.plot.acc.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseAccuracy,
   theme(legend.position = "none")
 
 rf.plot.gini.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseGini,
-                                                         y=parameter,
-                                                         fill = parameter))+
+                                                         y=reorder(parameter, MeanDecreaseGini)))+
   
-  geom_col(colour = "seagreen")+
-  scale_fill_manual(values = c("seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen",
-                               "seagreen2",
-                               "seagreen2",
-                               "seagreen2"))+
+  geom_col(colour = "darkgreen", fill = "seagreen2")+
   xlab("Mean Decrease Gini")+
   ylab("Parameter")+
   ggtitle("D")+
@@ -3382,6 +3301,11 @@ rf.plot.gini.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseGini,
     (rf.plot.acc.sam.high + rf.plot.gini.sam.high)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures for Intervention Coverage Greater than 0.5")
 
 
+# tiff("Figure_14.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+#       pointsize = 12)
+# ((seq.rot.mix.rf.plot.acc.high + seq.rot.mix.rf.plot.gini.high)/
+#     (rf.plot.acc.sam.high + rf.plot.gini.sam.high)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures for Intervention Coverage Greater than 0.5")
+# dev.off()
 
 
 
@@ -3606,40 +3530,14 @@ panel_mixture = ggplot(plot.mix.df, aes(x=time.in.generations,
   theme(legend.position = "none")+
   theme(text = element_text(size = 15))
 
-gridExtra::grid.arrange(panel_sequence,
-                        panel_rotation,
-                        panel_mixture,
-                        nrow = 1)
 
+panel_sequence + panel_rotation + panel_mixture
 
-####
-#Demonstrating the Scaling of Beta (exposure scaling factor):::
-response.values = response_to_insecticide_selection(exposure.scaling.factor = 10,
-                                                    minimum.insecticide.resistance.heritability = 0.05,
-                                                    maximum.insecticide.resistance.heritability = 0.30,
-                                                    minimum.female.insecticide.exposure = 0.4,
-                                                    maximum.female.insecticide.exposure = 0.9,
-                                                    minimum.male.insecticide.exposure = 0,
-                                                    maximum.male.insecticide.exposure = 1,
-                                                    nsim = 100000)
-calibrated =  10/response.values
-df = data.frame(calibrated)
+# tiff("Figure_3.tiff", units="px", width=1000*6, height=600*6, res=100*6,
+#      pointsize = 1)
+# panel_sequence + panel_rotation + panel_mixture
+# dev.off()
 
-#FIGURE 2
-ggplot(df, aes(x=calibrated))+
-  geom_histogram(bins = 100,
-                 colour = "black",
-                 fill = "lightblue",)+
-  geom_vline(xintercept = 8, colour = "red",
-             size = 2, alpha = 0.7)+
-  geom_vline(xintercept = 12, colour = "red",
-             size = 2, alpha = 0.7)+
-  scale_x_continuous(breaks = seq(0, 80, by = 10))+
-  xlab("Years to 10% Bioassay Survival")+
-  ylab("Frequency")+
-  theme_classic()+
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 15))
 
 
 
