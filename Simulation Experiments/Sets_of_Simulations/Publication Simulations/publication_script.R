@@ -17,6 +17,8 @@ library(MASS)
 library(devtools) #for polyres package [will need to figure out how to allow install from github]
 load_all()
 
+# install_github("NeilHobbs/polyres")
+# library(polyres)
 ############################################
 ## 1. Setting Up and Running Simulations  ##
 ############################################
@@ -1225,7 +1227,7 @@ plot_seq_rot_primary_outcome = function(){
     annotate("text", x = -50, y = 7200, label = paste0("Increasing \n Benefit \n Sequences"))+
     annotate("text", x = 25, y = 7200, label = paste0("Increasing \n Benefit \n Rotations"))+
     #xlim(-50, 50)+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Count")+
     ggtitle("Overall - 61663 Simulations")+
     guides(fill=guide_legend(title="Outcome"))+
@@ -1281,7 +1283,7 @@ plot_seq_rot_primary_outcome = function(){
     xlab(" ")+
     ylab("Cross Resistance")+
     xlim(-100, 50)+
-    ggtitle("Novel - Deployment Interval: 10 Generations")+
+    ggtitle(paste0("Novel Insecticides \n Deployment Interval: 10 Generations"))+
     theme_classic()+
     theme(legend.position = "none")
   
@@ -1300,10 +1302,10 @@ plot_seq_rot_primary_outcome = function(){
                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Cross Resistance")+
     xlim(-100, 50)+
-    ggtitle("Novel - Deployment Interval: 30 Generations")+
+    ggtitle(paste0("Novel Insecticides \n Deployment Interval: 30 Generations"))+
     theme_classic()+
     theme(legend.position = "none")
   
@@ -1324,7 +1326,7 @@ plot_seq_rot_primary_outcome = function(){
     xlab(" ")+
     ylab(" ")+
     xlim(-100, 50)+
-    ggtitle("Pre-Used - Deployment Interval: 10 Generations")+
+    ggtitle(paste0("Pre-Existing Resistance to Insecticides \n Deployment Interval: 10 Generations"))+
     theme_classic()+
     theme(legend.position = "none")
   
@@ -1342,10 +1344,10 @@ plot_seq_rot_primary_outcome = function(){
                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab(" ")+    
     xlim(-100, 50)+
-    ggtitle("Pre-Used - Deployment Interval: 30 Generations")+
+    ggtitle(paste0("Pre-Existing Resistance to Insecticides \n Deployment Interval: 30 Generations"))+
     theme_classic()+
     theme(legend.position = "none")
   
@@ -1360,12 +1362,13 @@ plot_seq_rot_primary_outcome = function(){
 }
 #Figure 4
 plot_seq_rot_primary_outcome()
-#Sequences and Rotations: The Draws
 
-# tiff("Figure_4.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+# tiff("Figure_4.tiff", units="px", width=1500*6, height=800*6, res=100*6,
 #      pointsize = 12)
 # plot_seq_rot_primary_outcome()
 # dev.off()
+
+#Sequences and Rotations: The Draws
 
 rot.seq.df.all$difference.peak.resistance = c(sequence.df.10$peak.resistance - rotation.df.10$peak.resistance, sequence.df.30$peak.resistance - rotation.df.30$peak.resistance)
 rot.seq.df.all$difference.mean.resistance = c(sequence.df.10$mean.resistance.intensity. - rotation.df.10$mean.resistance.intensity., sequence.df.30$mean.resistance.intensity. - rotation.df.30$mean.resistance.intensity.)
@@ -1607,7 +1610,7 @@ plot_seq_mix_primary_outcome = function(){
                size = 2)+
     annotate("segment", x = 10, xend = 45, y = 5200, yend = 5200, colour = "#005a32", size=3, alpha=0.7, arrow=arrow())+
     annotate("text", x = 20, y = 5600, label = paste0("Increasing \n Benefit \n Mixtures"))+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Count")+
     ggtitle("Overall - 79845 Simulations")+
     xlim(-15, 80)+
@@ -1660,7 +1663,7 @@ plot_seq_mix_primary_outcome = function(){
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab(" ")+
     ylab("Cross Resistance")+
-    ggtitle("Novel - Deployment Interval: 10 Generations")+
+    ggtitle(paste0("Novel Insecticides \n Deployment Interval: 10 Generations"))+
     xlim(0, 80)+
     theme_classic()
   
@@ -1677,9 +1680,9 @@ plot_seq_mix_primary_outcome = function(){
                                                   label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Cross Resistance")+
-    ggtitle("Novel - Deployment Interval: 30 Generations")+
+    ggtitle(paste0("Novel Insecticides \n Deployment Interval: 30 Generations"))+
     xlim(0, 80)+
     theme_classic()
   
@@ -1698,7 +1701,7 @@ plot_seq_mix_primary_outcome = function(){
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab(" ")+
     ylab(" ")+
-    ggtitle("Pre-Used - Deployment Interval: 10 Generations")+
+    ggtitle(paste0("Pre-Existing Resistance to Insecticides \n Deployment Interval: 10 Generations"))+
     xlim(0, 80)+
     theme_classic()
   
@@ -1716,10 +1719,10 @@ plot_seq_mix_primary_outcome = function(){
                                                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab(" ")+
     xlim(0, 80)+
-    ggtitle("Pre-Used - Deployment Interval: 30 Generations")+
+    ggtitle(paste0("Pre-Existing Resistance to Insecticides \n Deployment Interval: 30 Generations"))+
     theme_classic()
   
   
@@ -1736,7 +1739,7 @@ plot_seq_mix_primary_outcome = function(){
 #Figure 6
 plot_seq_mix_primary_outcome()
 
-# tiff("Figure_6.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+# tiff("Figure_6.tiff", units="px", width=1500*6, height=800*6, res=100*6,
 #      pointsize = 12)
 # plot_seq_mix_primary_outcome()
 # dev.off()
@@ -1787,7 +1790,7 @@ plot_rot_mix_primary_outcome = function(){
                size = 2)+
     annotate("segment", x = 10, xend = 45, y = 8000, yend =8000, colour = "#005a32", size=3, alpha=0.7, arrow=arrow())+
     annotate("text", x = 20, y =7600, label = paste0("Increasing \n Benefit \n Mixtures"))+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Count")+
     ggtitle("Overall - 75885 Simulations")+
     xlim(-15, 80)+
@@ -1840,7 +1843,7 @@ plot_rot_mix_primary_outcome = function(){
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab(" ")+
     ylab("Cross Resistance")+
-    ggtitle("Novel - Deployment Interval: 10 Generations")+
+    ggtitle(paste0("Novel Insecticides \n Deployment Interval: 10 Generations"))+
     xlim(0, 80)+
     theme_classic()
   
@@ -1857,9 +1860,9 @@ plot_rot_mix_primary_outcome = function(){
                                                   label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Cross Resistance")+
-    ggtitle("Novel - Deployment Interval: 30 Generations")+
+    ggtitle(paste0("Novel Insecticides \n Deployment Interval: 30 Generations"))+
     xlim(0, 80)+
     theme_classic()
   
@@ -1878,7 +1881,7 @@ plot_rot_mix_primary_outcome = function(){
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
     xlab(" ")+
     ylab(" ")+
-    ggtitle("Pre-Used - Deployment Interval: 10 Generations")+
+    ggtitle(paste0("Pre-Existing Resistance to Insecticides \n Deployment Interval: 10 Generations"))+
     xlim(0, 80)+
     theme_classic()
   
@@ -1896,10 +1899,10 @@ plot_rot_mix_primary_outcome = function(){
                                                    label = Freq),
                size = 3)+
     geom_vline(xintercept = 0, linetype = "dashed", colour ="grey")+
-    xlab("Percentage Difference in Operational Lifespan")+
+      xlab("Percentage Difference in Strategy Lifespan")+
     ylab(" ")+
     xlim(0, 80)+
-    ggtitle("Pre-Used - Deployment Interval: 30 Generations")+
+    ggtitle(paste0("Pre-Existing Resistance to Insecticides \n Deployment Interval: 30 Generations"))+
     theme_classic()
   
   
@@ -1914,7 +1917,7 @@ plot_rot_mix_primary_outcome = function(){
 }
 plot_rot_mix_primary_outcome()
 
-# tiff("Figure_7.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+# tiff("Figure_7.tiff", units="px", width=1500*6, height=800*6, res=100*6,
 #      pointsize = 12)
 # plot_rot_mix_primary_outcome()
 # dev.off()
@@ -2118,7 +2121,7 @@ plot_unique_insecticide_difference = function(){
     geom_text(aes(x=0, y=2000, label = paste0("N = ", n.sims.1
     ),
     size = 10))+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Count")+
     xlim(-100, 100)+
     ylim(0, 3000)+
@@ -2142,7 +2145,7 @@ plot_unique_insecticide_difference = function(){
     geom_text(aes(x=0, y=2200, label = paste0("N = ", n.sims.2
     ),
     size = 10))+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Count")+
     xlim(-100, 100)+
     ylim(0, 3000)+
@@ -2167,7 +2170,7 @@ plot_unique_insecticide_difference = function(){
     geom_text(aes(x=0, y=2000, label = paste0("N = ", n.sims.3
     ),
     size = 10))+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Count")+    
     xlim(-100, 100)+
     ylim(0, 3000)+
@@ -2191,7 +2194,7 @@ plot_unique_insecticide_difference = function(){
     geom_text(aes(x=-0, y=2500, label = paste0("N = ", n.sims.4
     ),
     size = 10))+
-    xlab("Percentage Difference in Operational Lifespan")+    
+    xlab("Percentage Difference in Strategy Lifespan")+    
     ylab("Count")+
     xlim(-100, 100)+
     ylim(0, 3000)+
@@ -2216,7 +2219,7 @@ plot_unique_insecticide_difference = function(){
     geom_text(aes(x=-20, y=2500, label = paste0("N = ", n.sims.5
     ),
     size = 10))+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Count")+
     xlim(-100, 100)+
     ylim(0, 3000)+
@@ -2242,7 +2245,7 @@ plot_unique_insecticide_difference = function(){
     geom_text(aes(x=0, y=2000, label = paste0("N = ", n.sims.6
     ),
     size = 10))+
-    xlab("Percentage Difference in Operational Lifespan")+
+    xlab("Percentage Difference in Strategy Lifespan")+
     ylab("Count")+
     xlim(-100, 100)+
     ylim(0, 3000)+
@@ -2384,12 +2387,14 @@ make_pcor_plot = function(){
     xlim(-0.65, 0.3)+
     ylab("Parameter") +
     xlab("Partial Rank Correlation") +
+    scale_x_continuous(sec.axis = sec_axis(~ . , name = "Cross Resistance",
+                                           breaks = NULL,
+                                           labels = NULL))+
     guides(fill=guide_legend(ncol=1)) +
     coord_flip()+
     theme_classic()+
-    facet_grid(as.factor(cross.selection)~.)+
+    facet_grid(cross.selection~.)+
     theme(legend.position = "right")
-  
   return(figure)
 }
 
@@ -2685,23 +2690,18 @@ seq.rot.rf.plot.acc = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseAccuracy,
   theme(legend.position = "none")
 
 
-seq.rot.rf.plot.gini = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseGini,
-                                                       y=reorder(parameter, MeanDecreaseGini)))+
-  
-  geom_col(colour = "blue",
-           fill = "skyblue")+
-  xlab("Mean Decrease Gini")+
-  ylab("Parameter")+
-  ggtitle("B")+
-  theme_classic()+
-  theme(legend.position = "none")
+# seq.rot.rf.plot.gini = ggplot(rf.model.seq.rot.df, aes(x=MeanDecreaseGini,
+#                                                        y=reorder(parameter, MeanDecreaseGini)))+
+#   
+#   geom_col(colour = "blue",
+#            fill = "skyblue")+
+#   xlab("Mean Decrease Gini")+
+#   ylab("Parameter")+
+#   ggtitle("B")+
+#   theme_classic()+
+#   theme(legend.position = "none")
 
-seq.rot.rf.plot.acc / seq.rot.rf.plot.gini
-
-# tiff("Figure_9.tiff", units="px", width=1500*6, height=600*6, res=100*6,
-#      pointsize = 12)
 # seq.rot.rf.plot.acc / seq.rot.rf.plot.gini
-# dev.off()
 
 
 ##Unique Insecticides Seq vs Adaptive Rot:
@@ -2757,32 +2757,32 @@ seq.adrot.rf.plot.acc = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseAccuracy
   geom_col(colour = "darkgreen", fill = "seagreen2")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
-  ggtitle("C")+
+  ggtitle("B")+
   theme_classic()+
   theme(legend.position = "none")
 
-seq.adrot.rf.plot.gini = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseGini,
-                                                           y=reorder(parameter, MeanDecreaseGini)))+
-  
-  geom_col(colour = "darkgreen", fill = "seagreen2")+
-  xlab("Mean Decrease Gini")+
-  ylab("Parameter")+
-  ggtitle("D")+
-  theme_classic()+
-  theme(legend.position = "none")
-
-gridExtra::grid.arrange(seq.adrot.rf.plot.acc, seq.adrot.rf.plot.gini,
-                        nrow = 1)
-
-
-((seq.rot.rf.plot.acc + seq.rot.rf.plot.gini)/
-    (seq.adrot.rf.plot.acc + seq.adrot.rf.plot.gini)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
+# seq.adrot.rf.plot.gini = ggplot(rf.model.seq.adrot.df, aes(x=MeanDecreaseGini,
+#                                                            y=reorder(parameter, MeanDecreaseGini)))+
+#   
+#   geom_col(colour = "darkgreen", fill = "seagreen2")+
+#   xlab("Mean Decrease Gini")+
+#   ylab("Parameter")+
+#   ggtitle("D")+
+#   theme_classic()+
+#   theme(legend.position = "none")
+# 
+# gridExtra::grid.arrange(seq.adrot.rf.plot.acc, seq.adrot.rf.plot.gini,
+#                         nrow = 1)
 
 
-# tiff("Figure_10.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+seq.rot.rf.plot.acc /
+    seq.adrot.rf.plot.acc + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
+
+
+# tiff("Figure_10.tiff", units="px", width=1000*6, height=600*6, res=100*6,
 #      pointsize = 12)
-# ((seq.rot.rf.plot.acc + seq.rot.rf.plot.gini)/
-# (seq.adrot.rf.plot.acc + seq.adrot.rf.plot.gini)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
+# seq.rot.rf.plot.acc /
+# seq.adrot.rf.plot.acc + plot_annotation(title = "Random Forest Models: Sequences vs Rotations")
 # dev.off()
 
 #Random Forest: Sequence, Rotation and Mixtures
@@ -2838,20 +2838,20 @@ seq.rot.mix.rf.plot.acc = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseAccu
   ggtitle("A")+
   theme_classic()+
   theme(legend.position = "none")
-seq.rot.mix.rf.plot.gini = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseGini,
-                                                               y=reorder(parameter,
-                                                                         MeanDecreaseGini)))+
-  
-  geom_col(colour = "blue", fill = "skyblue")+
-  xlab("Mean Decrease Gini")+
-  ylab("Parameter")+
-  ggtitle("B")+
-  theme_classic()+
-  theme(legend.position = "none")
+# seq.rot.mix.rf.plot.gini = ggplot(rf.model.seq.rot.mix.df, aes(x=MeanDecreaseGini,
+#                                                                y=reorder(parameter,
+#                                                                          MeanDecreaseGini)))+
+#   
+#   geom_col(colour = "blue", fill = "skyblue")+
+#   xlab("Mean Decrease Gini")+
+#   ylab("Parameter")+
+#   ggtitle("B")+
+#   theme_classic()+
+#   theme(legend.position = "none")
 
 
-seq.rot.mix.rf.plot.acc
-seq.rot.mix.rf.plot.gini
+# seq.rot.mix.rf.plot.acc
+# seq.rot.mix.rf.plot.gini
 
 
 ##Unique Insecticides Seq vs Adaptive Rot vs Mixtures
@@ -2899,31 +2899,30 @@ rf.plot.acc.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseAccuracy,
   
   geom_col(colour = "darkgreen", fill = "seagreen2")+ 
   ylab("Parameter")+
-  ggtitle("C")+
+  ggtitle("B")+
   theme_classic()+
   theme(legend.position = "none")
 
-rf.plot.gini.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseGini,
-                                               y=reorder(parameter, MeanDecreaseGini)))+
-  geom_col(colour = "darkgreen", fill = "seagreen2")+ 
-  xlab("Mean Decrease Gini")+
-  ylab("Parameter")+
-  ggtitle("D")+
-  theme_classic()+
-  theme(legend.position = "none")
+# rf.plot.gini.sam = ggplot(rf.model.sam.df, aes(x=MeanDecreaseGini,
+#                                                y=reorder(parameter, MeanDecreaseGini)))+
+#   geom_col(colour = "darkgreen", fill = "seagreen2")+ 
+#   xlab("Mean Decrease Gini")+
+#   ylab("Parameter")+
+#   ggtitle("D")+
+#   theme_classic()+
+#   theme(legend.position = "none")
 
-gridExtra::grid.arrange(rf.plot.acc.sam, rf.plot.gini.sam,
-                        nrow = 1)
+# gridExtra::grid.arrange(rf.plot.acc.sam, rf.plot.gini.sam,
+#                         nrow = 1)
+
+seq.rot.mix.rf.plot.acc /
+    rf.plot.acc.sam + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures")
 
 
-((seq.rot.mix.rf.plot.acc + seq.rot.mix.rf.plot.gini)/
-    (rf.plot.acc.sam + rf.plot.gini.sam)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures")
-
-
-# tiff("Figure_11.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+# tiff("Figure_11.tiff", units="px", width=1000*6, height=600*6, res=100*6,
 #      pointsize = 12)
-# ((seq.rot.mix.rf.plot.acc + seq.rot.mix.rf.plot.gini)/
-#     (rf.plot.acc.sam + rf.plot.gini.sam)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures")
+# seq.rot.mix.rf.plot.acc /
+#     rf.plot.acc.sam + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures")
 # dev.off()
 
 
@@ -3071,18 +3070,18 @@ seq.rot.rf.plot.acc.high = ggplot(rf.model.seq.rot.df.high, aes(x=MeanDecreaseAc
   theme_classic()+
   theme(legend.position = "none")
 
-seq.rot.rf.plot.gini.high = ggplot(rf.model.seq.rot.df.high, aes(x=MeanDecreaseGini,
-                                                                 y=reorder(parameter, MeanDecreaseGini)))+
-  
-  geom_col(colour = "blue", fill = "skyblue")+
-  xlab("Mean Decrease Gini")+
-  ylab("Parameter")+
-  ggtitle("B")+
-  theme_classic()+
-  theme(legend.position = "none")
-
-gridExtra::grid.arrange(seq.rot.rf.plot.acc.high, seq.rot.rf.plot.gini.high,
-                        nrow = 1)
+# seq.rot.rf.plot.gini.high = ggplot(rf.model.seq.rot.df.high, aes(x=MeanDecreaseGini,
+#                                                                  y=reorder(parameter, MeanDecreaseGini)))+
+#   
+#   geom_col(colour = "blue", fill = "skyblue")+
+#   xlab("Mean Decrease Gini")+
+#   ylab("Parameter")+
+#   ggtitle("B")+
+#   theme_classic()+
+#   theme(legend.position = "none")
+# 
+# gridExtra::grid.arrange(seq.rot.rf.plot.acc.high, seq.rot.rf.plot.gini.high,
+#                         nrow = 1)
 
 
 
@@ -3134,31 +3133,31 @@ seq.adrot.rf.plot.acc.high = ggplot(rf.model.seq.adrot.df.high, aes(x=MeanDecrea
   xlab("Mean Decrease Gini")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
-  ggtitle("C")+
+  ggtitle("B")+
   theme_classic()+
   theme(legend.position = "none")
 
-seq.adrot.rf.plot.gini.high = ggplot(rf.model.seq.adrot.df.high, aes(x=MeanDecreaseGini,
-                                                                     y=reorder(parameter, MeanDecreaseGini)))+
-  
-  geom_col(colour = "darkgreen", fill = "seagreen2")+
-  xlab("Mean Decrease Gini")+
-  ylab("Parameter")+
-  ggtitle("D")+
-  theme_classic()+
-  theme(legend.position = "none")
+# seq.adrot.rf.plot.gini.high = ggplot(rf.model.seq.adrot.df.high, aes(x=MeanDecreaseGini,
+#                                                                      y=reorder(parameter, MeanDecreaseGini)))+
+#   
+#   geom_col(colour = "darkgreen", fill = "seagreen2")+
+#   xlab("Mean Decrease Gini")+
+#   ylab("Parameter")+
+#   ggtitle("D")+
+#   theme_classic()+
+#   theme(legend.position = "none")
 
-gridExtra::grid.arrange(seq.adrot.rf.plot.acc.high, seq.adrot.rf.plot.gini.high,
-                        nrow = 1)
+# gridExtra::grid.arrange(seq.adrot.rf.plot.acc.high, seq.adrot.rf.plot.gini.high,
+#                         nrow = 1)
 
 
-((seq.rot.rf.plot.acc.high + seq.rot.rf.plot.gini.high)/
-    (seq.adrot.rf.plot.acc.high + seq.adrot.rf.plot.gini.high)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations for Intervention Coverage Greater than 0.5")
+seq.rot.rf.plot.acc.high /
+  seq.adrot.rf.plot.acc.high + plot_annotation(title = "Random Forest Models: Sequences vs Rotations for Intervention Coverage Greater than 0.5")
 
-# tiff("Figure_13.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+# tiff("Figure_13.tiff", units="px", width=1000*6, height=600*6, res=100*6,
 #      pointsize = 12)
-# ((seq.rot.rf.plot.acc.high + seq.rot.rf.plot.gini.high)/
-#     (seq.adrot.rf.plot.acc.high + seq.adrot.rf.plot.gini.high)) + plot_annotation(title = "Random Forest Models: Sequences vs Rotations for Intervention Coverage Greater than 0.5")
+# seq.rot.rf.plot.acc.high /
+#   seq.adrot.rf.plot.acc.high + plot_annotation(title = "Random Forest Models: Sequences vs Rotations for Intervention Coverage Greater than 0.5")
 # dev.off()
 
 
@@ -3212,20 +3211,20 @@ seq.rot.mix.rf.plot.acc.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDe
   ggtitle("A")+
   theme_classic()+
   theme(legend.position = "none")
+# 
+# seq.rot.mix.rf.plot.gini.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDecreaseGini,
+#                                                                          y=reorder(parameter,
+#                                                                                    MeanDecreaseGini)))+
+#   geom_col(colour = "blue", fill = "skyblue")+
+#   xlab("Mean Decrease Gini")+
+#   ylab("Parameter")+
+#   ggtitle("B")+
+#   theme_classic()+
+#   theme(legend.position = "none")
 
-seq.rot.mix.rf.plot.gini.high = ggplot(rf.model.seq.rot.mix.high.df, aes(x=MeanDecreaseGini,
-                                                                         y=reorder(parameter,
-                                                                                   MeanDecreaseGini)))+
-  geom_col(colour = "blue", fill = "skyblue")+
-  xlab("Mean Decrease Gini")+
-  ylab("Parameter")+
-  ggtitle("B")+
-  theme_classic()+
-  theme(legend.position = "none")
-
-
-seq.rot.mix.rf.plot.acc.high
-seq.rot.mix.rf.plot.gini.high
+# 
+# seq.rot.mix.rf.plot.acc.high
+# seq.rot.mix.rf.plot.gini.high
 
 
 
@@ -3278,33 +3277,29 @@ rf.plot.acc.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseAccuracy,
   geom_col(colour = "darkgreen", fill = "seagreen2")+
   xlab("Mean Decrease Accuracy")+
   ylab("Parameter")+
-  ggtitle("C")+
+  ggtitle("B")+
   theme_classic()+
   theme(legend.position = "none")
 
-rf.plot.gini.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseGini,
-                                                         y=reorder(parameter, MeanDecreaseGini)))+
-  
-  geom_col(colour = "darkgreen", fill = "seagreen2")+
-  xlab("Mean Decrease Gini")+
-  ylab("Parameter")+
-  ggtitle("D")+
-  theme_classic()+
-  theme(legend.position = "none")
+# rf.plot.gini.sam.high = ggplot(rf.model.sam.df.high, aes(x=MeanDecreaseGini,
+#                                                          y=reorder(parameter, MeanDecreaseGini)))+
+#   
+#   geom_col(colour = "darkgreen", fill = "seagreen2")+
+#   xlab("Mean Decrease Gini")+
+#   ylab("Parameter")+
+#   ggtitle("D")+
+#   theme_classic()+
+#   theme(legend.position = "none")
 
 
+seq.rot.mix.rf.plot.acc.high /
+    rf.plot.acc.sam.high + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures for Intervention Coverage Greater than 0.5")
 
 
-
-
-((seq.rot.mix.rf.plot.acc.high + seq.rot.mix.rf.plot.gini.high)/
-    (rf.plot.acc.sam.high + rf.plot.gini.sam.high)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures for Intervention Coverage Greater than 0.5")
-
-
-# tiff("Figure_14.tiff", units="px", width=1500*6, height=600*6, res=100*6,
+# tiff("Figure_14.tiff", units="px", width=1000*6, height=600*6, res=100*6,
 #       pointsize = 12)
-# ((seq.rot.mix.rf.plot.acc.high + seq.rot.mix.rf.plot.gini.high)/
-#     (rf.plot.acc.sam.high + rf.plot.gini.sam.high)) + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures for Intervention Coverage Greater than 0.5")
+# seq.rot.mix.rf.plot.acc.high /
+#   rf.plot.acc.sam.high + plot_annotation(title = "Random Forest Models: Sequences/Rotations vs Mixtures for Intervention Coverage Greater than 0.5")
 # dev.off()
 
 
@@ -3449,12 +3444,42 @@ panel_sequence = ggplot(plot.seq.df, aes(x=time.in.generations,
   geom_point(aes(x=time.in.generations,
                  y=-0.5, colour = insecticide.deployed),
              size = 1)+
-  geom_vline(xintercept = max(plot.seq.df$time.in.generations),
+  
+  scale_y_continuous(breaks = c(0, 5, 8, 10),
+                     limits = c(-1, 11))+
+  
+  geom_vline(xintercept = 180, colour = "black")+
+  geom_text(aes(x=175, y = 5, label = "Insecticide 1 is withdrawn",
+                angle = 270),
+            colour = "#e31a1c",
+            size = 5)+
+  geom_text(aes(x=205, y = 5, label = "Insecticide 2 is deployed",
+                angle = 270),
+            colour = "#377eb8",
+            size = 5)+
+  geom_vline(xintercept = 300, colour = "black")+
+  geom_text(aes(x=300, y = 3, label = paste0("Insecticide 1 is returned and \n is available for re-deployment"),
+                angle = 270),
+            colour = "#e31a1c",
+            size = 5)+
+  geom_vline(xintercept = 420,
              colour = "orange",
              linetype = "dashed",
              size = 0.5)+
-  scale_y_continuous(breaks = c(0, 5, 8, 10),
-                     limits = c(-1, 11))+
+  geom_text(aes(x=420,
+                y=5, label = paste0("No insecticides available \n SIMULATION TERMINATES")),
+            colour = "orange",
+            angle = 270,
+            size = 5)+
+  geom_text(aes(y=-0.75, x=200, label="Which Insecticide is Deployed"),
+            colour = "black",
+            size = 5)+
+  geom_text(aes(x=90, y = 10.25, label = "Withdrawal Threshold"),
+            colour = "black",
+            size = 5)+
+  geom_text(aes(x=70, y = 8.25, label = "Return Threshold"),
+            colour = "grey",
+            size = 5)+
   xlim(1, 500)+
   ggtitle("Sequence")+
   xlab("Time in Generations")+
@@ -3462,6 +3487,7 @@ panel_sequence = ggplot(plot.seq.df, aes(x=time.in.generations,
   theme_classic()+
   theme(legend.position = "none")+
   theme(text = element_text(size = 15))
+
 
 
 panel_rotation = ggplot(plot.rot.df, aes(x=time.in.generations,
@@ -3478,6 +3504,20 @@ panel_rotation = ggplot(plot.rot.df, aes(x=time.in.generations,
              colour = "orange",
              linetype = "dashed",
              size = 0.5)+
+  geom_text(aes(y=-0.75, x=200, label="Which Insecticide is Deployed"),
+            colour = "black",
+            size = 5)+
+  geom_text(aes(x=90, y = 10.25, label = "Withdrawal Threshold"),
+            colour = "black",
+            size = 5)+
+  geom_text(aes(x=70, y = 8.25, label = "Return Threshold"),
+            colour = "grey",
+            size = 5)+
+  geom_text(aes(x=500,
+                y=5, label = paste0("500 Generations Reached \n SIMULATION TERMINATES")),
+            colour = "orange",
+            angle = 270,
+            size = 5)+
   scale_y_continuous(breaks = c(0, 5, 8, 10),
                      limits = c(-1, 11))+
   xlim(1, 500)+
@@ -3520,6 +3560,20 @@ panel_mixture = ggplot(plot.mix.df, aes(x=time.in.generations,
              colour = "orange",
              linetype = "dashed",
              size = 0.5)+
+  geom_text(aes(x=90, y = 10.25, label = "Withdrawal Threshold"),
+            colour = "black",
+            size = 5)+
+  geom_text(aes(x=70, y = 8.25, label = "Return Threshold"),
+            colour = "grey",
+            size = 5)+
+  geom_text(aes(x=500,
+                y=5, label = paste0("500 Generations Reached \n SIMULATION TERMINATES")),
+            colour = "orange",
+            angle = 270,
+            size = 5)+
+  geom_text(aes(y=-0.75, x=200, label="Which Insecticide is Deployed"),
+            colour = "black",
+            size = 5)+
   scale_y_continuous(breaks = c(0, 5, 8, 10),
                      limits = c(-1, 11))+
   xlim(1, 500)+
@@ -3530,11 +3584,10 @@ panel_mixture = ggplot(plot.mix.df, aes(x=time.in.generations,
   theme(legend.position = "none")+
   theme(text = element_text(size = 15))
 
-
 panel_sequence + panel_rotation + panel_mixture
 
-# tiff("Figure_3.tiff", units="px", width=1000*6, height=600*6, res=100*6,
-#      pointsize = 1)
+# tiff("Figure_3.tiff", units="px", width=1800*6, height=800*6, res=100*6,
+#      pointsize = 10)
 # panel_sequence + panel_rotation + panel_mixture
 # dev.off()
 
